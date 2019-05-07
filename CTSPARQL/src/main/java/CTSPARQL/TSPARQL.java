@@ -3114,11 +3114,13 @@ public class TSPARQL {
 									for (int i = 1; i < rules.get(0).size(); i++) {
 										newhead = newhead + rules.get(0).get(i) + ',';
 									}
+									
 									if (!newhead.isEmpty()) {
 										newhead = newhead.substring(0, newhead.length() - 1);
 										String head = newhead + "," + cons + "," + domain;
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
 										if (qimpl.hasSolution())
+										//COUNTEREXAMPLE
 										{
 											error = true;
 											if (!union) {
@@ -3184,6 +3186,7 @@ public class TSPARQL {
 												head = newhead + "," + cons;
 												org.jpl7.Query qcons = new org.jpl7.Query(head);
 												if (!qcons.hasSolution()) {
+													//INCONSISTENCY
 													error = true;
 													if (!union) {
 														System.out.println(
@@ -3191,6 +3194,7 @@ public class TSPARQL {
 														System.out.println(head);
 													}
 												} else {
+													//ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
@@ -3198,6 +3202,7 @@ public class TSPARQL {
 												}
 											}
 											else {
+												//INCOMPLETENESS
 												error = true;
 												if (!union) {
 													System.out.println(
@@ -3208,6 +3213,7 @@ public class TSPARQL {
 										}
 									}
 									else {
+										//INCOMPLETENESS
 										error = true;
 										if (!union) {
 											System.out.println(
@@ -3218,6 +3224,7 @@ public class TSPARQL {
 										}
 									}
 								} else {
+									//INCOMPLETENESS
 									error = true;
 									if (!union) {
 										System.out.println(
@@ -3228,6 +3235,7 @@ public class TSPARQL {
 								}
 							}
 						} else {
+							//INCOMPLETENESS
 							error = true;
 							if (!union) {
 								System.out.println("Unsuccessful type validity. Case 14.5 . The property cannot be proved. "
@@ -3363,7 +3371,7 @@ public class TSPARQL {
 										String head = newhead + "," + cons + "," + domain;
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
 										if (qimpl.hasSolution())
-										{
+										{ //COUNTEREXAMPLE
 											error = true;
 											if (!union) {
 												System.out.println("Unsuccessful type validity. Case 18. Counterexample:");
@@ -3396,6 +3404,7 @@ public class TSPARQL {
 												head = newhead + "," + cons;
 												org.jpl7.Query qcons = new org.jpl7.Query(head);
 												if (!qcons.hasSolution()) {
+													//INCONSISTENCY
 													error = true;
 													if (!union) {
 														System.out.println(
@@ -3403,12 +3412,14 @@ public class TSPARQL {
 														System.out.println(head);
 													}
 												} else {
+													//ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
 													} else {}
 												}
 											} else {
+												//INCOMPLETENESS
 												error = true;
 												if (!union) {
 													System.out.println(
@@ -3418,6 +3429,7 @@ public class TSPARQL {
 											}
 										}
 									} else {
+										//INCOMPLETENESS
 										error = true;
 										if (!union) {
 											System.out.println(
@@ -3429,6 +3441,7 @@ public class TSPARQL {
 									    }
 										}
 										else {
+											//INCOMPLETENESS
 											error = true;
 											if (!union) {
 												System.out.println(
@@ -3440,6 +3453,7 @@ public class TSPARQL {
 									}
 								}
 								else {
+									//INCOMPLETENESS
 									error = true;
 									if (!union) {
 										System.out.println(

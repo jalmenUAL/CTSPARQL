@@ -79,7 +79,7 @@ public class MyUI extends UI {
 	String rdf = "C:/rdf-vocabulary.owl";
 	String owl = "C:/owl-vocabulary.owl";
 	OWLReasoner reasoner;	
-	ComboBox<String> cb_testing = new ComboBox<String>();
+	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>(); 
 	public static String readStringFromURL(String requestURL) throws IOException {
 		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString())) {
@@ -112,31 +112,31 @@ public class MyUI extends UI {
         });*/
 
 		HorizontalLayout hlb = new HorizontalLayout();
-		Button typing = new Button("Typing");
-		typing.setStyleName(ValoTheme.BUTTON_FRIENDLY);
-		typing.setIcon(VaadinIcons.AMBULANCE);
-		Button checking = new Button("Consistency Checking");
-		checking.setStyleName(ValoTheme.BUTTON_DANGER);
-		checking.setIcon(VaadinIcons.CHECK);   
-		Button testing = new Button("Testing");
-		testing.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		testing.setIcon(VaadinIcons.HEART);
-		Button run_testing = new Button("Run Testing");
-		run_testing.setStyleName(ValoTheme.BUTTON_FRIENDLY);
-		run_testing.setIcon(VaadinIcons.PLAY);	
+		Button correctness = new Button("Correctness");
+		correctness.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		correctness.setIcon(VaadinIcons.AMBULANCE);
+		//Button checking = new Button("Consistency Checking");
+		//checking.setStyleName(ValoTheme.BUTTON_DANGER);
+		//checking.setIcon(VaadinIcons.CHECK);   
+		Button type_validity = new Button("Type Validity");
+		type_validity.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		type_validity.setIcon(VaadinIcons.HEART);
+		Button run_type_validity = new Button("Run Type Validity");
+		run_type_validity.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		run_type_validity.setIcon(VaadinIcons.PLAY);	
 		HorizontalLayout hlt = new HorizontalLayout();
-		hlb.addComponent(typing);
-		hlb.addComponent(checking);
-		hlb.addComponent(testing);
-		hlt.addComponent(cb_testing);
+		hlb.addComponent(correctness);
+		//hlb.addComponent(checking);
+		hlb.addComponent(type_validity);
+		hlt.addComponent(cb_type_validity);
 		hlt.addComponent(cb_vars);
-		hlt.addComponent(run_testing);
-		cb_testing.setVisible(false);
-		cb_testing.setWidth("600px");
+		hlt.addComponent(run_type_validity);
+		cb_type_validity.setVisible(false);
+		cb_type_validity.setWidth("600px");
 		cb_vars.setVisible(false);
-		cb_testing.setEmptySelectionAllowed(false);
+		cb_type_validity.setEmptySelectionAllowed(false);
 		cb_vars.setEmptySelectionAllowed(false);	
-		run_testing.setVisible(false);		
+		run_type_validity.setVisible(false);		
 		Panel edS = new Panel();
 		Panel resP = new Panel();
 		edS.setSizeFull();
@@ -489,12 +489,12 @@ public class MyUI extends UI {
 		examplest.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9", "Example 10");
 		
-		ComboBox<String> examplesc = new ComboBox<>("Examples of Consistency Checking");
+		/*ComboBox<String> examplesc = new ComboBox<>("Examples of Consistency Checking");
 		examplesc.setEmptySelectionAllowed(false);
 		examplesc.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
-				"Example 8", "Example 9", "Example 10");
+				"Example 8", "Example 9", "Example 10");*/
 		
-		ComboBox<String> examplestst = new ComboBox<>("Examples of Testing");
+		ComboBox<String> examplestst = new ComboBox<>("Examples of Type Validity");
 		examplestst.setEmptySelectionAllowed(false);
 		examplestst.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9", "Example 10");
@@ -529,7 +529,7 @@ public class MyUI extends UI {
 			}
 		});
 		
-		examplesc.addValueChangeListener(event -> {
+		/*examplesc.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
 				Notification.show("No example selected");
 			} else {
@@ -555,7 +555,7 @@ public class MyUI extends UI {
 					editor.setValue(val10);
 				}  
 			}
-		});
+		});*/
 		
 		examplestst.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -595,7 +595,7 @@ public class MyUI extends UI {
 		Panel edO = new Panel();
 		edO.setSizeFull();
 
-		typing.addClickListener(new Button.ClickListener() {
+		correctness.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {	
 				result.setValue("");
@@ -635,14 +635,14 @@ public class MyUI extends UI {
 				System.setOut(ps);
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
 						df_rdf, df_owl,"C:/"+filet.getValue());
-				t.SPARQL_TYPING(editor.getValue());
+				t.SPARQL_CORRECTNESS(editor.getValue());
 				System.out.flush();
 				System.setOut(old);
 				result.setValue(baos.toString());
 				System.out.println(baos.toString());
 			}
 		});
-		checking.addClickListener(new Button.ClickListener() {
+		/*checking.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				result.setValue("");
@@ -685,8 +685,8 @@ public class MyUI extends UI {
 				System.setOut(old);
 				result.setValue(baos.toString());
 			}
-		});
-		testing.addClickListener(new Button.ClickListener() {
+		});*/
+		type_validity.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {		
 				result.setValue("");
@@ -699,11 +699,11 @@ public class MyUI extends UI {
 				} catch (OWLOntologyCreationException e2) {
 					e2.printStackTrace();
 				}		
-				cb_testing.clear();
+				cb_type_validity.clear();
 				cb_vars.clear();			
-				cb_testing.setVisible(true);
+				cb_type_validity.setVisible(true);
 				cb_vars.setVisible(true);
-				run_testing.setVisible(true);			
+				run_type_validity.setVisible(true);			
 				Set<OWLClass> classes_testing = ontology.getClassesInSignature();
 				List<String> names = new ArrayList<String>();
 				String urio = ontology.getOntologyID().getOntologyIRI().toString();
@@ -711,20 +711,20 @@ public class MyUI extends UI {
 				{
 				if (c.getIRI().getStart().equals(urio+"#")) {names.add(c.getIRI().toString());}
 				}
-				cb_testing.setItems(names);				
+				cb_type_validity.setItems(names);				
 				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
 				List<Var> vars = query.getProjectVars();
 				cb_vars.setItems(vars);
-				testing.setEnabled(false);
-				typing.setEnabled(false);
-				checking.setEnabled(false);
+				type_validity.setEnabled(false);
+				correctness.setEnabled(false);
+				//checking.setEnabled(false);
 			}
 		});
 		
-		run_testing.addClickListener(new Button.ClickListener() {
+		run_type_validity.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {		
-				if (cb_testing.isEmpty() || cb_vars.isEmpty())
+				if (cb_type_validity.isEmpty() || cb_vars.isEmpty())
 				{Notification.show("Please select a class and an individual");
 				}
 				else
@@ -755,16 +755,16 @@ public class MyUI extends UI {
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
 						df_rdf, df_owl,"C:/"+filet.getValue());
 				Optional<Var> variable_testing = cb_vars.getSelectedItem();
-				Optional<String> type_testing = cb_testing.getSelectedItem();
+				Optional<String> type_testing = cb_type_validity.getSelectedItem();
 				String var_name = variable_testing.get().getName().replace('?', ' ').replaceAll("\\s", "");  
 				String type_name = type_testing.get();						
-				t.SPARQL_TESTING(editor.getValue(),var_name,type_name);		
-				cb_testing.setVisible(false);
+				t.SPARQL_TYPE_VALIDITY(editor.getValue(),var_name,type_name);		
+				cb_type_validity.setVisible(false);
 				cb_vars.setVisible(false);
-				run_testing.setVisible(false);	
-				testing.setEnabled(true);
-				checking.setEnabled(true);
-				typing.setEnabled(true);
+				run_type_validity.setVisible(false);	
+				type_validity.setEnabled(true);
+				//checking.setEnabled(true);
+				correctness.setEnabled(true);
 				System.out.flush();
 				System.setOut(old);
 				result.setValue(baos.toString());
@@ -776,7 +776,7 @@ public class MyUI extends UI {
 		HorizontalLayout examplesall = new HorizontalLayout();
 		layout.addComponent(lab);
 		examplesall.addComponent(examplest);
-		examplesall.addComponent(examplesc);
+		//examplesall.addComponent(examplesc);
 		examplesall.addComponent(examplestst);
 		layout.addComponent(examplesall);
 		layout.addComponent(filet);

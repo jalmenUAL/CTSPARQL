@@ -90,22 +90,19 @@ import com.hp.hpl.jena.sparql.syntax.ElementSubQuery;
 import com.hp.hpl.jena.sparql.syntax.ElementUnion;
 import com.hp.hpl.jena.util.FileUtils;
 
-public class TSPARQL {
+public class TSPARQL5 {
 
 
 	// FILTER && || PENDING
-	// INFERENCIA EN CLASES Y PROPIEDADES
+	// SUBPROPERTY - PENDING
 
 	//SELECCIONAR EJEMPLOS - VAADIN
-	//LIMPIEZA
-	//ONTOLOGÍAS REMOTAS
-	//QUITAR MINUS, OPTIONAL Y NOT
 
 	Integer next = 1;
 	Integer current = 0;
 	Integer nvar = 0;
 	Boolean error = false;
-	//Boolean negation = false;
+	Boolean negation = false;
 	
 	List<String> vars = new ArrayList<String>();
 	List<List<String>> rules = new ArrayList<List<String>>();
@@ -132,7 +129,7 @@ public class TSPARQL {
 	Boolean wrong_analysis;
 	String file;
 
-	public TSPARQL(OWLOntologyManager manager, OWLOntologyManager manager_rdf, OWLOntologyManager manager_owl,
+	public TSPARQL5(OWLOntologyManager manager, OWLOntologyManager manager_rdf, OWLOntologyManager manager_owl,
 			OWLOntology ontology, OWLOntology ont_rdf, OWLOntology ont_owl, OWLDataFactory dataFactory,
 			OWLDataFactory df_rdf, OWLDataFactory df_owl, String file) {
 		this.constraints_elements.clear();
@@ -693,8 +690,7 @@ public class TSPARQL {
 
 	public Boolean Existence(TriplePath tp) {
 		Boolean result = true;
-		if (tp.getSubject().isURI() 
-				&& !isDeclared(tp.getSubject().getNameSpace(), tp.getSubject().getLocalName())) {
+		if (tp.getSubject().isURI() && !isDeclared(tp.getSubject().getNameSpace(), tp.getSubject().getLocalName())) {
 			System.out.println("There is some item not declared in the ontology");
 			System.out.println(tp.getSubject());
 			result = false;
@@ -707,8 +703,7 @@ public class TSPARQL {
 			result = false;
 			wrong_analysis = true;
 		}
-		if (tp.getObject().isURI() 
-				&& !isDeclared(tp.getObject().getNameSpace(), tp.getObject().getLocalName())) {
+		if (tp.getObject().isURI() && !isDeclared(tp.getObject().getNameSpace(), tp.getObject().getLocalName())) {
 			System.out.println("There is some item not declared in the ontology");
 			System.out.println(tp.getObject());
 			result = false;
@@ -719,7 +714,6 @@ public class TSPARQL {
 
 	public void Item_Analysis(ListIterator<TriplePath> it, OWLOntology ont, OWLDataFactory dft,
 			OWLOntologyManager mng) {
-		
 		String urio = ont.getOntologyID().getOntologyIRI().toString();
 		TriplePath tp = it.next();
 		Boolean Existence = Existence(tp);
@@ -1315,7 +1309,6 @@ public class TSPARQL {
 		{
 			System.out.println("SPARQL expression not supported");
 			wrong_analysis = true;
-			rules.clear();
 		}
 		else
 		{
@@ -1389,7 +1382,6 @@ public class TSPARQL {
 				elementBind((ElementBind) ex, step, fileo);
 			} else {
 				System.out.println("SPARQL expression not supported");
-				System.out.println(ex);
 				wrong_analysis = true;
 				rules.clear();
 			}
@@ -1439,12 +1431,7 @@ public class TSPARQL {
 			current = tmp;
 		} else
 		if (el.getExpr().getFunction().getFunctionName(null) == "notexists") {
-			System.out.println("SPARQL expression not supported");
-			System.out.println(el);
-			wrong_analysis = true;
-			rules.clear();
-			
-			/*negation = true;
+			negation = true;
 			List<String> varstemp = new ArrayList<String>();
 			for (String v : vars) {
 				varstemp.add(v);
@@ -1517,8 +1504,6 @@ public class TSPARQL {
 				vars.add(v);
 			}
 			current = tmp;
-			*/
-			
 		} else if ((el.getExpr().getFunction().getOpName().toString() == "<")
 				|| (el.getExpr().getFunction().getOpName().toString() == "<=")
 				|| (el.getExpr().getFunction().getOpName().toString() == "=")
@@ -1563,13 +1548,8 @@ public class TSPARQL {
 	};
 
 	public void elementUnion(ElementUnion el, Integer step, String fileo) {
-		
-		System.out.println("SPARQL expression not supported");
-		System.out.println(el);
-		wrong_analysis = true;
-		rules.clear();
 
-		/*String union = "(";
+		String union = "(";
 		for (Element e : el.getElements()) {
 			List<String> varstemp = new ArrayList<String>();
 			for (String v : vars) {
@@ -1647,8 +1627,7 @@ public class TSPARQL {
 		}
 		union = union.substring(0, union.length() - 1);
 		union = union + ")";
-		rules.get(current).add(union);*/
-		
+		rules.get(current).add(union);
 	}
 
 	public void elementGroup(ElementGroup el, Integer step, String fileo) {
@@ -1671,7 +1650,6 @@ public class TSPARQL {
 				elementGroup((ElementGroup) e, step, fileo);
 			} else {
 				System.out.println("SPARQL expression not supported");
-				System.out.println(e);
 				wrong_analysis = true;
 				rules.clear();
 			}
@@ -1679,12 +1657,8 @@ public class TSPARQL {
 	}
 
 	public void elementMinus(ElementMinus el, Integer step, String fileo) {
-		System.out.println("SPARQL expression not supported");
-		System.out.println(el);
-		wrong_analysis = true;
-		rules.clear();
-		
-		/*Element e = el.getMinusElement();
+		negation = true;
+		Element e = el.getMinusElement();
 		List<String> varstemp = new ArrayList<String>();
 		for (String v : vars) {
 			varstemp.add(v);
@@ -1727,14 +1701,14 @@ public class TSPARQL {
 		ctriples.clear();
 		String head;
 		if (vars.isEmpty()) {
-			 
+			/* GOAL */
 			if (current == 0 && step == 0) {
 				head = "p";
 			} else {
 				head = "p" + current + "_" + step;
 			}
 		} else {
-			 
+			/* GOAL */
 			if (current == 0 && step == 0) {
 				head = "p" + "(";
 			} else {
@@ -1758,16 +1732,10 @@ public class TSPARQL {
 			vars.add(v);
 		}
 		current = tmp;
-		*/
 	}
 
 	public void elementOptional(ElementOptional el, Integer step, String fileo) {
-		System.out.println("SPARQL expression not supported");
-		System.out.println(el);
-		wrong_analysis = true;
-		rules.clear();
-		
-		/*negation = true;
+		negation = true;
 		Element e = el.getOptionalElement();
 		List<String> varstemp = new ArrayList<String>();
 		for (String v : vars) {
@@ -1841,9 +1809,7 @@ public class TSPARQL {
 			vars.add(v);
 		}
 		current = tmp;
-		*/
 	};
-	
 
 	public void elementSubQuery(ElementSubQuery el, Integer step, String fileo) {
 
@@ -1865,7 +1831,6 @@ public class TSPARQL {
 		{
 			System.out.println("SPARQL expression not supported");
 			wrong_analysis = true;
-			rules.clear();
 		}
 		List<String> varstemp = new ArrayList<String>();
 		for (String v : vars) {
@@ -1891,7 +1856,6 @@ public class TSPARQL {
 			elementBind((ElementBind) e, step, fileo);
 		} else {
 			System.out.println("SPARQL expression not supported");
-			System.out.println(e);
 			wrong_analysis = true;
 			rules.clear();
 		}
@@ -1962,18 +1926,17 @@ public class TSPARQL {
 			}
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				System.out.println("This type is not supported by consistency analysis:");
-				System.out.println(arg0);
-				wrong_analysis = true;
-				 
+				Set<OWLClassExpression> ec = arg0.getOperands();
+				for (OWLClassExpression e : ec) {
+					e.accept(this);
+					rules.get(current).add(";");
+				}
+				rules.get(current).add("true");
 			}
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				System.out.println("This type is not supported by consistency analysis:");
-				System.out.println(arg0);
-				wrong_analysis = true;
-				 
- 			}
+				// PELLET
+			}
 			@Override
 			public void visit(OWLObjectSomeValuesFrom arg0) {
 			}
@@ -2083,27 +2046,22 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLDataSomeValuesFrom arg0) {
-				 
 			}
 
 			@Override
 			public void visit(OWLDataHasValue arg0) {
-				//FALTA
 			}
 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
-				 
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				 
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				 
 			}
 		};
 		ce.accept(cv);
@@ -2559,10 +2517,9 @@ public class TSPARQL {
 		rules.clear();
 		SPARQL_ANALYSIS(file, query, 0);
 		
-		/*if (negation) {System.out.println("The query contains negative constraints: OPTIONAL, MINUS or NOT EXISTS. "
+		if (negation) {System.out.println("The query contains negative constraints: OPTIONAL, MINUS or NOT EXISTS. "
 				+ "They are not allowed.");}
-		else {*/
-		
+		else {
 		String r = "";
 		if (!wrong_analysis) {
 			r = sparql_consistency();
@@ -2576,7 +2533,7 @@ public class TSPARQL {
 				System.out.print(r);
 			}
 		} else {}
-		//}
+		}
 		restore(file);	
 	};
 	
@@ -2590,9 +2547,9 @@ public class TSPARQL {
 		vars.clear();
 		rules.clear();
 		SPARQL_ANALYSIS(file, query, 0);		
-		/*if (negation) {System.out.println("The query contains negative constraints: OPTIONAL, MINUS or NOT EXISTS. "
+		if (negation) {System.out.println("The query contains negative constraints: OPTIONAL, MINUS or NOT EXISTS. "
 				+ "They are not allowed.");}
-		else {*/
+		else {
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		OWLClass ce = dataFactory.getOWLClass(IRI.create(type_name));
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
@@ -2600,7 +2557,7 @@ public class TSPARQL {
 		if (!error && !wrong_analysis) {
 			System.out.println("Successful type validity. The property has been proved");
 		}	
-		//}
+		}
 		restore(file);
 		
 	};
@@ -2608,7 +2565,7 @@ public class TSPARQL {
 
 	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, String var_name) {		
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
-			//Boolean union = false;
+			Boolean union = false;
 			@Override
 			public void visit(OWLClass arg0) {
 				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
@@ -2620,12 +2577,12 @@ public class TSPARQL {
 					if (consistency == "true") {
 					} else {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out
-									.println("Unsuccessful type validity. Case 1. Caused by the following inconsistency:");
+									.println("Unsuccessful type validity. Case 1.1. Caused by the following inconsistency:");
 							System.out.print(explanations());
 							System.out.println(arg0);
-						//}
+						}
 					}
 					removeTypeAssertion(arg0, in);
 					Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
@@ -2653,12 +2610,7 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				
-				System.out.println("This type is not supported by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-		
-				/*Boolean each = false;
+				Boolean each = false;
 				union = true;
 				Set<OWLClassExpression> ec = arg0.getOperands();
 				for (OWLClassExpression e : ec) {
@@ -2672,18 +2624,11 @@ public class TSPARQL {
 					System.out.println("rdf:type");
 					System.out.println(arg0);
 				}
-				union = false;*/
-				
+				union = false;
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				
-				System.out.println("This type is not supported by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
@@ -2711,7 +2656,7 @@ public class TSPARQL {
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
@@ -2721,25 +2666,25 @@ public class TSPARQL {
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
-									"Unsuccessful type validity. Case 2. The following class membership cannot be proved:");
+									"Unsuccessful type validity. Case 4. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
-										"Unsuccessful type validity. Case 2.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity. Case 4.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
@@ -2748,71 +2693,62 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectAllValuesFrom arg0) {
-				
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
-									"Unsuccessful type validity. Case 3. The following class membership cannot be proved:");
+									"Unsuccessful type validity. Case 5. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
-										"Unsuccessful type validity. Case 3.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity. Case 5.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
-				
-				 
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
-									"Unsuccessful type validity. Case 4. The following class membership cannot be proved:");
+									"Unsuccessful type validity. Case 6. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
-										"Unsuccessful type validity. Case 4.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity. Case 6.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
@@ -2821,117 +2757,99 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
-									"Unsuccessful type validity. Case 5. The following class membership cannot be proved:");
+									"Unsuccessful type validity. Case 7. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
-										"Unsuccessful type validity. Case 5.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity. Case 7.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 
 			}
 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 8. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 8.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 9. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 9.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
@@ -2941,25 +2859,25 @@ public class TSPARQL {
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 10. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 10.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
@@ -2973,25 +2891,25 @@ public class TSPARQL {
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 11. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 11.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
@@ -3001,40 +2919,34 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
-				
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*if (!error) {
+				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 12. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 12.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
@@ -3045,25 +2957,25 @@ public class TSPARQL {
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 13. The following class membership cannot be proved:");
 								System.out.println(in);
 								System.out.println("rdf:type");
 								System.out.println(arg0);
-							//}
+							}
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
 							if (consistency == "true") {
 							} else {
 								error = true;
-								//if (!union) {
+								if (!union) {
 									System.out.println(
 											"Unsuccessful type validity. Case 13.1. Caused by the following inconsistency:");
 									System.out.print(explanations());
 									System.out.println(arg0);
-								//}
+								}
 							}
 							removeTypeAssertion(arg0, in);
 						}
@@ -3211,7 +3123,7 @@ public class TSPARQL {
 										//COUNTEREXAMPLE
 										{
 											error = true;
-											//if (!union) {
+											if (!union) {
 												System.out.println("Unsuccessful type validity. Case 14. Counterexample:");
 												Map<String, Term>[] sols = qimpl.allSolutions();
 												for (Map<String, Term> s : sols) {
@@ -3220,7 +3132,7 @@ public class TSPARQL {
 															System.out.println(rename.get(key) + "=" + s.get(key));
 														}
 												}
-											//}
+											}
 										} else {
 											cons = "";
 											for (String var : vars_) {
@@ -3276,11 +3188,11 @@ public class TSPARQL {
 												if (!qcons.hasSolution()) {
 													//INCONSISTENCY
 													error = true;
-													//if (!union) {
+													if (!union) {
 														System.out.println(
 																"Unsuccessful type validity. Case 14.1. Caused by the following inconsistency");
 														System.out.println(head);
-													//}
+													}
 												} else {
 													//ENTAILMENT
 													head = newhead + "->" + cons;
@@ -3292,44 +3204,44 @@ public class TSPARQL {
 											else {
 												//INCOMPLETENESS
 												error = true;
-												//if (!union) {
+												if (!union) {
 													System.out.println(
 															"Unsuccessful type validity. Case 14.2. The following expression cannot be proved");
 													System.out.println(head);
-												//}
+												}
 											}
 										}
 									}
 									else {
 										//INCOMPLETENESS
 										error = true;
-										//if (!union) {
+										if (!union) {
 											System.out.println(
 													"Unsuccessful type validity. Case 14.3. The following expression cannot be proved");
 											for (String c : constraints_elements) {
 												System.out.print(c);
 											}
-										//}
+										}
 									}
 								} else {
 									//INCOMPLETENESS
 									error = true;
-									//if (!union) {
+									if (!union) {
 										System.out.println(
 												"Unsuccessful type validity. Case 14.4. The property cannot be proved. "
 														+ "Not enough information for:");
 										System.out.println(dp.getIRI().toString());
-									//}
+									}
 								}
 							}
 						} else {
 							//INCOMPLETENESS
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println("Unsuccessful type validity. Case 14.5 . The property cannot be proved. "
 										+ "Not enough information for:");
 								System.out.println(var_name);
-							//}
+							}
 						}
 					}
 				}
@@ -3343,25 +3255,25 @@ public class TSPARQL {
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 17. The following class membership cannot be proved:");
 								System.out.println(in);
 								System.out.println("rdf:type");
 								System.out.println(arg0);
-							//}
+							}
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
 							if (consistency == "true") {
 							} else {
 								error = true;
-								//if (!union) {
+								if (!union) {
 									System.out.println(
 											"Unsuccessful type validity. Case 17.1. Caused by the following inconsistency:");
 									System.out.print(explanations());
 									System.out.println(arg0);
-								//}
+								}
 							}
 							removeTypeAssertion(arg0, in);
 						}
@@ -3461,7 +3373,7 @@ public class TSPARQL {
 										if (qimpl.hasSolution())
 										{ //COUNTEREXAMPLE
 											error = true;
-											//if (!union) {
+											if (!union) {
 												System.out.println("Unsuccessful type validity. Case 18. Counterexample:");
 												Map<String, Term>[] sols = qimpl.allSolutions();
 												for (Map<String, Term> s : sols) {
@@ -3470,7 +3382,7 @@ public class TSPARQL {
 															System.out.println(rename.get(key) + "=" + s.get(key));
 														}
 												}
-											//}
+											}
 										}
 										else {
 											vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
@@ -3494,11 +3406,11 @@ public class TSPARQL {
 												if (!qcons.hasSolution()) {
 													//INCONSISTENCY
 													error = true;
-													//if (!union) {
+													if (!union) {
 														System.out.println(
 																"Unsuccessful type validity. Case 18.1. Caused by the following inconsistency");
 														System.out.println(head);
-													//}
+													}
 												} else {
 													//ENTAILMENT
 													head = newhead + "->" + cons;
@@ -3509,46 +3421,46 @@ public class TSPARQL {
 											} else {
 												//INCOMPLETENESS
 												error = true;
-												//if (!union) {
+												if (!union) {
 													System.out.println(
 															"Unsuccessful type validity. Case 18.2. The following expression cannot be proved");
 													System.out.println(cons);
-												//}
+												}
 											}
 										}
 									} else {
 										//INCOMPLETENESS
 										error = true;
-										//if (!union) {
+										if (!union) {
 											System.out.println(
 													"Unsuccessful type validity. Case 18.3. The following expression cannot be proved:");
 											for (String c : constraints_elements)
 											{System.out.print(c);							
 											}
-										//}
+										}
 									    }
 										}
 										else {
 											//INCOMPLETENESS
 											error = true;
-											//if (!union) {
+											if (!union) {
 												System.out.println(
 														"Unsuccessful type validity. Case 18.4. The property cannot be proved. "
 																+ "Not enough information for: ");
 												System.out.println(dp.getIRI().toString());
-											//}
+											}
 										}
 									}
 								}
 								else {
 									//INCOMPLETENESS
 									error = true;
-									//if (!union) {
+									if (!union) {
 										System.out.println(
 												"Unsuccessful type validity. Case 18.5. The property cannot be proved. "
 														+ "Not enough information for: ");
 										System.out.println(var_name);
-									//}
+									}
 								}
 							}
 						}
@@ -3556,119 +3468,102 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*if (!error) {
+				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 19. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 19.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*if (!error) {
+				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 20. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 20.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}*/
+				}
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				
-				System.out.println("This type cannot be proved by type validity analysis:");
-				System.out.println(arg0);
-				error = true;
-				
-				/*if (!error) {
+				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
-						//if (!union) {
+						if (!union) {
 							System.out.println(
 									"Unsuccessful type validity. Case 22. The following class membership cannot be proved:");
 							System.out.println(in);
 							System.out.println("rdf:type");
 							System.out.println(arg0);
-						//}
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
-							//if (!union) {
+							if (!union) {
 								System.out.println(
 										"Unsuccessful type validity. Case 22.1. Caused by the following inconsistency:");
 								System.out.print(explanations());
 								System.out.println(arg0);
-							//}
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				} */
+				}
 			}
-		
 		};
-		
+
 		if (!wrong_analysis) {ce.accept(cv);}
-		
 	}
 
 	public void copy(String file) {
@@ -4173,7 +4068,7 @@ public class TSPARQL {
 		}
 
 		
-		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
+		TSPARQL5 t = new TSPARQL5(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/social-network-2019.owl");
 
 		t.SPARQL_CORRECTNESS(test7);

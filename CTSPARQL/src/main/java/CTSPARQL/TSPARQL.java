@@ -93,12 +93,11 @@ import com.hp.hpl.jena.util.FileUtils;
 public class TSPARQL {
 
 
-	// FILTER && || PENDING
-	// INFERENCIA EN CLASES Y PROPIEDADES
-	//SELECCIONAR EJEMPLOS - VAADIN
-	//ONTOLOGÍAS REMOTAS
-	//PROBAR RESTRICCIONES EN FECHAS
-
+	//FILTER && || PENDING
+	//ONTOLOGÍAS REMOTAS VAADIN
+	//ctriples
+	//Mejorar salida
+ 
 	Integer next = 1;
 	Integer current = 0;
 	Integer nvar = 0;
@@ -722,6 +721,7 @@ public class TSPARQL {
 						System.out.println("Literal cannot be used as subject");
 						wrong_analysis = true;
 					} else if (tp.getSubject().isURI()) /* UUL */ {
+						 
 						
 						//STORE TRIPLE PATTERN 
 						ctriples.add(tp);
@@ -759,11 +759,29 @@ public class TSPARQL {
 								e.printStackTrace();
 							}
 						} else {
-							System.out.println("Literal used with an object property or individual");
+							System.out.println("Literal used with an object property");
 							wrong_analysis = true;
 						}
 					} else /* VUL */
 					{
+						
+						
+						//ADD TYPE
+						OWLNamedIndividual ni = null;
+						ni = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom = dft.getOWLClassAssertionAxiom(cls, ni);
+						AddAxiom addAxiom = new AddAxiom(ont, axiom);
+						mng.applyChange(addAxiom);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {					 
+							e.printStackTrace();
+						}
+						 
+						
+						
+						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject().getName())) {
@@ -785,23 +803,23 @@ public class TSPARQL {
 						 
 						
 						//ADD TRIPLE PATTERN
-						OWLNamedIndividual ni = dft
+						OWLNamedIndividual ni2 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
 							OWLDataProperty o = dft.getOWLDataProperty(
 									IRI.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()));
 							OWLLiteral owlTypedLiteral = dft.getOWLLiteral(tp.getObject().getLiteralValue().toString(),
 									dft.getOWLDatatype(IRI.create(tp.getObject().getLiteralDatatypeURI())));
-							OWLAxiom axiom = dft.getOWLDataPropertyAssertionAxiom(o, ni, owlTypedLiteral);
-							AddAxiom addAxiom = new AddAxiom(ont, axiom);
-							mng.applyChange(addAxiom);
+							OWLAxiom axiom2 = dft.getOWLDataPropertyAssertionAxiom(o, ni2, owlTypedLiteral);
+							AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
+							mng.applyChange(addAxiom2);
 							try {
 								manager.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
 								e.printStackTrace();
 							}
 						} else {
-							System.out.println("Literal used with an object property or individual");
+							System.out.println("Literal used with an object property");
 							wrong_analysis = true;
 						}
 					}
@@ -810,30 +828,36 @@ public class TSPARQL {
 					/* second V should be a data property */
 					if (tp.getSubject().isVariable()) /* VVL */ {
 					 
-						
-						//ADD TRIPLE PATTERN
+						//ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(
-								IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
-						OWLNamedIndividual ni2 = null;
-						ni2 = dft
-								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
-						OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls, ni2);
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
-						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
 						mng.applyChange(addAxiom1);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {					 
+							e.printStackTrace();
+						}
+						OWLNamedIndividual ni2 = null;
+						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
+						OWLClass cls2 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls2, ni2);
+						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
 						mng.applyChange(addAxiom2);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {						 
+						} catch (OWLOntologyStorageException e) {					 
 							e.printStackTrace();
 						}
+						
+						
+						 
 					} else if (tp.getSubject().isURI()) /* UVL */ {
 						/* V should be a data property */
 						
-						//ADD TRIPLE PATTERN
+						//ADD TYPE
 						OWLNamedIndividual ni1 = null;
 						ni1 = dft.getOWLNamedIndividual(
 								IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -870,25 +894,38 @@ public class TSPARQL {
 						} else
 						if (tp.getPredicate().isURI()) /* VUU */ {
 							
-							
-							
 							if (isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
+								
+								//ADD TYPE
+								OWLNamedIndividual ni1 = null;
+								ni1 = dft.getOWLNamedIndividual(
+										IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+								OWLClass cls = dft
+										.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+								OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
+								AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
+								mng.applyChange(addAxiom1);
+								try {
+									mng.saveOntology(ont);
+								} catch (OWLOntologyStorageException e) {
+									e.printStackTrace();
+								}
 								
 								//STORE TRIPLE PATTERN
 								ctriples.add(tp);
 								if (ctriplesn.containsKey(tp.getSubject().getName())) {
 									if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
 										ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-												.add(tp.getObject().getLiteral().getValue().toString());
+												.add(tp.getObject().toString());
 									} else {
 										Set<String> content = new HashSet<String>();
-										content.add(tp.getObject().getLiteral().getValue().toString());
+										content.add(tp.getObject().toString());
 										ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
 									}
 								} else {
 									Set<String> content = new HashSet<String>();
-									content.add(tp.getObject().getLiteral().getValue().toString());
+									content.add(tp.getObject().toString());
 									Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
 									map.put(tp.getPredicate(), content);
 									ctriplesn.put(tp.getSubject().getName(), map);
@@ -913,20 +950,7 @@ public class TSPARQL {
 									e.printStackTrace();
 								}
 								
-								//ADD TYPE
-								OWLNamedIndividual ni1 = null;
-								ni1 = dft.getOWLNamedIndividual(
-										IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-								OWLClass cls = dft
-										.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-								OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
-								AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
-								mng.applyChange(addAxiom1);
-								try {
-									mng.saveOntology(ont);
-								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
-								}
+								
 							} else {
 								System.out.println("Individual used with a data property");
 								wrong_analysis = true;
@@ -934,7 +958,7 @@ public class TSPARQL {
 						} else { /* second V should be an object property */
 							if (tp.getSubject().isVariable()) /* VVU */ {
 								
-								//ADD TRIPLE PATTERN
+								//ADD TYPE
 								OWLNamedIndividual ni1 = null;
 								ni1 = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -957,7 +981,7 @@ public class TSPARQL {
 							} else if (tp.getSubject().isURI()) /* UVU */ {
 								/* V should be an object property */
 								
-								//ADD TRIPLE PATTERN				
+								//ADD TYPE				
 								OWLNamedIndividual ni1 = null;
 								ni1 = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -988,32 +1012,32 @@ public class TSPARQL {
 							if (ctriplesn.containsKey(tp.getSubject().getName())) {
 								if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
 									ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-											.add(tp.getObject().getLiteral().getValue().toString());
+											.add(tp.getObject().toString());
 								} else {
 									Set<String> content = new HashSet<String>();
-									content.add(tp.getObject().getLiteral().getValue().toString());
+									content.add(tp.getObject().toString());
 									ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
 								}
 							} else {
 								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getLiteral().getValue().toString());
+								content.add(tp.getObject().toString());
 								Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
 								map.put(tp.getPredicate(), content);
 								ctriplesn.put(tp.getSubject().getName(), map);
 							}			
 							
 							//ADD TRIPLE PATTERN
-							OWLNamedIndividual ni = null;
-							ni = dft.getOWLNamedIndividual(
+							OWLNamedIndividual ni3 = null;
+							ni3 = dft.getOWLNamedIndividual(
 									IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
-							OWLNamedIndividual ni2 = null;
-							ni2 = dft.getOWLNamedIndividual(
+							OWLNamedIndividual ni4 = null;
+							ni4 = dft.getOWLNamedIndividual(
 									IRI.create(tp.getObject().getNameSpace() + tp.getObject().getLocalName()));
 							if (isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
 								OWLObjectProperty o = dft.getOWLObjectProperty(IRI
 										.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()));
-								OWLAxiom axiom = dft.getOWLObjectPropertyAssertionAxiom(o, ni, ni2);
+								OWLAxiom axiom = dft.getOWLObjectPropertyAssertionAxiom(o, ni3, ni4);
 								AddAxiom addAxiom = new AddAxiom(ont, axiom);
 								mng.applyChange(addAxiom);
 								try {
@@ -1067,11 +1091,11 @@ public class TSPARQL {
 						}
 						 
 						
-						//ADD TRIPLE PATTERN
+						//ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
-						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
-						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
 						mng.applyChange(addAxiom1);
 						try {
@@ -1079,17 +1103,28 @@ public class TSPARQL {
 						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						//ADD TYPE
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
+						OWLClass cls2 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
+						OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls2, ni2);
+						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
+						mng.applyChange(addAxiom2);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {
+							e.printStackTrace();
+						}
+						
+						//ADD TYPE
+						OWLNamedIndividual ni3 = null;
+						ni3 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						for (String t : RangesDataPropertyAll(
 								IRI.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()))) {
-							OWLClass cls2 = dft.getOWLClass(
+							OWLClass cls3 = dft.getOWLClass(
 									IRI.create("http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1)));
-							OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls2, ni2);
-							AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
-							mng.applyChange(addAxiom2);
+							OWLAxiom axiom3 = dft.getOWLClassAssertionAxiom(cls3, ni3);
+							AddAxiom addAxiom3 = new AddAxiom(ont, axiom3);
+							mng.applyChange(addAxiom3);
 							try {
 								mng.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
@@ -1102,6 +1137,30 @@ public class TSPARQL {
 						}
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
+						
+						//ADD TYPE
+						OWLNamedIndividual ni1 = null;
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
+						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
+						mng.applyChange(addAxiom1);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {
+							e.printStackTrace();
+						}
+						OWLNamedIndividual ni2 = null;
+						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
+						OWLClass cls2 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls2, ni2);
+						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
+						mng.applyChange(addAxiom2);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {
+							e.printStackTrace();
+						}
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
@@ -1121,17 +1180,19 @@ public class TSPARQL {
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject().getName(), map);
 						}
+						
+						
 						//ADD TRIPLE PATTERN
-						OWLNamedIndividual ni1 = null;
-						ni1 = dft
+						OWLNamedIndividual ni3 = null;
+						ni3 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-						OWLNamedIndividual ni2 = null;
-						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
+						OWLNamedIndividual ni4 = null;
+						ni4 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						OWLObjectProperty o = dft.getOWLObjectProperty(
 								IRI.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()));
-						OWLAxiom axiom2 = dft.getOWLObjectPropertyAssertionAxiom(o, ni1, ni2);
-						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
-						mng.applyChange(addAxiom2);
+						OWLAxiom axiom3 = dft.getOWLObjectPropertyAssertionAxiom(o, ni3, ni4);
+						AddAxiom addAxiom3 = new AddAxiom(ont, axiom3);
+						mng.applyChange(addAxiom3);
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
@@ -1143,24 +1204,11 @@ public class TSPARQL {
 						wrong_analysis = true;
 					}
 					
-					//ADD TYPE
 					 
-					OWLNamedIndividual ni1 = null;
-					ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-					OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-					OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
-					AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
-					mng.applyChange(addAxiom1);
-					try {
-						mng.saveOntology(ont);
-					} catch (OWLOntologyStorageException e) {
-						 
-						e.printStackTrace();
-					}
 				} else /* VVV */
 				{
 				 
-					//ADD TRIPLE PATTERN
+					//ADD TYPE
 					OWLNamedIndividual ni1 = null;
 					ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
 					OWLNamedIndividual ni2 = null;
@@ -1243,6 +1291,18 @@ public class TSPARQL {
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
 						
+						//ADD TYPE
+						OWLNamedIndividual ni1 = null;
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));						 
+						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
+						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
+						mng.applyChange(addAxiom1);
+						try {
+							mng.saveOntology(ont);
+						} catch (OWLOntologyStorageException e) {						 
+							e.printStackTrace();
+						}
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
@@ -1264,14 +1324,14 @@ public class TSPARQL {
 						}
 						
 						//ADD TRIPLE PATTERN
-						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(
-								IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
 						OWLNamedIndividual ni2 = null;
-						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
+						ni2 = dft.getOWLNamedIndividual(
+								IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
+						OWLNamedIndividual ni3 = null;
+						ni3 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						OWLObjectProperty o = dft.getOWLObjectProperty(
 								IRI.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()));
-						OWLAxiom axiom2 = dft.getOWLObjectPropertyAssertionAxiom(o, ni1, ni2);
+						OWLAxiom axiom2 = dft.getOWLObjectPropertyAssertionAxiom(o, ni2, ni3);
 						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
 						mng.applyChange(addAxiom2);
 						try {
@@ -1284,13 +1344,13 @@ public class TSPARQL {
 				} else /* UVV */
 				{
 					
-					//ADD TRIPLE PATTERN
+					//ADD TYPE
 					OWLNamedIndividual ni = null;
 					ni = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
 					OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 					OWLAxiom axiom = dft.getOWLClassAssertionAxiom(cls, ni);
-					AddAxiom addAxiom = new AddAxiom(ont, axiom);
-					mng.applyChange(addAxiom);
+					AddAxiom addAxiom2 = new AddAxiom(ont, axiom);
+					mng.applyChange(addAxiom2);
 					try {
 						mng.saveOntology(ont);
 					} catch (OWLOntologyStorageException e) {					 
@@ -1302,6 +1362,8 @@ public class TSPARQL {
 	};
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
+		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
+		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 		
 		OWLClass dt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:dateTime"));
 		OWLClass st = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:string"));
@@ -1314,6 +1376,7 @@ public class TSPARQL {
 		OWLClass flo = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:float"));
 		OWLClass dec = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:decimal"));
 
+        OWLDisjointClassesAxiom ax0 = dataFactory.getOWLDisjointClassesAxiom(lit,res);
         OWLDisjointClassesAxiom ax1 = dataFactory.getOWLDisjointClassesAxiom(dt,st);
         OWLDisjointClassesAxiom ax2 =dataFactory.getOWLDisjointClassesAxiom(dt,intt);
         OWLDisjointClassesAxiom ax3 =dataFactory.getOWLDisjointClassesAxiom(dt,pintt);
@@ -1332,9 +1395,10 @@ public class TSPARQL {
         OWLDisjointClassesAxiom ax15 =dataFactory.getOWLDisjointClassesAxiom(st,dou);
         OWLDisjointClassesAxiom ax16 =dataFactory.getOWLDisjointClassesAxiom(st,flo);
         OWLDisjointClassesAxiom ax17 =dataFactory.getOWLDisjointClassesAxiom(st,dec);
-
         OWLDisjointClassesAxiom ax18 =dataFactory.getOWLDisjointClassesAxiom(nintt,pintt);
 
+        AddAxiom addAxiom0 = new AddAxiom(ontology, ax0);
+        manager.applyChange(addAxiom0);
         AddAxiom addAxiom1 = new AddAxiom(ontology, ax1);
         manager.applyChange(addAxiom1);
         AddAxiom addAxiom2 = new AddAxiom(ontology, ax2);
@@ -3213,405 +3277,538 @@ public class TSPARQL {
 
 	public static void main(String[] args) {
 
-		// Wrong type 0
-		String type0 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//CORRECTNESS
+		
+		//First Method. Wrongly Typed Query.
+		
+		String ex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { sn:foo sn:attends_to sn:empty }\n";
-		// Wrong type 1
-		String type1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:name ?EVENT . ?EVENT sn:name ?NAME}\n";
-		// Wrong type 2
-		String type2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:name ?EVENT . ?EVENT rdf:type sn:Event}\n";
-		// Wrong type 3
-		String type3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:name ?EVENT . ?EVENT rdf:type ?TYPE}\n";
-		// Wrong type 4
-		String type4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:name ?NAME . ?USER sn:age ?NAME}\n";
-		// Wrong type 5
-		String type5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:attends_to ?EVENT . ?USER sn:friend_of ?EVENT}\n";
+				+ "SELECT ?USER "
+				+ "WHERE { sn:foo sn:unknown sn:bad }\n";
 
-		// Wrong type 6
-		String type6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:attends_to ?EVENT . ?EVENT sn:friend_of ?USER}\n";
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:attends_to ?EVENT . \r\n" + 
+				"?USER sn:friend_of ?EVENT\r\n" + 
+				"}";
 
-		// Wrong type 7
-		String type7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:attends_to ?USER }\n";
+				+ "SELECT ?USER WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:attends_to ?USER\r\n" + 
+				"}\r\n" + 
+				"\r\n" + 
+				"";
 
-		// Wrong type 8
-		String type8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		
+		String ex4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:friend_of ?USER }\n";
+				+ "SELECT ?USER WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:likes ?EVENT\r\n ." +
+				"?EVENT rdf:type sn:User\r\n" +
+				"}";
+		
+ 		String ex5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+ 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:attends_to ?EVENT . \r\n" + 
+				"?USER sn:age ?EVENT\r\n" + 
+				"}\n";
+		
+		
+ 		String ex6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:age ?EVENT .\r\n" + 
+				"?EVENT rdf:type sn:Event\r\n" + 
+				"}";
 
-		// Wrong type 9
-		String type9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+ 		
+		String ex7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER rdf:type sn:User . ?USER rdf:type sn:Event }\n";
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:age ?EVENT .\r\n" + 
+				"?EVENT rdf:type ?TYPE\r\n" + 
+				"}";
 
-		// Wrong type 10
-		String type10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER rdf:type sn:User . ?USER rdf:type ?type "
-				+ ". ?type rdfs:subClassOf sn:Event }\n";
+				+ "SELECT ?USER ?P ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER ?P ?EVENT . \r\n" + 
+				"?USER sn:age ?P\r\n" + 
+				"}";
 
-		// Wrong type 11 --correcta
-		String type11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		
+		String ex9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER ?Prop sn:User . ?Prop rdf:type sn:Event  }\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER rdf:type sn:Event .\r\n" + 
+				"?USER rdf:type sn:User  \r\n" + 
+				"}";
 
-		// Wrong type 12 --correcta
-		String type12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER ?Prop sn:User . ?USER rdf:type ?Prop  }\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER rdf:type sn:Event .\r\n" + 
+				"?USER rdf:type ?TYPE .\r\n" + 
+				"?TYPE rdfs:subClassOf sn:User\r\n" + 
+				"}";
 
-		// Wrong type 13
-		String type13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		
+		String ex11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER ?Prop ?Value . ?USER sn:name ?Prop }\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER rdf:type 10\r\n" + 
+				"}";
 
-		// Wrong type 14  
-		String type14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		
+		String ex12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER sn:name ?Value . FILTER (?Value > 10) }\n";
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:name ?VALUE .\r\n" + 
+				"FILTER (?VALUE > 10) \r\n" + 
+				"}";
 
-		// Wrong type 15
-		String type15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		 
+		//MIRAR
+		String ex13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE { ?USER rdf:type 10 }\n";
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + 
+				"{ \r\n" + 
+				"sn:jesus sn:name ?VALUE .\r\n" + 
+				"FILTER (?VALUE > 10) \r\n" + 
+				"}";
 
-		String val0 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE = 50) "
-				+ ". BIND ((?AGE+?AGE) AS ?U) . FILTER(?U = 10)}";
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + 
+				"{ \r\n" + 
+				"sn:jesus sn:name ?NAME .\r\n" + 
+				"sn:jesus sn:age ?NAME\r\n" + 
+				"}";
 
-		String val1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+ 		String ex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+ 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER1 ?USER2 WHERE {\n" + "?USER1 sn:age ?AU1 . ?USER2 sn:age ?AU2 . \n "
-				+ "FILTER(?AU1-?AU2 < 10) .\n" + "FILTER(?AU1 > 40 ).\n" + "FILTER (?AU2 < 18) }\n";
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + 
+				"{ \r\n" + 
+				"sn:jesus sn:name ?NAME .\r\n" + 
+				"sn:jesus sn:age ?AGE .\r\n" + 
+				"FILTER (?NAME > ?AGE) \r\n" + 
+				"}";
 
-		String val2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+ 		//MIRAR
+		String ex16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AU . " + "FILTER(?AU > 30 ).\n" + "FILTER (?AU < 31) }\n";
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER ?PROP ?EVENT . \r\n" + 
+				"FILTER (?USER > 10)\r\n" + 
+				"}";
+		
+		//First Method. Inconsistent Query.
 
-		String val3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?HU  . " + "FILTER(?HU > 130 ).\n"
+				+ "SELECT ?USER "
+				+ "WHERE {\n" 
+				+ "?USER sn:age ?AGE .\n" 
+				+ "FILTER (?AGE = 50) "
+				+ ". BIND ((?AGE+?AGE) AS ?U) "
+				+ ". FILTER(?U = 10)}";
+
+		String ex18 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER1 ?USER2 "
+				+ "WHERE {\n" 
+				+ "?USER1 sn:age ?AU1 . "
+				+ "?USER2 sn:age ?AU2 . \n "
+				+ "FILTER(?AU1-?AU2 < 10) .\n" 
+				+ "FILTER(?AU1 > 40 ).\n" 
+				+ "FILTER (?AU2 < 18) }\n";
+
+		String ex19 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER "
+				+ "WHERE {\n" 
+				+ "?USER sn:age ?AU . " 
+				+ "FILTER(?AU > 30 ).\n" 
+				+ "FILTER (?AU < 31) }\n";
+
+		String ex20 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER "
+				+ "WHERE {\n" 
+				+ "?USER sn:height ?HU  . " 
+				+ "FILTER(?HU > 130 ).\n"
 				+ "FILTER (?HU < 131) }\n";
 
-		String val4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex21 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "FILTER EXISTS {SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) }\n" + "}}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:friend_of ?USER \r\n" + 
+				"}";
 
-		String val5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex22 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n"
-				+ "FILTER EXISTS {SELECT ?USER2 WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
-				+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
+				+ "SELECT ?USER WHERE {\n" 
+				+ "?USER sn:height ?H .\n" 
+				+ "FILTER (?H > 175) .\n"
+				+ "FILTER EXISTS "
+				+ "{SELECT ?USER2 WHERE {\n" 
+				+ "?USER2 sn:height ?H2 .\n" 
+				+ "FILTER (?H2 < 176) .\n"
+				+ "FILTER (?H < ?H2 ) }\n" 
+				+ "}}\n";
 
-		String val6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?USER2 WHERE {\n" + "?USER rdf:type sn:Young .\n" + "?USER sn:age ?AGE .\n"
-				+ "FILTER (?AGE > 50) .\n" + "?USER sn:attends_to ?Event" + "}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"sn:jesus sn:friend_of sn:jesus\r\n" + 
+				"}";
 
-		String val7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex24 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER rdf:type sn:Young .\n" + "?USER sn:age ?AGE .\n"
-				+ "FILTER (?AGE > 50) .\n" + "}\n";
+				+ "SELECT ?USER ?DA \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER rdf:type sn:Active . \r\n" + 
+				"?USER sn:dailyActivity ?DA . \r\n" + 
+				"FILTER (?DA<=4) \r\n" + 
+				"}";
 
-		String val8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex25 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "OPTIONAL {SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) }\n" + "}}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:age ?AGE .\r\n" + 
+				"FILTER (?AGE < 50) .\r\n" + 
+				"FILTER (?AGE > 100)\r\n" + 
+				"}";
 
-		String val9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) }\n" + "}}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:age ?AGE .\r\n" + 
+				"?USER2 sn:age ?AGE2 . \r\n" + 
+				"FILTER (?AGE2 < 50) .\r\n" + 
+				"FILTER (?AGE > 100) .\r\n" + 
+				"BIND((?AGE + ?AGE2) AS ?SUM) .\r\n" + 
+				"FILTER (?SUM < 10)\r\n" + 
+				"}";
 
-		String val10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "?USER2 rdf:type sn:Young .\n"
-				+ "FILTER (?AGE < ?AGE2 ) }\n" + "}}\n";
+				+ "SELECT ?MESSAGE\r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?MESSAGE sn:date ?DATE .\r\n" + 
+				"FILTER (?DATE < '2017-09-04T01:00:00Z') .\r\n" + 
+				"FILTER (?DATE > '2018-09-04T01:00:00Z')\r\n" + 
+				"}";
 
-		String val11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex28 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "OPTIONAL {SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) . ?USER2 rdf:type sn:Young  }\n" + "}}\n";
+				+ "SELECT ?USER\r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:name ?NAME .\r\n" + 
+				"FILTER (?NAME < 'a') .\r\n" + 
+				"FILTER (?NAME > 'z')\r\n" + 
+				"}";
 
-		String val12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex29 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n"
-				+ "MINUS {SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) . ?USER2 rdf:type sn:Young  }\n" + "}}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER sn:age ?AGE .\r\n" + 
+				"?USER sn:age ?AGE2\r\n" + 
+				"FILTER (?AGE != ?AGE2) \r\n" + 
+				"}";
 
-		String val13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex30 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER rdf:type ?Type . ?Type rdfs:subClassOf sn:Young .\n"
-				+ "?USER sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n" + "}\n";
+				+ "SELECT ?USER \r\n" + 
+				"WHERE \r\n" + 
+				"{ \r\n" + 
+				"?USER rdf:type sn:OpinionLeader .\r\n" + 
+				"?USER sn:creates ?MESSAGE\r\n" + 
+				"}";
 
-		String val14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex31 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:name ?name . FILTER ('z' < ?name) . FILTER (?name < 'a') }\n";
+				+ "SELECT ?USER WHERE {\n" 
+				+ "?USER sn:name ?name . "
+				+ "FILTER ('z' < ?name) . "
+				+ "FILTER (?name < 'a') }\n";
 
-		String val14b = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		
+		String ex32 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?EVENT WHERE {\n" + "?EVENT sn:date ?date . FILTER ('2017-09-04T01:00:00Z' < ?date) "
-				+ ". FILTER (?date < '2017-09-04T02:00:00Z') }\n";
+				+ "SELECT ?EVENT "
+				+ "WHERE {\n" 
+				+ "?EVENT sn:date ?date . "
+				+ "FILTER ('2017-09-04T01:00:00Z' < ?date) . "
+				+ "FILTER (?date < '2017-09-04T02:00:00Z') }\n";
 
-		String val15 = // SOLO A NIVEL DE RESTRICCION, NO DE INSTANCIA
-				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+		//MIRAR
+		String ex33 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?AGE WHERE {\n" + "sn:antonio sn:age ?AGE .\n" + "FILTER (?AGE > 50) .\n" + "}\n";
+						+ "SELECT ?USER \r\n" + 
+						"WHERE \r\n" + 
+						"{ \r\n" + 
+						"?USER rdf:type sn:SocialLeader\r\n" + 
+						"?USER sn:created ?MESSAGE\r\n" + 
+						"}";
 
-		String val16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:added_by ?USER2 . ?USER sn:friend_of sn:antonio\n" + "}\n";
-
-		String val17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?CARD WHERE {\n" + "?PROP owl:minCardinality ?CARD . \n" + " FILTER(?CARD = -1)}\n";
-
-		String test1 = "# ?USER rdf:type Verified" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER sn:verified ?V . FILTER(?V = 1)" + "}";
-
-		String test2 = "# ?USER rdf:type Verified" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER sn:verified ?V . FILTER(?V > 1)" + "}";
-
-		String test3 = "# ?USER rdf:type Verified" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER sn:verified ?V" + "}";
-
-		String test4 = "# ?USER rdf:type Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER sn:nfollowers ?NF . ?USER sn:nfollowers ?NF2 . FILTER(?NF <100)"
-				+ "}";
-
-		String test5 = "# ?USER rdf:type Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER sn:nfollowers ?NF . ?USER sn:nfollowers ?NF2 . FILTER(?NF <800) ."
-				+ "FILTER(?NF2 <200) "
-				+ "}";
-
-		String test6 = "# ?USER rdf:type Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER   WHERE {\n ?USER rdf:type sn:User . ?USER sn:age ?Y " + "}";
-
-		String test7 = "# ?USER rdf:type Leader" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?AGE ?MESSAGE  WHERE {\n ?USER rdf:type sn:User . " + "{SELECT ?MESSAGE WHERE {\n"
-				+ "?MESSAGE sn:sent_by ?USER  }}}\n";
-
-		// Answer: MESSAGE is not of type Shared
-
-		String test8 = "#?USER rdf:type Young" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER1 ?USER2 ?AU1 ?AU2 WHERE {\n" + "?USER1 sn:age ?AU1 . ?USER2 sn:age ?AU2 . \n "
-				+ "FILTER(?AU1-?AU2 < 10) .\n" + "FILTER(?AU1 > 20 ).\n" + "FILTER (?AU2 < 18) }\n";
-
-		// Au1 is smaller than 38
-
-		String test9 = "#?USER rdf:type Young" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?AGE WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE < 50) .\n"
-				+ "FILTER EXISTS {SELECT ?USER2 WHERE {\n" + "?USER2 sn:age ?AGE2 .\n" + "FILTER (?AGE2 < 25) .\n"
-				+ "FILTER (?AGE < ?AGE2 ) }\n" + "}}\n";
-
-		// Answer: Age is smaller than 25
-
-		String test10 = "# ?USER rdf:type Young" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Age of User is greater than 40
-
-		String test11 = "# ?MESSAGE rdf:type Shared" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Message has not been shared by an user
-
-		String test12 = "# ?USER sn:likes ?MESSAGE" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: No
-
-		String test13 = "# ?USER rdf:type sn:Young" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Age of user is greater than 40
-
-		String test14 = "# ?USER rdf:type sn:Mature" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Yes
-
-		String test15 = "# ?USER rdf:type sn:Event" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Event has empty intersection with User
-
-		String test16 = "# ?USER2 sn:likes ?MESSAGE" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE ?AGE WHERE {\n" + "?USER sn:age ?AGE . FILTER(?AGE >40) . \n"
-				+ "{SELECT ?USER WHERE {\n" + "?MESSAGE sn:sent_by ?USER . ?USER2 sn:likes ?MESSAGE }}}\n";
-
-		// Answer: Yes
+		//TYPE VALIDITY
 		
-		String test17 = "# ?USER2 sn:likes ?MESSAGE" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:nfollowers 200 . sn:antonio rdf:type sn:User }\n";
-
-		// Answer: Yes
+		//Second Method. Incomplete Query. Missing Triple Pattern.
 		
-		String test18 = "# ?USER2 sn:likes ?MESSAGE" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//MIRAR
+		String ex34 = "# ?USER : sn:SocialLeader\n" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:height '200'^^xsd:double . ?USER rdf:type sn:User }\n";
+				+ "SELECT ?USER ?MESSAGE \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:creates ?MESSAGE .\r\n" + 
+				"?USER2 sn:likes ?MESSAGE\r\n" + 
+				"}";
 
-		// Answer: Yes
+		String ex35 = "# ?USER : sn:SocialLeader\n"
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:likes ?MESSAGE .\r\n" + 
+				"?USER2 sn:shares ?MESSAGE\r\n" + 
+				"}";
+
+		String ex36 = "# ?USER : sn:OpinionLeader\n" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER sn:creates ?MESSAGE .\r\n" + 
+				"}";
+
+		//Second Method. Incomplete Query. Missing Filter Condition.
 		
-		String test19 = "# ?USER2 sn:likes ?MESSAGE" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		//Mirar
+		String ex37 = "# ?USER : sn:Influencer" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H . ?USER rdf:type sn:User . FILTER (?H>25) }\n";
+				+ "SELECT ?USER ?DL \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER rdf:type sn:User .\r\n" + 
+				"?USER sn:dailyLikes ?DL \r\n" + 
+				"}";
+		
+		//Second Method. Inconsistent Variable Typing. Ontology Inconsistency.
 
-		// Answer: Yes
+		String ex38 = "# ?USER : sn:Message" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?MESSAGE sn:attends_to ?USER\r\n" + 
+				"}";
+		
+		String ex39 = "# ?USER : sn:User" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?MESSAGE sn:attends_to ?USER\r\n" + 
+				"}";
+		
+		//Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
 
+		//Mirar
+		String ex40 = "# ?USER : sn:Active" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER rdf:type sn:User .\r\n" + 
+				"?USER sn:dailyActivity ?DL .\r\n" + 
+				"FILTER (?DL < 5) \r\n" + 
+				"}";
+
+		//Second Method. Counterexamples of Variable Typing.
+		
+		//Mirar
+		String ex41 = "# ?USER : sn:Active" 
+				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + 
+				"WHERE \r\n" + 
+				"{\r\n" + 
+				"?USER rdf:type sn:User .\r\n" + 
+				"?USER sn:dailyActivity ?DL .\r\n" + 
+				"FILTER (?DL < 200) \r\n" + 
+				"}";
+
+		 
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;
 		OWLOntologyManager manager_owl;
@@ -3666,10 +3863,11 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/social-network-2019.owl");
 
-		t.SPARQL_CORRECTNESS(test7);
-		//t.SPARQL_TYPE_VALIDITY(test19, "USER", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Tall");
+		t.SPARQL_CORRECTNESS(ex13);
 		
-
+		//t.SPARQL_TYPE_VALIDITY(ex41, "USER", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Active");
+		
+       
 	};
 	 
 	

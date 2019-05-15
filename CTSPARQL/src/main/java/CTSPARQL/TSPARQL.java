@@ -107,7 +107,7 @@ public class TSPARQL {
 	List<String> vars = new ArrayList<String>();
 	List<List<String>> rules = new ArrayList<List<String>>();
 	Set<TriplePath> ctriples = new HashSet<TriplePath>();
-	Map<String, Map<Node, Set<String>>> ctriplesn = new HashMap<String, Map<Node, Set<String>>>();
+	Map<Node, Map<Node, Set<Node>>> ctriplesn = new HashMap<Node, Map<Node, Set<Node>>>();
 	Map<String, String> types_literals = new HashMap<String, String>();
 	Set<String> constraints_elements = new HashSet<String>();
 	Set<TriplePath> datatriples = new HashSet<TriplePath>();
@@ -725,21 +725,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN 
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getLiteral().getValue().toString());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getLiteral().getValue().toString());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getLiteral().getValue().toString());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}			
 						
 						//ADD TRIPLE PATTERN
@@ -784,21 +784,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getLiteral().getValue().toString());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getLiteral().getValue().toString());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getLiteral().getValue().toString());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}					
 						 
 						
@@ -914,21 +914,21 @@ public class TSPARQL {
 								
 								//STORE TRIPLE PATTERN
 								ctriples.add(tp);
-								if (ctriplesn.containsKey(tp.getSubject().getName())) {
-									if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-										ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-												.add(tp.getObject().toString());
+								if (ctriplesn.containsKey(tp.getSubject())) {
+									if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+										ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+												.add(tp.getObject());
 									} else {
-										Set<String> content = new HashSet<String>();
-										content.add(tp.getObject().toString());
-										ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+										Set<Node> content = new HashSet<Node>();
+										content.add(tp.getObject());
+										ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 									}
 								} else {
-									Set<String> content = new HashSet<String>();
-									content.add(tp.getObject().toString());
-									Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+									Set<Node> content = new HashSet<Node>();
+									content.add(tp.getObject());
+									Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 									map.put(tp.getPredicate(), content);
-									ctriplesn.put(tp.getSubject().getName(), map);
+									ctriplesn.put(tp.getSubject(), map);
 								}			
 								
 								
@@ -1009,21 +1009,21 @@ public class TSPARQL {
 							
 							//STORE TRIPLE PATTERN
 							ctriples.add(tp);
-							if (ctriplesn.containsKey(tp.getSubject().getName())) {
-								if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-									ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-											.add(tp.getObject().toString());
+							if (ctriplesn.containsKey(tp.getSubject())) {
+								if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+									ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+											.add(tp.getObject());
 								} else {
-									Set<String> content = new HashSet<String>();
-									content.add(tp.getObject().toString());
-									ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+									Set<Node> content = new HashSet<Node>();
+									content.add(tp.getObject());
+									ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 								}
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().toString());
-								Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 								map.put(tp.getPredicate(), content);
-								ctriplesn.put(tp.getSubject().getName(), map);
+								ctriplesn.put(tp.getSubject(), map);
 							}			
 							
 							//ADD TRIPLE PATTERN
@@ -1073,21 +1073,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getName());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getName());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getName());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}
 						 
 						
@@ -1132,7 +1132,7 @@ public class TSPARQL {
 							}
 							addTypeVariable(tp.getObject().getName().substring(0).toUpperCase(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
-							types_literals.put(tp.getObject().getName().substring(0).toUpperCase(),
+							types_literals.put(tp.getObject().getName(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
 						}
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
@@ -1164,21 +1164,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getName());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getName());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getName());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}
 						
 						
@@ -1238,21 +1238,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getName());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getName());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getName());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}
 						
 						//ADD TYPE
@@ -1285,7 +1285,7 @@ public class TSPARQL {
 							}
 							addTypeVariable(tp.getObject().getName().substring(0).toUpperCase(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
-							types_literals.put(tp.getObject().getName().substring(0).toUpperCase(),
+							types_literals.put(tp.getObject().getName(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
 						}
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
@@ -1306,21 +1306,21 @@ public class TSPARQL {
 						
 						//STORE TRIPLE PATTERN
 						ctriples.add(tp);
-						if (ctriplesn.containsKey(tp.getSubject().getName())) {
-							if (ctriplesn.get(tp.getSubject().getName()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject().getName()).get(tp.getPredicate())
-										.add(tp.getObject().getName());
+						if (ctriplesn.containsKey(tp.getSubject())) {
+							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
+										.add(tp.getObject());
 							} else {
-								Set<String> content = new HashSet<String>();
-								content.add(tp.getObject().getName());
-								ctriplesn.get(tp.getSubject().getName()).put(tp.getPredicate(), content);
+								Set<Node> content = new HashSet<Node>();
+								content.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).put(tp.getPredicate(), content);
 							}
 						} else {
-							Set<String> content = new HashSet<String>();
-							content.add(tp.getObject().getName());
-							Map<Node, Set<String>> map = new HashMap<Node, Set<String>>();
+							Set<Node> content = new HashSet<Node>();
+							content.add(tp.getObject());
+							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
-							ctriplesn.put(tp.getSubject().getName(), map);
+							ctriplesn.put(tp.getSubject(), map);
 						}
 						
 						//ADD TRIPLE PATTERN
@@ -1492,13 +1492,16 @@ public class TSPARQL {
 			elementGroup((ElementGroup) e, step, file);
 			String urio = ontology.getOntologyID().getOntologyIRI().toString();
 			for (TriplePath tp : ctriples) {
+				if (tp.getSubject().isVariable())
+				{
 				Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
 						IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 				datatriples.add(tp);
 				if (!(typ == null)) {
 					for (OWLClassExpression c : typ) {
-						OWLRestriction(c.asOWLClass(), tp.getSubject().getName());
+						OWLRestriction(c.asOWLClass(), tp.getSubject());
 					}
+				}
 				}
 			}
 			ctriples.clear();		 
@@ -1544,7 +1547,7 @@ public class TSPARQL {
 				datatriples.add(tp);
 				if (!(typ == null)) {
 					for (OWLClassExpression c : typ) {
-						OWLRestriction(c.asOWLClass(), tp.getSubject().getName());
+						OWLRestriction(c.asOWLClass(), tp.getSubject());
 					}
 				}
 			}
@@ -1610,6 +1613,7 @@ public class TSPARQL {
 		for (int i = 0; i < ss.size(); i++) {
 			rules.get(current).add(ss.get(i));
 		}
+		constraints_elements.add(el.getExpr().toString()+" = "+el.getVar().asNode().toString());
 	}
 
 	public void elementPathBlock(ElementPathBlock el, Integer step, String fileo) {
@@ -1738,7 +1742,7 @@ public class TSPARQL {
 			datatriples.add(tp);
 			if (!(typ == null)) {
 				for (OWLClassExpression c : typ) {
-					OWLRestriction(c.asOWLClass(), tp.getSubject().getName());
+					OWLRestriction(c.asOWLClass(), tp.getSubject());
 				}
 			}
 		}
@@ -1776,7 +1780,7 @@ public class TSPARQL {
 		current = tmp;
 	}
 
-	public void OWLRestriction(OWLClass ce, String var_name) {
+	public void OWLRestriction(OWLClass ce, Node var_name) {
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
 			@Override
 			public void visit(OWLClass arg0) {
@@ -1820,11 +1824,11 @@ public class TSPARQL {
 				 OWLClassExpression filler = allValuesFrom.getFiller();
 			
 				for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
-					Map<Node, Set<String>> uses = ctriplesn.get(var_name);
+					Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 					if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-						Set<String> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-						String cons = "";						
-						for (String var : vars_) {
+						Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						 						
+						for (Node var : vars_) {
 							OWLRestriction(filler.asOWLClass(),var);
 						}
 					}
@@ -1864,38 +1868,77 @@ public class TSPARQL {
 					OWLDataAllValuesFrom allValuesFrom = (OWLDataAllValuesFrom) arg0;
 					OWLDataRange filler = allValuesFrom.getFiller();
 					for (OWLDataProperty dp : allValuesFrom.getDataPropertiesInSignature()) {
-						Map<Node, Set<String>> uses = ctriplesn.get(var_name);
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<String> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							String cons = "";						
-							for (String var : vars_) {
+							for (Node var : vars_) {
 								OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 								if (r.getDatatype().isInteger()) {
 									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 										if (fr.getFacet().toString() == "maxExclusive") {
+											if (var.isVariable()) {
 											cons = cons + 
-												var.toUpperCase() + "#<" + fr.getFacetValue().getLiteral()
+												var.toString().substring(1).toUpperCase() + "#<" + fr.getFacetValue().getLiteral()
 												+ ",";
-											constraints_elements.add("("+var.toUpperCase() + "<" 
-												+ fr.getFacetValue().getLiteral()+")");
+											constraints_elements.add("("+var.toString().toUpperCase() + "<" 
+												+ fr.getFacetValue().getLiteral()+")");}
+											else
+											{
+												cons = cons + 
+														var.getLiteralValue().toString() + "#<" + fr.getFacetValue().getLiteral()
+														+ ",";
+													constraints_elements.add("("+var.getLiteralValue().toString() + "<" 
+														+ fr.getFacetValue().getLiteral()+")");
+											}
+											
+											
+											
 										} else if (fr.getFacet().toString() == "maxInclusive") {
-											cons = cons + 
-												var.toUpperCase() + "#<=" + fr.getFacetValue().getLiteral()
-												+ ",";
-											constraints_elements.add("("+var.toUpperCase() + "<=" 
-												+ fr.getFacetValue().getLiteral()+")");
+											if (var.isVariable()) {
+												cons = cons + 
+													var.toString().substring(1).toUpperCase() + "#<=" + fr.getFacetValue().getLiteral()
+													+ ",";
+												constraints_elements.add("("+var.toString().toUpperCase() + "<=" 
+													+ fr.getFacetValue().getLiteral()+")");}
+												else
+												{
+													cons = cons + 
+															var.getLiteralValue().toString() + "#<=" + fr.getFacetValue().getLiteral()
+															+ ",";
+														constraints_elements.add("("+var.getLiteralValue().toString() + "<=" 
+															+ fr.getFacetValue().getLiteral()+")");
+												}
 										} else if (fr.getFacet().toString() == "minExclusive") {
-											cons = cons + 
-												var.toUpperCase() + "#>" + fr.getFacetValue().getLiteral()
-												+ ",";
-											constraints_elements.add("("+var.toUpperCase() + ">" 
-												+ fr.getFacetValue().getLiteral()+")");
+											if (var.isVariable()) {
+												cons = cons + 
+													var.toString().substring(1).toUpperCase() + "#>" + fr.getFacetValue().getLiteral()
+													+ ",";
+												constraints_elements.add("("+var.toString().toUpperCase() + ">" 
+													+ fr.getFacetValue().getLiteral()+")");}
+												else
+												{
+													cons = cons + 
+															var.getLiteralValue().toString() + "#>" + fr.getFacetValue().getLiteral()
+															+ ",";
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">" 
+															+ fr.getFacetValue().getLiteral()+")");
+												}
 										} else if (fr.getFacet().toString() == "minInclusive") {
-											cons = cons + 
-												var.toUpperCase() + "#>=" + fr.getFacetValue().getLiteral()
-												+ ",";
-											constraints_elements.add("("+var.toUpperCase() + ">=" + 
-												fr.getFacetValue().getLiteral()+")");
+											if (var.isVariable()) {
+												cons = cons + 
+													var.toString().substring(1).toUpperCase() + "#>=" + fr.getFacetValue().getLiteral()
+													+ ",";
+												constraints_elements.add("("+var.toString().toUpperCase() + ">=" 
+													+ fr.getFacetValue().getLiteral()+")");}
+												else
+												{
+													cons = cons + 
+															var.getLiteralValue().toString() + "#>=" + fr.getFacetValue().getLiteral()
+															+ ",";
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">=" 
+															+ fr.getFacetValue().getLiteral()+")");
+												}
 										}
 									}
 								} else 
@@ -1904,29 +1947,74 @@ public class TSPARQL {
 										) {
 										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 											if (fr.getFacet().toString() == "maxExclusive") {
+												
+												if (var.isVariable())
+												{
 												cons = cons + 
-												"{" + var.toUpperCase() + "<" + fr.getFacetValue().getLiteral().toString() +"}"
+												"{" + var.toString().substring(1).toUpperCase() + "<" + fr.getFacetValue().getLiteral() +"}"
 												+ ",";
-												constraints_elements.add("("+var.toUpperCase() + "<" 
+												constraints_elements.add("("+var.toString().toUpperCase() + "<" 
 												+ fr.getFacetValue().getLiteral()+")");
+												}
+												else 
+												{
+													cons = cons + 
+															"{" + var.getLiteralValue().toString() + "<" + fr.getFacetValue().getLiteral() +"}"
+															+ ",";
+															constraints_elements.add("("+var.getLiteralValue().toString() + "<" 
+															+ fr.getFacetValue().getLiteral()+")");	
+												}
 											} else if (fr.getFacet().toString() == "maxInclusive") {
-												cons = cons 
-												+ "{"+ var.toUpperCase() + "<=" + fr.getFacetValue().getLiteral().toString() + "}"
+												if (var.isVariable())
+												{
+												cons = cons + 
+												"{" + var.toString().substring(1).toUpperCase() + "<=" + fr.getFacetValue().getLiteral() +"}"
 												+ ",";
-												constraints_elements.add("("+var.toUpperCase() + "<=" 
+												constraints_elements.add("("+var.toString().toUpperCase() + "<=" 
 												+ fr.getFacetValue().getLiteral()+")");
+												}
+												else 
+												{
+													cons = cons + 
+															"{" + var.getLiteralValue().toString() + "<=" + fr.getFacetValue().getLiteral() +"}"
+															+ ",";
+															constraints_elements.add("("+var.getLiteralValue().toString() + "<=" 
+															+ fr.getFacetValue().getLiteral()+")");	
+												}
 											} else if (fr.getFacet().toString() == "minExclusive") {
-												cons = cons 
-												+ "{"+ var.toUpperCase() + ">" + fr.getFacetValue().getLiteral().toString() + "}"
+												if (var.isVariable())
+												{
+												cons = cons + 
+												"{" + var.toString().substring(1).toUpperCase() + ">" + fr.getFacetValue().getLiteral() +"}"
 												+ ",";
-												constraints_elements.add("("+var.toUpperCase() + ">" 
+												constraints_elements.add("("+var.toString().toUpperCase() + ">" 
 												+ fr.getFacetValue().getLiteral()+")");
+												}
+												else 
+												{
+													cons = cons + 
+															"{" + var.getLiteralValue().toString() + ">" + fr.getFacetValue().getLiteral() +"}"
+															+ ",";
+															constraints_elements.add("("+var.getLiteralValue().toString() + ">" 
+															+ fr.getFacetValue().getLiteral()+")");	
+												}
 											} else if (fr.getFacet().toString() == "minInclusive") {
-												cons = cons 
-												+ "{"+ var.toUpperCase() + ">=" + fr.getFacetValue().getLiteral().toString() +"}"
+												if (var.isVariable())
+												{
+												cons = cons + 
+												"{" + var.toString().substring(1).toUpperCase() + ">=" + fr.getFacetValue().getLiteral() +"}"
 												+ ",";
-												constraints_elements.add("("+var.toUpperCase() + ">=" 
+												constraints_elements.add("("+var.toString().toUpperCase() + ">=" 
 												+ fr.getFacetValue().getLiteral()+")");
+												}
+												else 
+												{
+													cons = cons + 
+															"{" + var.getLiteralValue().toString() + ">=" + fr.getFacetValue().getLiteral() +"}"
+															+ ",";
+															constraints_elements.add("("+var.getLiteralValue().toString() + ">=" 
+															+ fr.getFacetValue().getLiteral()+")");	
+												}
 											}
 										}
 									} else {wrong_analysis=true;System.out.println("OWL Restriction not allowed");}
@@ -1951,26 +2039,45 @@ public class TSPARQL {
 					OWLDataHasValue HasValue = (OWLDataHasValue) arg0;
 					OWLLiteral value = HasValue.getValue();
 					for (OWLDataProperty dp : HasValue.getDataPropertiesInSignature()) {
-						Map<Node, Set<String>> uses = ctriplesn.get(var_name);
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<String> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							String cons = "";						
-							for (String var : vars_) {					
+							for (Node var : vars_) {					
 								if (value.isInteger()) {
+											if (var.isVariable())
+											{
 											cons = cons + 
-												var.toUpperCase() + "#=" + value.getLiteral();
-											constraints_elements.add("("+var.toUpperCase() + "=" 
+												var.toString().substring(1).toUpperCase() + "#=" + value.getLiteral();
+											constraints_elements.add("("+var.toString().toUpperCase() + "=" 
 												+ value.getLiteral()+")");
+											}
+											else 
+											{
+												cons = cons + 
+														var.getLiteralValue().toString() + "#=" + value.getLiteral();
+													constraints_elements.add("("+var.getLiteralValue().toString() + "=" 
+														+ value.getLiteral()+")");
+											}
 									}
 								 else 
 									if (value.isFloat() || 
 											value.isDouble() 
 										) {
+										        if (var.isVariable())
+										        {
 												cons = cons + 
-												"{" + var.toUpperCase() + "<" + value.getLiteral() +"}"
-												+ ",";
-												constraints_elements.add("("+var.toUpperCase() + "<" 
-												+ value.getLiteral()+")");									 
+												"{" + var.toString().substring(1).toUpperCase() + "=:=" + value.getLiteral() +"}";
+												constraints_elements.add("("+var.toString().toUpperCase() + "=" 
+												+ value.getLiteral()+")");
+										        }
+										        else
+										        {
+										        	cons = cons + 
+															"{" + var.getLiteralValue().toString() + "=:=" + value.getLiteral() +"}";
+															constraints_elements.add("("+var.getLiteralValue().toString() + "=" 
+															+ value.getLiteral()+")");
+										        }
 										}
 									 else {wrong_analysis=true;System.out.println("OWL Restriction not allowed");}
 							}
@@ -2200,7 +2307,9 @@ public class TSPARQL {
 
 		} else if (st.isConstant()) {
 
+			 
 			if (isValidFormat("dd/MM/yyyy", st.toString(), Locale.ENGLISH)) {
+				
 				addTypeVariable(var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase(),
 						"http://www.types.org#xsd:dateTime");
 				DateTimeFormatter fomatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH);
@@ -2376,9 +2485,13 @@ public class TSPARQL {
 			System.out.println("Error: Some variable is not typed");
 		} else {
 			OWLClass cls = dataFactory.getOWLClass(IRI.create(type));
+			OWLClass cls2 = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 			OWLAxiom axiom1 = dataFactory.getOWLClassAssertionAxiom(cls, ni);
+			OWLAxiom axiom2 = dataFactory.getOWLClassAssertionAxiom(cls2, ni);
 			AddAxiom addAxiom1 = new AddAxiom(ontology, axiom1);
+			AddAxiom addAxiom2 = new AddAxiom(ontology, axiom2);
 			manager.applyChange(addAxiom1);
+			manager.applyChange(addAxiom2);
 			try {
 				manager.saveOntology(ontology);
 			} catch (OWLOntologyStorageException e) {
@@ -2487,7 +2600,7 @@ public class TSPARQL {
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		OWLClass ce = dataFactory.getOWLClass(IRI.create(type_name));
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
-		owl_type_validity(ce, in, var_name);
+		owl_type_validity(ce, in, Node.createVariable(var_name));
 		if (!error && !wrong_analysis) {
 			System.out.println("Successful type validity. The property has been proved");
 		}	
@@ -2496,7 +2609,7 @@ public class TSPARQL {
 	};
 
 
-	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, String var_name) {		
+	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, Node var_name) {		
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
 			@Override
 			public void visit(OWLClass arg0) {
@@ -2557,6 +2670,27 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectSomeValuesFrom arg0) {
+				
+				if (ctriplesn.containsKey(var_name)) {
+					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
+					 OWLClassExpression filler = someValuesFrom.getFiller();
+				
+					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							 						
+							for (Node var : vars_) {
+								String urio = ontology.getOntologyID().getOntologyIRI().toString();
+								OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var));
+								owl_type_validity(filler.asOWLClass(),in,var);
+							}
+						}
+					}
+					}
+				
+				
+				
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
@@ -2759,67 +2893,152 @@ public class TSPARQL {
 							OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
 							OWLDataRange filler = someValuesFrom.getFiller();
 							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
-								Map<Node, Set<String>> uses = ctriplesn.get(var_name);
+								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-									Set<String> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 									String cons = "";
-									for (String var : vars_) {
+									for (Node var : vars_) {
 										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 										if (r.getDatatype().isInteger()) { //CHANGED , by ;
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 												if (fr.getFacet().toString() == "maxExclusive") {
-													cons = cons + "#\\" + var.toUpperCase() + "#<"
+													if (var.isVariable())
+													{
+													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#<"
 															+ fr.getFacetValue().getLiteral() + ";"; 
-													constraints_elements.add("("+var.toUpperCase() + "<"
+													constraints_elements.add("("+var.toString().toUpperCase() + "<"
 															+ fr.getFacetValue().getLiteral()+")");
+													}
+													else 
+													{
+														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<"
+																+ fr.getFacetValue().getLiteral() + ";"; 
+														constraints_elements.add("("+var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral()+")");
+													}	
 												} else if (fr.getFacet().toString() == "maxInclusive") {
-													cons = cons + "#\\" + var.toUpperCase() + "#<="
-															+ fr.getFacetValue().getLiteral() + ";";
-													constraints_elements.add("("+var.toUpperCase() + "<="
+													if (var.isVariable())
+													{
+													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#<="
+															+ fr.getFacetValue().getLiteral() + ";"; 
+													constraints_elements.add("("+var.toString().toUpperCase() + "<="
 															+ fr.getFacetValue().getLiteral()+")");
+													}
+													else 
+													{
+														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<="
+																+ fr.getFacetValue().getLiteral() + ";"; 
+														constraints_elements.add("("+var.getLiteralValue().toString() + "<="
+																+ fr.getFacetValue().getLiteral()+")");
+													}	
 												} else if (fr.getFacet().toString() == "minExclusive") {
-													cons = cons + "#\\" + var.toUpperCase() + "#>"
-															+ fr.getFacetValue().getLiteral() + ";";
-													constraints_elements.add("("+var.toUpperCase() + ">"
+													if (var.isVariable())
+													{
+													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#>"
+															+ fr.getFacetValue().getLiteral() + ";"; 
+													constraints_elements.add("("+var.toString().toUpperCase() + ">"
 															+ fr.getFacetValue().getLiteral()+")");
+													}
+													else 
+													{
+														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>"
+																+ fr.getFacetValue().getLiteral() + ";"; 
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral()+")");
+													}	
 												} else if (fr.getFacet().toString() == "minInclusive") {
-													cons = cons + "#\\" + var.toUpperCase() + "#>="
-															+ fr.getFacetValue().getLiteral() + ";";
-													constraints_elements.add("("+var.toUpperCase() + ">="
+													if (var.isVariable())
+													{
+													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#>="
+															+ fr.getFacetValue().getLiteral() + ";"; 
+													constraints_elements.add("("+var.toString().toUpperCase() + ">="
 															+ fr.getFacetValue().getLiteral()+")");
+													}
+													else 
+													{
+														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>="
+																+ fr.getFacetValue().getLiteral() + ";"; 
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral()+")");
+													}	
 												}
 											}
 										}
 										else if (r.getDatatype().isDouble() //CHANGED , by ;
 												|| r.getDatatype().isFloat()) {
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+												
 												if (fr.getFacet().toString() == "maxExclusive") {
-													cons = cons  + "{"+ var.toUpperCase() + ">="
-															+ fr.getFacetValue().getLiteral().toString() +"}" + ";";
-													constraints_elements.add("("+var.toUpperCase() + "<"
+												
+												if (var.isVariable())
+													{
+													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + ">="
+															+ fr.getFacetValue().getLiteral() +"}" + ";";
+													constraints_elements.add("("+var.toString().toUpperCase() + ">="
 															+ fr.getFacetValue().getLiteral()+")");
+													}	
+												else
+												{ 
+														cons = cons  + "{"+ var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral() +"}" + ";";
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral()+")");
+												}	
+													
 												} else if (fr.getFacet().toString() == "maxInclusive") {
-													cons = cons  + "{"+ var.toUpperCase() + ">"
-															+ fr.getFacetValue().getLiteral().toString()+ "}" + ";";
-													constraints_elements.add("("+var.toUpperCase() + "<="
+													if (var.isVariable())
+													{
+													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + ">"
+															+ fr.getFacetValue().getLiteral() +"}" + ";";
+													constraints_elements.add("("+var.toString().toUpperCase() + ">"
 															+ fr.getFacetValue().getLiteral()+")");
+													}	
+												else
+												{ 
+														cons = cons  + "{"+ var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral() +"}" + ";";
+														constraints_elements.add("("+var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral()+")");
+												}	
 												} else if (fr.getFacet().toString() == "minExclusive") {
-													cons = cons  + "{"+  var.toUpperCase() + "=<"
-															+ fr.getFacetValue().getLiteral().toString() +"}" + ";";
-													constraints_elements.add("("+var.toUpperCase() + ">"
+													if (var.isVariable())
+													{
+													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + "=<"
+															+ fr.getFacetValue().getLiteral() +"}" + ";";
+													constraints_elements.add("("+var.toString().toUpperCase() + "=<"
 															+ fr.getFacetValue().getLiteral()+")");
+													}	
+												else
+												{ 
+														cons = cons  + "{"+ var.getLiteralValue().toString() + "=<"
+																+ fr.getFacetValue().getLiteral() +"}" + ";";
+														constraints_elements.add("("+var.getLiteralValue().toString() + "=<"
+																+ fr.getFacetValue().getLiteral()+")");
+												}	
 												} else if (fr.getFacet().toString() == "minInclusive") {
-													cons = cons + "{" + var.toUpperCase() + "<"
-															+ fr.getFacetValue().getLiteral().toString() + "}" + ";";
-													constraints_elements.add("("+var.toUpperCase() + ">="
+													if (var.isVariable())
+													{
+													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + "<"
+															+ fr.getFacetValue().getLiteral() +"}" + ";";
+													constraints_elements.add("("+var.toString().toUpperCase() + "<"
 															+ fr.getFacetValue().getLiteral()+")");
+													}	
+												else
+												{ 
+														cons = cons  + "{"+ var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral() +"}" + ";";
+														constraints_elements.add("("+var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral()+")");
+												}	
 												}
 											}
 										} else {error=true;System.out.println("OWL Restriction not allowed");}										
 									}
 									String domain = "";
 									Map<String, String> rename = new HashMap<String, String>();
-									for (String v : vars_) {
+									for (Node v : vars_) {
+										if (v.isVariable())
+										{
 										if (types_literals.containsKey(v)) {
 											if (types_literals.get(v).equals("http://www.types.org#xsd:integer")
 													|| types_literals.get(v).equals("http://www.types.org#xsd:string")
@@ -2836,7 +3055,8 @@ public class TSPARQL {
 												Integer act = nvar;
 												nvar++;
 												domain = domain + "fd_dom(" + v + ",R" + act + ")" + ",";
-												rename.put("R" + act, v);
+												rename.put("R" + act, v.toString());
+											
 											} else {
 												if (types_literals.get(v).equals("http://www.types.org#xsd:float")
 														|| types_literals.get(v)
@@ -2850,9 +3070,10 @@ public class TSPARQL {
 															+ "=..['..',inf,S];" + "inf(" + v + ",I)->R" + act
 															+ "=..['..',I,sup];" + "R" + act + "=..['..',inf,sup]))"
 															+ ",";
-													rename.put("R" + act, v);
+													rename.put("R" + act, v.toString());
 												}
 											}
+										}
 										}
 									}
 									if (!domain.isEmpty()) {
@@ -2884,22 +3105,56 @@ public class TSPARQL {
 												}
  										} else {
 											cons = "";
-											for (String var : vars_) {
+											for (Node var : vars_) {
 												OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 												if (r.getDatatype().isInteger()) { //CHANGED ; by ,
 													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 														if (fr.getFacet().toString() == "maxExclusive") {
-															cons = cons + var.toUpperCase() + "#<"
+															
+															if (var.isVariable())
+															{
+															cons = cons + var.toString().substring(1).toUpperCase() + "#<"
 																	+ fr.getFacetValue().getLiteral() + ",";
+															}
+															else
+															{
+																cons = cons + var.getLiteralValue().toString() + "#<"
+																		+ fr.getFacetValue().getLiteral() + ",";	
+															}
+																
 														} else if (fr.getFacet().toString() == "maxInclusive") {
-															cons = cons + var.toUpperCase() + "#<="
+															if (var.isVariable())
+															{
+															cons = cons + var.toString().substring(1).toUpperCase() + "#<="
 																	+ fr.getFacetValue().getLiteral() + ",";
+															}
+															else
+															{
+																cons = cons + var.getLiteralValue().toString() + "#<="
+																		+ fr.getFacetValue().getLiteral() + ",";	
+															}
 														} else if (fr.getFacet().toString() == "minExclusive") {
-															cons = cons + var.toUpperCase() + "#>"
+															if (var.isVariable())
+															{
+															cons = cons + var.toString().substring(1).toUpperCase() + "#>"
 																	+ fr.getFacetValue().getLiteral() + ",";
+															}
+															else
+															{
+																cons = cons + var.getLiteralValue().toString() + "#>"
+																		+ fr.getFacetValue().getLiteral() + ",";	
+															}
 														} else if (fr.getFacet().toString() == "minInclusive") {
-															cons = cons + var.toUpperCase() + "#>="
+															if (var.isVariable())
+															{
+															cons = cons + var.toString().substring(1).toUpperCase() + "#>="
 																	+ fr.getFacetValue().getLiteral() + ",";
+															}
+															else
+															{
+																cons = cons + var.getLiteralValue().toString() + "#>="
+																		+ fr.getFacetValue().getLiteral() + ",";	
+															}
 														}
 													}
 												} else
@@ -2907,17 +3162,49 @@ public class TSPARQL {
 															r.getDatatype().isDouble()) {
 														for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 															if (fr.getFacet().toString() == "maxExclusive") {
-																cons = cons + "{"+ var.toUpperCase() + "<"
+																if (var.isVariable())
+																{
+																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<"
 																		+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
+																else 
+																{
+																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<"
+																			+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
 															} else if (fr.getFacet().toString() == "maxInclusive") {
-																cons = cons + "{" + var.toUpperCase() + "<="
-																		+ fr.getFacetValue().getLiteral() +"}" + ",";
+																if (var.isVariable())
+																{
+																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<="
+																		+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
+																else 
+																{
+																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<="
+																			+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
 															} else if (fr.getFacet().toString() == "minExclusive") {
-																cons = cons + "{"+ var.toUpperCase() + ">"
-																		+ fr.getFacetValue().getLiteral() +"}" + ",";
+																if (var.isVariable())
+																{
+																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">"
+																		+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
+																else 
+																{
+																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">"
+																			+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
 															} else if (fr.getFacet().toString() == "minInclusive") {
-																cons = cons + "{" + var.toUpperCase() + ">="
-																		+ fr.getFacetValue().getLiteral() +"}" + ",";
+																if (var.isVariable())
+																{
+																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">="
+																		+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
+																else 
+																{
+																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">="
+																			+ fr.getFacetValue().getLiteral() + "}" + ",";
+																}
 															}
 														}
 													} else {error=true;System.out.println("OWL Restriction not allowed");}
@@ -3041,24 +3328,41 @@ public class TSPARQL {
 							OWLDataHasValue hasValue = (OWLDataHasValue) arg0;
 							OWLLiteral val = hasValue.getValue();
 							for (OWLDataProperty dp : hasValue.getDataPropertiesInSignature()) {
-								Map<Node, Set<String>> uses = ctriplesn.get(var_name);
+								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 									String cons = "";
-									Set<String> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-									for (String var : vars_) {
+									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+									for (Node var : vars_) {
 										if (val.isInteger()) {
-											cons = cons + "#\\" + var.toUpperCase() + "#=" + val.getLiteral();
-											constraints_elements.add("("+var.toUpperCase() + "=" + val.getLiteral()+")");
+											if (var.isVariable())
+											{
+											cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#=" + val.getLiteral();
+											constraints_elements.add("("+var.toString().toUpperCase() + "=" + val.getLiteral()+")");
+											}
+											else
+											{
+												cons = cons + "#\\" + var.getLiteralValue().toString() + "#=" + val.getLiteral();
+												constraints_elements.add("("+var.getLiteralValue().toString() + "=" + val.getLiteral()+")");
+											}
 										}
 										else if (val.isFloat() || val.isDouble() ) {
-											cons = cons + "{" + var.toUpperCase() + "=\\=" + val.getLiteral().toString() +"}" 
-											 ;
-											constraints_elements.add("("+var.toUpperCase() + "=" + val.getLiteral()+")");
+											if (var.isVariable())
+											{
+											cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "=\\=" + val.getLiteral();
+											constraints_elements.add("("+var.toString().toUpperCase() + "=" + val.getLiteral()+")");
+											}
+											else
+											{
+												cons = cons + "#\\" + var.getLiteralValue().toString() + "=\\=" + val.getLiteral();
+												constraints_elements.add("("+var.getLiteralValue().toString() + "=" + val.getLiteral()+")");
+											}
 										}
 									}
 									String domain = "";
 									Map<String, String> rename = new HashMap<String, String>();
-									for (String v : vars_) {
+									for (Node v : vars_) {
+										if (v.isVariable())
+										{
 										if (types_literals.containsKey(v)) {
 											if (types_literals.get(v).equals("http://www.types.org#xsd:integer")
 													|| types_literals.get(v).equals("http://www.types.org#xsd:string")
@@ -3075,7 +3379,7 @@ public class TSPARQL {
 												Integer act = nvar;
 												nvar++;
 												domain = domain + "fd_dom(" + v + ",R" + act + ")" + ",";
-												rename.put("R" + act, v);
+												rename.put("R" + act, v.toString());
 											} else {
 												if (types_literals.get(v).equals("http://www.types.org#xsd:float")
 														|| types_literals.get(v)
@@ -3089,9 +3393,10 @@ public class TSPARQL {
 															+ "=..['..',inf,S];" + "inf(" + v + ",I)->R" + act
 															+ "=..['..',I,sup];" + "R" + act + "=..['..',inf,sup]))"
 															+ ",";
-													rename.put("R" + act, v);
+													rename.put("R" + act, v.toString());
 												}
 											}
+										}
 										}
 									}
 									if (!domain.isEmpty()) {
@@ -3120,12 +3425,27 @@ public class TSPARQL {
 										else {
 											vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 											cons = "";
-											for (String var : vars_) {
+											for (Node var : vars_) {
+												
 												if (val.isInteger()) {
-													cons = cons + var.toUpperCase() + "#=" + val.getLiteral();
+													if (var.isVariable())
+													{
+													cons = cons + var.toString().substring(1).toUpperCase() + "#=" + val.getLiteral();
+													}
+													else
+													{
+														cons = cons + var.getLiteral() + "#=" + val.getLiteral();
+													}
 												}
 												else if (val.isFloat() || val.isDouble()) {
-													cons = cons + "{"+ var.toUpperCase() + "=:=" + val.getLiteral() +"}";
+													if (var.isVariable())
+													{
+													cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "=:=" + val.getLiteral() +"}";
+													}
+													else
+													{
+													cons = cons + "{"+ var.getLiteral() + "=:=" + val.getLiteral() +"}";
+													}
 												} else {error=true;System.out.println("OWL Restriction not allowed");}
 											}
 											newhead = "";
@@ -3421,7 +3741,7 @@ public class TSPARQL {
 				"}";
 
 		 
-		//MIRAR
+		
 		String ex13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3433,7 +3753,7 @@ public class TSPARQL {
 				"FILTER (?VALUE > 10) \r\n" + 
 				"}";
 
-		//MIRAR
+		
 		String ex14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3445,7 +3765,7 @@ public class TSPARQL {
 				"sn:jesus sn:age ?NAME\r\n" + 
 				"}";
 
-		//MIRAR
+		
  		String ex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
  				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3458,7 +3778,7 @@ public class TSPARQL {
 				"FILTER (?NAME > ?AGE) \r\n" + 
 				"}";
 
- 		//MIRAR
+ 		
 		String ex16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3546,7 +3866,7 @@ public class TSPARQL {
 				+ "FILTER (?H < ?H2 ) }\n" 
 				+ "}}\n";
 
-		//MIRAR
+		
 		String ex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3558,7 +3878,7 @@ public class TSPARQL {
 				"sn:jesus sn:friend_of sn:jesus\r\n" + 
 				"}";
 
-		//MIRAR
+		
 		String ex24 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3580,12 +3900,12 @@ public class TSPARQL {
 				+ "SELECT ?USER \r\n" + 
 				"WHERE \r\n" + 
 				"{ \r\n" + 
-				"?USER sn:age ?AGE .\r\n" + 
-				"FILTER (?AGE < 50) .\r\n" + 
-				"FILTER (?AGE > 100)\r\n" + 
+				"sn:jesus sn:age ?AGE .\r\n" + 
+				"FILTER (?AGE = 50) .\r\n" + 
+				"FILTER (?AGE = 100)\r\n" + 
 				"}";
 
-		//MIRAR
+		
 		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3612,8 +3932,8 @@ public class TSPARQL {
 				"WHERE \r\n" + 
 				"{ \r\n" + 
 				"?MESSAGE sn:date ?DATE .\r\n" + 
-				"FILTER (?DATE < '2017-09-04T01:00:00Z') .\r\n" + 
-				"FILTER (?DATE > '2018-09-04T01:00:00Z')\r\n" + 
+				"FILTER (?DATE < '09/04/2015') .\r\n" + 
+				"FILTER (?DATE > '09/04/2015')\r\n" + 
 				"}";
 
 		String ex28 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -3664,7 +3984,7 @@ public class TSPARQL {
 				+ "FILTER ('z' < ?name) . "
 				+ "FILTER (?name < 'a') }\n";
 
-		
+		//MIRAR
 		String ex32 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3676,7 +3996,7 @@ public class TSPARQL {
 				+ "FILTER ('2017-09-04T01:00:00Z' < ?date) . "
 				+ "FILTER (?date < '2017-09-04T02:00:00Z') }\n";
 
-		//MIRAR
+		
 		String ex33 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
 						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3685,15 +4005,15 @@ public class TSPARQL {
 						+ "SELECT ?USER \r\n" + 
 						"WHERE \r\n" + 
 						"{ \r\n" + 
-						"?USER rdf:type sn:SocialLeader\r\n" + 
-						"?USER sn:created ?MESSAGE\r\n" + 
+						"?USER rdf:type sn:SocialLeader .\r\n" + 
+						"?USER sn:creates ?MESSAGE\r\n" + 
 						"}";
 
 		//TYPE VALIDITY
 		
 		//Second Method. Incomplete Query. Missing Triple Pattern.
 		
-		//MIRAR
+		
 		String ex34 = "# ?USER : sn:SocialLeader\n" 
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
@@ -3734,7 +4054,7 @@ public class TSPARQL {
 
 		//Second Method. Incomplete Query. Missing Filter Condition.
 		
-		//Mirar
+		
 		String ex37 = "# ?USER : sn:Influencer" 
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
@@ -3776,8 +4096,8 @@ public class TSPARQL {
 		
 		//Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
 
-		//Mirar
-		String ex40 = "# ?USER : sn:Active" 
+		
+		String ex40 = "# ?USER : sn:Influencer" 
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3787,14 +4107,14 @@ public class TSPARQL {
 				"WHERE \r\n" + 
 				"{\r\n" + 
 				"?USER rdf:type sn:User .\r\n" + 
-				"?USER sn:dailyActivity ?DL .\r\n" + 
+				"?USER sn:dailyLikes ?DL .\r\n" + 
 				"FILTER (?DL < 5) \r\n" + 
 				"}";
 
 		//Second Method. Counterexamples of Variable Typing.
 		
 		//Mirar
-		String ex41 = "# ?USER : sn:Active" 
+		String ex41 = "# ?USER : sn:Influencer" 
 				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -3804,7 +4124,7 @@ public class TSPARQL {
 				"WHERE \r\n" + 
 				"{\r\n" + 
 				"?USER rdf:type sn:User .\r\n" + 
-				"?USER sn:dailyActivity ?DL .\r\n" + 
+				"?USER sn:dailyLikes ?DL .\r\n" + 
 				"FILTER (?DL < 200) \r\n" + 
 				"}";
 
@@ -3863,9 +4183,9 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/social-network-2019.owl");
 
-		t.SPARQL_CORRECTNESS(ex13);
+		//t.SPARQL_CORRECTNESS(ex27);
 		
-		//t.SPARQL_TYPE_VALIDITY(ex41, "USER", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Active");
+		t.SPARQL_TYPE_VALIDITY(ex40, "USER", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer");
 		
        
 	};

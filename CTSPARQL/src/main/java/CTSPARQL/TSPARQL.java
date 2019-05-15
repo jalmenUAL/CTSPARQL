@@ -5,12 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -92,18 +96,14 @@ import com.hp.hpl.jena.util.FileUtils;
 
 public class TSPARQL {
 
+	// ONTOLOGÍAS REMOTAS VAADIN
+	// Mejorar salida
 
-	//FILTER && || PENDING
-	//ONTOLOGÍAS REMOTAS VAADIN
-	//ctriples
-	//Mejorar salida
- 
 	Integer next = 1;
 	Integer current = 0;
 	Integer nvar = 0;
 	Boolean error = false;
-	 
-	
+
 	List<String> vars = new ArrayList<String>();
 	List<List<String>> rules = new ArrayList<List<String>>();
 	Set<TriplePath> ctriples = new HashSet<TriplePath>();
@@ -140,10 +140,10 @@ public class TSPARQL {
 		this.file = file;
 
 	}
-	
+
 	public String sparql_constraint_checking() {
 
-		String result ="";
+		String result = "";
 		String t1 = "use_module(library('clpfd'))";
 		org.jpl7.Query q1 = new org.jpl7.Query(t1);
 		System.out.print((q1.hasSolution() ? "" : ""));
@@ -169,11 +169,13 @@ public class TSPARQL {
 			System.out.print((q3.hasSolution() ? "" : ""));
 		}
 		org.jpl7.Query q4 = new org.jpl7.Query(rules.get(0).get(0));
-		if (!q4.hasSolution()) {	 		 
+		if (!q4.hasSolution()) {
 			for (String c : constraints_elements) {
 				result = result + c + " ";
 			}
-		} else { result = "true";}
+		} else {
+			result = "true";
+		}
 		return result;
 	}
 
@@ -306,6 +308,7 @@ public class TSPARQL {
 		else
 			return false;
 	}
+
 	public Boolean isObjectProperty(OWLOntology ont, String uri, String className) {
 		if (isDataProperty(ont, uri, className)) {
 			return false;
@@ -527,8 +530,7 @@ public class TSPARQL {
 				g.delete();
 			theDir.delete();
 			return s;
-		} else
-		if (query.isConstructType()) {
+		} else if (query.isConstructType()) {
 			Model result = QueryExecutionFactory.create(query, model).execConstruct();
 			File theDir = new File("tmp-sparql");
 			if (!theDir.exists()) {
@@ -563,8 +565,7 @@ public class TSPARQL {
 				g.delete();
 			theDir.delete();
 			return s;
-		} else
-		if (query.isDescribeType()) {
+		} else if (query.isDescribeType()) {
 			Model result = QueryExecutionFactory.create(query, model).execDescribe();
 
 			File theDir = new File("tmp-sparql");
@@ -599,15 +600,13 @@ public class TSPARQL {
 				g.delete();
 			theDir.delete();
 			return s;
-		} else
-		{
+		} else {
 			Boolean b = QueryExecutionFactory.create(query, model).execAsk();
 			return b.toString();
 		}
 	};
 
-	public String ValueExpr(Expr e)
-	{
+	public String ValueExpr(Expr e) {
 		String arg = "";
 		if (e.isVariable()) {
 			arg = e.toString().replace('?', ' ').replaceAll("\\s", "");
@@ -660,8 +659,7 @@ public class TSPARQL {
 					return "integer";
 				} else if (isReal(arg)) {
 					return "real";
-				}
-				else {
+				} else {
 					return "wrong";
 				}
 			} else if (e.isFunction()) {
@@ -684,8 +682,7 @@ public class TSPARQL {
 
 	public Boolean Existence(TriplePath tp) {
 		Boolean result = true;
-		if (tp.getSubject().isURI() 
-				&& !isDeclared(tp.getSubject().getNameSpace(), tp.getSubject().getLocalName())) {
+		if (tp.getSubject().isURI() && !isDeclared(tp.getSubject().getNameSpace(), tp.getSubject().getLocalName())) {
 			System.out.println("There is some item not declared in the ontology");
 			System.out.println(tp.getSubject());
 			result = false;
@@ -698,8 +695,7 @@ public class TSPARQL {
 			result = false;
 			wrong_analysis = true;
 		}
-		if (tp.getObject().isURI() 
-				&& !isDeclared(tp.getObject().getNameSpace(), tp.getObject().getLocalName())) {
+		if (tp.getObject().isURI() && !isDeclared(tp.getObject().getNameSpace(), tp.getObject().getLocalName())) {
 			System.out.println("There is some item not declared in the ontology");
 			System.out.println(tp.getObject());
 			result = false;
@@ -710,7 +706,7 @@ public class TSPARQL {
 
 	public void Item_Analysis(ListIterator<TriplePath> it, OWLOntology ont, OWLDataFactory dft,
 			OWLOntologyManager mng) {
-		
+
 		String urio = ont.getOntologyID().getOntologyIRI().toString();
 		TriplePath tp = it.next();
 		Boolean Existence = Existence(tp);
@@ -721,14 +717,12 @@ public class TSPARQL {
 						System.out.println("Literal cannot be used as subject");
 						wrong_analysis = true;
 					} else if (tp.getSubject().isURI()) /* UUL */ {
-						 
-						
-						//STORE TRIPLE PATTERN 
+
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -740,12 +734,12 @@ public class TSPARQL {
 							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
-						}			
-						
-						//ADD TRIPLE PATTERN
-							OWLNamedIndividual ni = dft.getOWLNamedIndividual(
+						}
+
+						// ADD TRIPLE PATTERN
+						OWLNamedIndividual ni = dft.getOWLNamedIndividual(
 								IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
-							if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
+						if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
 							OWLDataProperty o = dft.getOWLDataProperty(
 									IRI.create(tp.getPredicate().getNameSpace() + tp.getPredicate().getLocalName()));
 							OWLLiteral owlTypedLiteral = dft.getOWLLiteral(tp.getObject().getLiteralValue().toString(),
@@ -764,9 +758,8 @@ public class TSPARQL {
 						}
 					} else /* VUL */
 					{
-						
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni = null;
 						ni = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
@@ -775,19 +768,15 @@ public class TSPARQL {
 						mng.applyChange(addAxiom);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {					 
+						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						 
-						
-						
-						
-						//STORE TRIPLE PATTERN
+
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -799,10 +788,9 @@ public class TSPARQL {
 							Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
-						}					
-						 
-						
-						//ADD TRIPLE PATTERN
+						}
+
+						// ADD TRIPLE PATTERN
 						OWLNamedIndividual ni2 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
@@ -823,41 +811,40 @@ public class TSPARQL {
 							wrong_analysis = true;
 						}
 					}
-				}
-				else if (tp.getPredicate().isVariable()) {
+				} else if (tp.getPredicate().isVariable()) {
 					/* second V should be a data property */
 					if (tp.getSubject().isVariable()) /* VVL */ {
-					 
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						ni1 = dft
+								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
 						mng.applyChange(addAxiom1);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {					 
+						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
 						OWLNamedIndividual ni2 = null;
-						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
+						ni2 = dft.getOWLNamedIndividual(
+								IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
 						OWLClass cls2 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom2 = dft.getOWLClassAssertionAxiom(cls2, ni2);
 						AddAxiom addAxiom2 = new AddAxiom(ont, axiom2);
 						mng.applyChange(addAxiom2);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {					 
+						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						
-						 
+
 					} else if (tp.getSubject().isURI()) /* UVL */ {
 						/* V should be a data property */
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
 						ni1 = dft.getOWLNamedIndividual(
 								IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -881,8 +868,7 @@ public class TSPARQL {
 					System.out.println("Literal cannot be used as property");
 					wrong_analysis = true;
 				}
-			}
-			else if (tp.getObject().isURI()) {
+			} else if (tp.getObject().isURI()) {
 				if (tp.getSubject().isLiteral()) /* L-U */ {
 					System.out.println("Literal cannot be used as subject");
 					wrong_analysis = true;
@@ -891,13 +877,12 @@ public class TSPARQL {
 						if (tp.getPredicate().isLiteral()) /* VLU */ {
 							System.out.println("Literal cannot be used as property");
 							wrong_analysis = true;
-						} else
-						if (tp.getPredicate().isURI()) /* VUU */ {
-							
+						} else if (tp.getPredicate().isURI()) /* VUU */ {
+
 							if (isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
-								
-								//ADD TYPE
+
+								// ADD TYPE
 								OWLNamedIndividual ni1 = null;
 								ni1 = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -911,13 +896,12 @@ public class TSPARQL {
 								} catch (OWLOntologyStorageException e) {
 									e.printStackTrace();
 								}
-								
-								//STORE TRIPLE PATTERN
+
+								// STORE TRIPLE PATTERN
 								ctriples.add(tp);
 								if (ctriplesn.containsKey(tp.getSubject())) {
 									if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-										ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-												.add(tp.getObject());
+										ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 									} else {
 										Set<Node> content = new HashSet<Node>();
 										content.add(tp.getObject());
@@ -929,10 +913,9 @@ public class TSPARQL {
 									Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 									map.put(tp.getPredicate(), content);
 									ctriplesn.put(tp.getSubject(), map);
-								}			
-								
-								
-								//ADD TRIPLE PATTERN
+								}
+
+								// ADD TRIPLE PATTERN
 								OWLNamedIndividual ni = null;
 								ni = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -946,19 +929,18 @@ public class TSPARQL {
 								mng.applyChange(addAxiom);
 								try {
 									mng.saveOntology(ont);
-								} catch (OWLOntologyStorageException e) {						 
+								} catch (OWLOntologyStorageException e) {
 									e.printStackTrace();
 								}
-								
-								
+
 							} else {
 								System.out.println("Individual used with a data property");
 								wrong_analysis = true;
 							}
 						} else { /* second V should be an object property */
 							if (tp.getSubject().isVariable()) /* VVU */ {
-								
-								//ADD TYPE
+
+								// ADD TYPE
 								OWLNamedIndividual ni1 = null;
 								ni1 = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -980,8 +962,8 @@ public class TSPARQL {
 								}
 							} else if (tp.getSubject().isURI()) /* UVU */ {
 								/* V should be an object property */
-								
-								//ADD TYPE				
+
+								// ADD TYPE
 								OWLNamedIndividual ni1 = null;
 								ni1 = dft.getOWLNamedIndividual(
 										IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
@@ -992,7 +974,7 @@ public class TSPARQL {
 								mng.applyChange(addAxiom1);
 								try {
 									mng.saveOntology(ont);
-								} catch (OWLOntologyStorageException e) {								 
+								} catch (OWLOntologyStorageException e) {
 									e.printStackTrace();
 								}
 							} else /* LVU */ {
@@ -1006,13 +988,12 @@ public class TSPARQL {
 							System.out.println("Literal cannot be a property");
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* UUU */ {
-							
-							//STORE TRIPLE PATTERN
+
+							// STORE TRIPLE PATTERN
 							ctriples.add(tp);
 							if (ctriplesn.containsKey(tp.getSubject())) {
 								if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-									ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-											.add(tp.getObject());
+									ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 								} else {
 									Set<Node> content = new HashSet<Node>();
 									content.add(tp.getObject());
@@ -1024,9 +1005,9 @@ public class TSPARQL {
 								Map<Node, Set<Node>> map = new HashMap<Node, Set<Node>>();
 								map.put(tp.getPredicate(), content);
 								ctriplesn.put(tp.getSubject(), map);
-							}			
-							
-							//ADD TRIPLE PATTERN
+							}
+
+							// ADD TRIPLE PATTERN
 							OWLNamedIndividual ni3 = null;
 							ni3 = dft.getOWLNamedIndividual(
 									IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
@@ -1042,7 +1023,7 @@ public class TSPARQL {
 								mng.applyChange(addAxiom);
 								try {
 									mng.saveOntology(ont);
-								} catch (OWLOntologyStorageException e) {								 
+								} catch (OWLOntologyStorageException e) {
 									e.printStackTrace();
 								}
 							} else {
@@ -1054,8 +1035,7 @@ public class TSPARQL {
 				}
 			}
 
-			else
-			if (tp.getSubject().isLiteral()) /* L-V */ {
+			else if (tp.getSubject().isLiteral()) /* L-V */ {
 				System.out.println("Literal cannot be used as subject");
 				wrong_analysis = true;
 			} else if (tp.getSubject().isVariable()) {
@@ -1065,18 +1045,16 @@ public class TSPARQL {
 					wrong_analysis = true;
 				} else if (tp.getPredicate().isURI()) /* VUV */
 				{
-					
+
 					if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
 
-						
-						//STORE TRIPLE PATTERN
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1089,11 +1067,11 @@ public class TSPARQL {
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
 						}
-						 
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						ni1 = dft
+								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
@@ -1114,8 +1092,8 @@ public class TSPARQL {
 						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni3 = null;
 						ni3 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						for (String t : RangesDataPropertyAll(
@@ -1137,10 +1115,11 @@ public class TSPARQL {
 						}
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						ni1 = dft
+								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
@@ -1161,13 +1140,12 @@ public class TSPARQL {
 						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						//STORE TRIPLE PATTERN
+
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1180,9 +1158,8 @@ public class TSPARQL {
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
 						}
-						
-						
-						//ADD TRIPLE PATTERN
+
+						// ADD TRIPLE PATTERN
 						OWLNamedIndividual ni3 = null;
 						ni3 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -1196,19 +1173,17 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							 
+
 							e.printStackTrace();
 						}
-					}
-					else {
+					} else {
 						wrong_analysis = true;
 					}
-					
-					 
+
 				} else /* VVV */
 				{
-				 
-					//ADD TYPE
+
+					// ADD TYPE
 					OWLNamedIndividual ni1 = null;
 					ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
 					OWLNamedIndividual ni2 = null;
@@ -1235,13 +1210,12 @@ public class TSPARQL {
 					if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
-						
-						//STORE TRIPLE PATTERN
+
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1254,21 +1228,21 @@ public class TSPARQL {
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
 						}
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));						 
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
 						mng.applyChange(addAxiom1);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {						 
+						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						for (String t : RangesDataPropertyAll(
@@ -1280,7 +1254,7 @@ public class TSPARQL {
 							mng.applyChange(addAxiom2);
 							try {
 								mng.saveOntology(ont);
-							} catch (OWLOntologyStorageException e) {							 
+							} catch (OWLOntologyStorageException e) {
 								e.printStackTrace();
 							}
 							addTypeVariable(tp.getObject().getName().substring(0).toUpperCase(),
@@ -1290,26 +1264,25 @@ public class TSPARQL {
 						}
 					} else if (isObjectPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 							&& !isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())) {
-						
-						//ADD TYPE
+
+						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
-						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));						 
+						ni1 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
 						mng.applyChange(addAxiom1);
 						try {
 							mng.saveOntology(ont);
-						} catch (OWLOntologyStorageException e) {						 
+						} catch (OWLOntologyStorageException e) {
 							e.printStackTrace();
 						}
-						
-						//STORE TRIPLE PATTERN
+
+						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate())
-										.add(tp.getObject());
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1322,8 +1295,8 @@ public class TSPARQL {
 							map.put(tp.getPredicate(), content);
 							ctriplesn.put(tp.getSubject(), map);
 						}
-						
-						//ADD TRIPLE PATTERN
+
+						// ADD TRIPLE PATTERN
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(
 								IRI.create(tp.getSubject().getNameSpace() + tp.getSubject().getLocalName()));
@@ -1343,8 +1316,8 @@ public class TSPARQL {
 					}
 				} else /* UVV */
 				{
-					
-					//ADD TYPE
+
+					// ADD TYPE
 					OWLNamedIndividual ni = null;
 					ni = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getPredicate().getName().substring(0)));
 					OWLClass cls = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
@@ -1353,18 +1326,19 @@ public class TSPARQL {
 					mng.applyChange(addAxiom2);
 					try {
 						mng.saveOntology(ont);
-					} catch (OWLOntologyStorageException e) {					 
+					} catch (OWLOntologyStorageException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-		} else {}
+		} else {
+		}
 	};
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
 		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-		
+
 		OWLClass dt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:dateTime"));
 		OWLClass st = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:string"));
 		OWLClass intt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:integer"));
@@ -1376,65 +1350,65 @@ public class TSPARQL {
 		OWLClass flo = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:float"));
 		OWLClass dec = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:decimal"));
 
-        OWLDisjointClassesAxiom ax0 = dataFactory.getOWLDisjointClassesAxiom(lit,res);
-        OWLDisjointClassesAxiom ax1 = dataFactory.getOWLDisjointClassesAxiom(dt,st);
-        OWLDisjointClassesAxiom ax2 =dataFactory.getOWLDisjointClassesAxiom(dt,intt);
-        OWLDisjointClassesAxiom ax3 =dataFactory.getOWLDisjointClassesAxiom(dt,pintt);
-        OWLDisjointClassesAxiom ax4 =dataFactory.getOWLDisjointClassesAxiom(dt,nintt);
-        OWLDisjointClassesAxiom ax5 =dataFactory.getOWLDisjointClassesAxiom(dt,npintt);
-        OWLDisjointClassesAxiom ax6 =dataFactory.getOWLDisjointClassesAxiom(dt,nnintt);
-        OWLDisjointClassesAxiom ax7 =dataFactory.getOWLDisjointClassesAxiom(dt,dou);
-        OWLDisjointClassesAxiom ax8 =dataFactory.getOWLDisjointClassesAxiom(dt,flo);
-        OWLDisjointClassesAxiom ax9 =dataFactory.getOWLDisjointClassesAxiom(dt,dec);
+		OWLDisjointClassesAxiom ax0 = dataFactory.getOWLDisjointClassesAxiom(lit, res);
+		OWLDisjointClassesAxiom ax1 = dataFactory.getOWLDisjointClassesAxiom(dt, st);
+		OWLDisjointClassesAxiom ax2 = dataFactory.getOWLDisjointClassesAxiom(dt, intt);
+		OWLDisjointClassesAxiom ax3 = dataFactory.getOWLDisjointClassesAxiom(dt, pintt);
+		OWLDisjointClassesAxiom ax4 = dataFactory.getOWLDisjointClassesAxiom(dt, nintt);
+		OWLDisjointClassesAxiom ax5 = dataFactory.getOWLDisjointClassesAxiom(dt, npintt);
+		OWLDisjointClassesAxiom ax6 = dataFactory.getOWLDisjointClassesAxiom(dt, nnintt);
+		OWLDisjointClassesAxiom ax7 = dataFactory.getOWLDisjointClassesAxiom(dt, dou);
+		OWLDisjointClassesAxiom ax8 = dataFactory.getOWLDisjointClassesAxiom(dt, flo);
+		OWLDisjointClassesAxiom ax9 = dataFactory.getOWLDisjointClassesAxiom(dt, dec);
 
-        OWLDisjointClassesAxiom ax10 =dataFactory.getOWLDisjointClassesAxiom(st,intt);
-        OWLDisjointClassesAxiom ax11 =dataFactory.getOWLDisjointClassesAxiom(st,pintt);
-        OWLDisjointClassesAxiom ax12 =dataFactory.getOWLDisjointClassesAxiom(st,nintt);
-        OWLDisjointClassesAxiom ax13 =dataFactory.getOWLDisjointClassesAxiom(st,npintt);
-        OWLDisjointClassesAxiom ax14 =dataFactory.getOWLDisjointClassesAxiom(st,nnintt);
-        OWLDisjointClassesAxiom ax15 =dataFactory.getOWLDisjointClassesAxiom(st,dou);
-        OWLDisjointClassesAxiom ax16 =dataFactory.getOWLDisjointClassesAxiom(st,flo);
-        OWLDisjointClassesAxiom ax17 =dataFactory.getOWLDisjointClassesAxiom(st,dec);
-        OWLDisjointClassesAxiom ax18 =dataFactory.getOWLDisjointClassesAxiom(nintt,pintt);
+		OWLDisjointClassesAxiom ax10 = dataFactory.getOWLDisjointClassesAxiom(st, intt);
+		OWLDisjointClassesAxiom ax11 = dataFactory.getOWLDisjointClassesAxiom(st, pintt);
+		OWLDisjointClassesAxiom ax12 = dataFactory.getOWLDisjointClassesAxiom(st, nintt);
+		OWLDisjointClassesAxiom ax13 = dataFactory.getOWLDisjointClassesAxiom(st, npintt);
+		OWLDisjointClassesAxiom ax14 = dataFactory.getOWLDisjointClassesAxiom(st, nnintt);
+		OWLDisjointClassesAxiom ax15 = dataFactory.getOWLDisjointClassesAxiom(st, dou);
+		OWLDisjointClassesAxiom ax16 = dataFactory.getOWLDisjointClassesAxiom(st, flo);
+		OWLDisjointClassesAxiom ax17 = dataFactory.getOWLDisjointClassesAxiom(st, dec);
+		OWLDisjointClassesAxiom ax18 = dataFactory.getOWLDisjointClassesAxiom(nintt, pintt);
 
-        AddAxiom addAxiom0 = new AddAxiom(ontology, ax0);
-        manager.applyChange(addAxiom0);
-        AddAxiom addAxiom1 = new AddAxiom(ontology, ax1);
-        manager.applyChange(addAxiom1);
-        AddAxiom addAxiom2 = new AddAxiom(ontology, ax2);
-        manager.applyChange(addAxiom2);
-        AddAxiom addAxiom3 = new AddAxiom(ontology, ax3);
-        manager.applyChange(addAxiom3);
-        AddAxiom addAxiom4 = new AddAxiom(ontology, ax4);
-        manager.applyChange(addAxiom4);
-        AddAxiom addAxiom5 = new AddAxiom(ontology, ax5);
-        manager.applyChange(addAxiom5);
-        AddAxiom addAxiom6 = new AddAxiom(ontology, ax6);
-        manager.applyChange(addAxiom6);
-        AddAxiom addAxiom7 = new AddAxiom(ontology, ax7);
-        manager.applyChange(addAxiom7);
-        AddAxiom addAxiom8 = new AddAxiom(ontology, ax8);
-        manager.applyChange(addAxiom8);
-        AddAxiom addAxiom9 = new AddAxiom(ontology, ax9);
-        manager.applyChange(addAxiom9);
-        AddAxiom addAxiom10 = new AddAxiom(ontology, ax10);
-        manager.applyChange(addAxiom10);
-        AddAxiom addAxiom11 = new AddAxiom(ontology, ax11);
-        manager.applyChange(addAxiom11);
-        AddAxiom addAxiom12 = new AddAxiom(ontology, ax12);
-        manager.applyChange(addAxiom12);
-        AddAxiom addAxiom13 = new AddAxiom(ontology, ax13);
-        manager.applyChange(addAxiom13);
-        AddAxiom addAxiom14 = new AddAxiom(ontology, ax14);
-        manager.applyChange(addAxiom14);
-        AddAxiom addAxiom15 = new AddAxiom(ontology, ax15);
-        manager.applyChange(addAxiom15);
-        AddAxiom addAxiom16 = new AddAxiom(ontology, ax16);
-        manager.applyChange(addAxiom16);
-        AddAxiom addAxiom17 = new AddAxiom(ontology, ax17);
-        manager.applyChange(addAxiom17);
-        AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
-        manager.applyChange(addAxiom18);
+		AddAxiom addAxiom0 = new AddAxiom(ontology, ax0);
+		manager.applyChange(addAxiom0);
+		AddAxiom addAxiom1 = new AddAxiom(ontology, ax1);
+		manager.applyChange(addAxiom1);
+		AddAxiom addAxiom2 = new AddAxiom(ontology, ax2);
+		manager.applyChange(addAxiom2);
+		AddAxiom addAxiom3 = new AddAxiom(ontology, ax3);
+		manager.applyChange(addAxiom3);
+		AddAxiom addAxiom4 = new AddAxiom(ontology, ax4);
+		manager.applyChange(addAxiom4);
+		AddAxiom addAxiom5 = new AddAxiom(ontology, ax5);
+		manager.applyChange(addAxiom5);
+		AddAxiom addAxiom6 = new AddAxiom(ontology, ax6);
+		manager.applyChange(addAxiom6);
+		AddAxiom addAxiom7 = new AddAxiom(ontology, ax7);
+		manager.applyChange(addAxiom7);
+		AddAxiom addAxiom8 = new AddAxiom(ontology, ax8);
+		manager.applyChange(addAxiom8);
+		AddAxiom addAxiom9 = new AddAxiom(ontology, ax9);
+		manager.applyChange(addAxiom9);
+		AddAxiom addAxiom10 = new AddAxiom(ontology, ax10);
+		manager.applyChange(addAxiom10);
+		AddAxiom addAxiom11 = new AddAxiom(ontology, ax11);
+		manager.applyChange(addAxiom11);
+		AddAxiom addAxiom12 = new AddAxiom(ontology, ax12);
+		manager.applyChange(addAxiom12);
+		AddAxiom addAxiom13 = new AddAxiom(ontology, ax13);
+		manager.applyChange(addAxiom13);
+		AddAxiom addAxiom14 = new AddAxiom(ontology, ax14);
+		manager.applyChange(addAxiom14);
+		AddAxiom addAxiom15 = new AddAxiom(ontology, ax15);
+		manager.applyChange(addAxiom15);
+		AddAxiom addAxiom16 = new AddAxiom(ontology, ax16);
+		manager.applyChange(addAxiom16);
+		AddAxiom addAxiom17 = new AddAxiom(ontology, ax17);
+		manager.applyChange(addAxiom17);
+		AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
+		manager.applyChange(addAxiom18);
 		try {
 			manager.saveOntology(ontology);
 		} catch (OWLOntologyStorageException e) {
@@ -1442,32 +1416,20 @@ public class TSPARQL {
 			e.printStackTrace();
 		}
 
-		
 		final Query query = QueryFactory.create(queryString);
-		if (	query.isConstructType() ||
-				query.isAskType() ||
-				query.isDescribeType() ||
-				query.isDistinct() ||
-				query.hasAggregators() ||
-				query.hasOrderBy() ||
-				query.hasGroupBy() ||
-				query.hasHaving() ||
-				query.hasOffset() ||
-				!query.getGraphURIs().isEmpty() ||
-				!query.getNamedGraphURIs().isEmpty() ||
-				query.hasLimit() )
-		{
+		if (query.isConstructType() || query.isAskType() || query.isDescribeType() || query.isDistinct()
+				|| query.hasAggregators() || query.hasOrderBy() || query.hasGroupBy() || query.hasHaving()
+				|| query.hasOffset() || !query.getGraphURIs().isEmpty() || !query.getNamedGraphURIs().isEmpty()
+				|| query.hasLimit()) {
 			System.out.println("SPARQL expression not supported");
 			wrong_analysis = true;
 			rules.clear();
-		}
-		else
-		{
+		} else {
 			rules.add(current, new ArrayList());
 			for (String v : query.getResultVars()) {
 				vars.add(v.toUpperCase());
 			}
-			 
+
 			String head;
 			if (vars.isEmpty()) {
 				if (current == 0 && step == 0) {
@@ -1492,24 +1454,23 @@ public class TSPARQL {
 			elementGroup((ElementGroup) e, step, file);
 			String urio = ontology.getOntologyID().getOntologyIRI().toString();
 			for (TriplePath tp : ctriples) {
-				if (tp.getSubject().isVariable())
-				{
-				Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
-						IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-				datatriples.add(tp);
-				if (!(typ == null)) {
-					for (OWLClassExpression c : typ) {
-						OWLRestriction(c.asOWLClass(), tp.getSubject());
+				if (tp.getSubject().isVariable()) {
+					Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
+							IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+					datatriples.add(tp);
+					if (!(typ == null)) {
+						for (OWLClassExpression c : typ) {
+							OWLRestriction(c.asOWLClass(), tp.getSubject());
+						}
 					}
 				}
-				}
 			}
-			ctriples.clear();		 
+			ctriples.clear();
 		}
 		return rules;
 	}
 
-	public void elementFilter(ElementFilter el, Integer step, String fileo) {		
+	public void elementFilter(ElementFilter el, Integer step, String fileo) {
 		if (el.getExpr().getFunction().getFunctionName(null) == "exists") {
 			List<String> varstemp = new ArrayList<String>();
 			for (String v : vars) {
@@ -1584,27 +1545,42 @@ public class TSPARQL {
 				vars.add(v);
 			}
 			current = tmp;
-		} else
-		if (el.getExpr().getFunction().getFunctionName(null) == "notexists") {
+		} else if (el.getExpr().getFunction().getFunctionName(null) == "notexists") {
 			System.out.println("SPARQL expression not supported");
 			System.out.println(el);
 			wrong_analysis = true;
 			rules.clear();
 			
-		} else if ((el.getExpr().getFunction().getOpName().toString() == "<")
+		} else if (el.getExpr().getFunction().getFunctionName(null) == "and") {
+			
+			for (int i=1; i <= el.getExpr().getFunction().numArgs(); i++)
+			{
+			    ElementFilter e = new ElementFilter(el.getExpr().getFunction().getArg(i));
+			    
+			    elementFilter(e,step,fileo);
+				 
+				 
+			}
+			
+		}
+
+		 else if ((el.getExpr().getFunction().getOpName().toString() == "<")
 				|| (el.getExpr().getFunction().getOpName().toString() == "<=")
 				|| (el.getExpr().getFunction().getOpName().toString() == "=")
 				|| (el.getExpr().getFunction().getOpName().toString() == ">")
 				|| (el.getExpr().getFunction().getOpName().toString() == ">=")
-				|| (el.getExpr().getFunction().getOpName().toString() == "!="))
-		{
+				|| (el.getExpr().getFunction().getOpName().toString() == "!=")) {
 			nvar++;
 			constraints_elements.add(el.getExpr().toString());
 			List<String> ss = new ArrayList<>(SExprtoPTerm(el.getExpr(), null));
 			for (int i = 0; i < ss.size(); i++) {
 				rules.get(current).add(ss.get(i));
 			}
-		} else {wrong_analysis = true; System.out.println("Expression "+el.getExpr().getFunction().getFunctionName(null)+ " not allowed in FILTER expression");}
+		} else {
+			wrong_analysis = true;
+			System.out.println("Expression " + el.getExpr().getFunction().getFunctionName(null)
+					+ " not allowed in FILTER expression");
+		}
 	}
 
 	public void elementBind(ElementBind el, Integer step, String fileo) {
@@ -1613,7 +1589,7 @@ public class TSPARQL {
 		for (int i = 0; i < ss.size(); i++) {
 			rules.get(current).add(ss.get(i));
 		}
-		constraints_elements.add(el.getExpr().toString()+" = "+el.getVar().asNode().toString());
+		constraints_elements.add(el.getExpr().toString() + " = " + el.getVar().asNode().toString());
 	}
 
 	public void elementPathBlock(ElementPathBlock el, Integer step, String fileo) {
@@ -1636,7 +1612,7 @@ public class TSPARQL {
 	};
 
 	public void elementUnion(ElementUnion el, Integer step, String fileo) {
-		
+
 		System.out.println("SPARQL expression not supported");
 		System.out.println(el);
 		wrong_analysis = true;
@@ -1683,26 +1659,15 @@ public class TSPARQL {
 		wrong_analysis = true;
 		rules.clear();
 	};
-	
 
 	public void elementSubQuery(ElementSubQuery el, Integer step, String fileo) {
 
 		Element e = el.getQuery().getQueryPattern();
 		Query query = el.getQuery();
-		if ( 
-				query.isConstructType() ||
-				query.isAskType() ||
-				query.isDescribeType() ||
-				query.isDistinct() ||
-				query.hasAggregators() ||
-				query.hasOrderBy() ||
-				query.hasGroupBy() ||
-				query.hasHaving() ||
-				query.hasOffset() ||
-				!query.getGraphURIs().isEmpty() ||
-				!query.getNamedGraphURIs().isEmpty() ||
-				query.hasLimit())
-		{
+		if (query.isConstructType() || query.isAskType() || query.isDescribeType() || query.isDistinct()
+				|| query.hasAggregators() || query.hasOrderBy() || query.hasGroupBy() || query.hasHaving()
+				|| query.hasOffset() || !query.getGraphURIs().isEmpty() || !query.getNamedGraphURIs().isEmpty()
+				|| query.hasLimit()) {
 			System.out.println("SPARQL expression not supported");
 			wrong_analysis = true;
 			rules.clear();
@@ -1793,6 +1758,7 @@ public class TSPARQL {
 					e.accept(this);
 				}
 			}
+
 			@Override
 			public void visit(OWLObjectIntersectionOf arg0) {
 				Set<OWLClassExpression> ec = arg0.getOperands();
@@ -1800,68 +1766,79 @@ public class TSPARQL {
 					e.accept(this);
 				}
 			}
+
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
-				 
+
 			}
+
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
-				 
- 			}
-			@Override
-			public void visit(OWLObjectSomeValuesFrom arg0) {				
+
 			}
+
 			@Override
-			public void visit(OWLObjectAllValuesFrom arg0) {			
+			public void visit(OWLObjectSomeValuesFrom arg0) {
+			}
+
+			@Override
+			public void visit(OWLObjectAllValuesFrom arg0) {
 				if (ctriplesn.containsKey(var_name)) {
-				OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
-				 OWLClassExpression filler = allValuesFrom.getFiller();
-			
-				for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
-					Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-					if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-						Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-						 						
-						for (Node var : vars_) {
-							OWLRestriction(filler.asOWLClass(),var);
+					OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
+					OWLClassExpression filler = allValuesFrom.getFiller();
+
+					for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+
+							for (Node var : vars_) {
+								OWLRestriction(filler.asOWLClass(), var);
+							}
 						}
 					}
 				}
-				}
 			}
+
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
 			}
+
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
 			}
+
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
 			}
+
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
 			}
+
 			@Override
 			public void visit(OWLObjectHasSelf arg0) {
 			}
+
 			@Override
 			public void visit(OWLObjectOneOf arg0) {
 			}
+
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
 				if (ctriplesn.containsKey(var_name)) {
@@ -1871,166 +1848,133 @@ public class TSPARQL {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-							String cons = "";						
+							String cons = "";
 							for (Node var : vars_) {
 								OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 								if (r.getDatatype().isInteger()) {
 									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 										if (fr.getFacet().toString() == "maxExclusive") {
 											if (var.isVariable()) {
-											cons = cons + 
-												var.toString().substring(1).toUpperCase() + "#<" + fr.getFacetValue().getLiteral()
-												+ ",";
-											constraints_elements.add("("+var.toString().toUpperCase() + "<" 
-												+ fr.getFacetValue().getLiteral()+")");}
-											else
-											{
-												cons = cons + 
-														var.getLiteralValue().toString() + "#<" + fr.getFacetValue().getLiteral()
-														+ ",";
-													constraints_elements.add("("+var.getLiteralValue().toString() + "<" 
-														+ fr.getFacetValue().getLiteral()+")");
+												cons = cons + var.toString().substring(1).toUpperCase() + "#<"
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + "<"
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + var.getLiteralValue().toString() + "#<"
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "<"
+														+ fr.getFacetValue().getLiteral() + ")");
 											}
-											
-											
-											
+
 										} else if (fr.getFacet().toString() == "maxInclusive") {
 											if (var.isVariable()) {
-												cons = cons + 
-													var.toString().substring(1).toUpperCase() + "#<=" + fr.getFacetValue().getLiteral()
-													+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + "<=" 
-													+ fr.getFacetValue().getLiteral()+")");}
-												else
-												{
-													cons = cons + 
-															var.getLiteralValue().toString() + "#<=" + fr.getFacetValue().getLiteral()
-															+ ",";
-														constraints_elements.add("("+var.getLiteralValue().toString() + "<=" 
-															+ fr.getFacetValue().getLiteral()+")");
-												}
+												cons = cons + var.toString().substring(1).toUpperCase() + "#<="
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + "<="
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + var.getLiteralValue().toString() + "#<="
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "<="
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
 										} else if (fr.getFacet().toString() == "minExclusive") {
 											if (var.isVariable()) {
-												cons = cons + 
-													var.toString().substring(1).toUpperCase() + "#>" + fr.getFacetValue().getLiteral()
-													+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + ">" 
-													+ fr.getFacetValue().getLiteral()+")");}
-												else
-												{
-													cons = cons + 
-															var.getLiteralValue().toString() + "#>" + fr.getFacetValue().getLiteral()
-															+ ",";
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">" 
-															+ fr.getFacetValue().getLiteral()+")");
-												}
+												cons = cons + var.toString().substring(1).toUpperCase() + "#>"
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + ">"
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + var.getLiteralValue().toString() + "#>"
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + ">"
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
 										} else if (fr.getFacet().toString() == "minInclusive") {
 											if (var.isVariable()) {
-												cons = cons + 
-													var.toString().substring(1).toUpperCase() + "#>=" + fr.getFacetValue().getLiteral()
-													+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + ">=" 
-													+ fr.getFacetValue().getLiteral()+")");}
-												else
-												{
-													cons = cons + 
-															var.getLiteralValue().toString() + "#>=" + fr.getFacetValue().getLiteral()
-															+ ",";
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">=" 
-															+ fr.getFacetValue().getLiteral()+")");
-												}
-										}
-									}
-								} else 
-									if (r.getDatatype().isFloat() || 
-											r.getDatatype().isDouble() 
-										) {
-										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-											if (fr.getFacet().toString() == "maxExclusive") {
-												
-												if (var.isVariable())
-												{
-												cons = cons + 
-												"{" + var.toString().substring(1).toUpperCase() + "<" + fr.getFacetValue().getLiteral() +"}"
-												+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + "<" 
-												+ fr.getFacetValue().getLiteral()+")");
-												}
-												else 
-												{
-													cons = cons + 
-															"{" + var.getLiteralValue().toString() + "<" + fr.getFacetValue().getLiteral() +"}"
-															+ ",";
-															constraints_elements.add("("+var.getLiteralValue().toString() + "<" 
-															+ fr.getFacetValue().getLiteral()+")");	
-												}
-											} else if (fr.getFacet().toString() == "maxInclusive") {
-												if (var.isVariable())
-												{
-												cons = cons + 
-												"{" + var.toString().substring(1).toUpperCase() + "<=" + fr.getFacetValue().getLiteral() +"}"
-												+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + "<=" 
-												+ fr.getFacetValue().getLiteral()+")");
-												}
-												else 
-												{
-													cons = cons + 
-															"{" + var.getLiteralValue().toString() + "<=" + fr.getFacetValue().getLiteral() +"}"
-															+ ",";
-															constraints_elements.add("("+var.getLiteralValue().toString() + "<=" 
-															+ fr.getFacetValue().getLiteral()+")");	
-												}
-											} else if (fr.getFacet().toString() == "minExclusive") {
-												if (var.isVariable())
-												{
-												cons = cons + 
-												"{" + var.toString().substring(1).toUpperCase() + ">" + fr.getFacetValue().getLiteral() +"}"
-												+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + ">" 
-												+ fr.getFacetValue().getLiteral()+")");
-												}
-												else 
-												{
-													cons = cons + 
-															"{" + var.getLiteralValue().toString() + ">" + fr.getFacetValue().getLiteral() +"}"
-															+ ",";
-															constraints_elements.add("("+var.getLiteralValue().toString() + ">" 
-															+ fr.getFacetValue().getLiteral()+")");	
-												}
-											} else if (fr.getFacet().toString() == "minInclusive") {
-												if (var.isVariable())
-												{
-												cons = cons + 
-												"{" + var.toString().substring(1).toUpperCase() + ">=" + fr.getFacetValue().getLiteral() +"}"
-												+ ",";
-												constraints_elements.add("("+var.toString().toUpperCase() + ">=" 
-												+ fr.getFacetValue().getLiteral()+")");
-												}
-												else 
-												{
-													cons = cons + 
-															"{" + var.getLiteralValue().toString() + ">=" + fr.getFacetValue().getLiteral() +"}"
-															+ ",";
-															constraints_elements.add("("+var.getLiteralValue().toString() + ">=" 
-															+ fr.getFacetValue().getLiteral()+")");	
-												}
+												cons = cons + var.toString().substring(1).toUpperCase() + "#>="
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + ">="
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + var.getLiteralValue().toString() + "#>="
+														+ fr.getFacetValue().getLiteral() + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + ">="
+														+ fr.getFacetValue().getLiteral() + ")");
 											}
 										}
-									} else {wrong_analysis=true;System.out.println("OWL Restriction not allowed");}
+									}
+								} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
+									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+										if (fr.getFacet().toString() == "maxExclusive") {
+
+											if (var.isVariable()) {
+												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + "<"
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + "{" + var.getLiteralValue().toString() + "<"
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "<"
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
+										} else if (fr.getFacet().toString() == "maxInclusive") {
+											if (var.isVariable()) {
+												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<="
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + "<="
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + "{" + var.getLiteralValue().toString() + "<="
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "<="
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
+										} else if (fr.getFacet().toString() == "minExclusive") {
+											if (var.isVariable()) {
+												cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + ">"
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + "{" + var.getLiteralValue().toString() + ">"
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + ">"
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
+										} else if (fr.getFacet().toString() == "minInclusive") {
+											if (var.isVariable()) {
+												cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.toString().toUpperCase() + ">="
+														+ fr.getFacetValue().getLiteral() + ")");
+											} else {
+												cons = cons + "{" + var.getLiteralValue().toString() + ">="
+														+ fr.getFacetValue().getLiteral() + "}" + ",";
+												constraints_elements.add("(" + var.getLiteralValue().toString() + ">="
+														+ fr.getFacetValue().getLiteral() + ")");
+											}
+										}
+									}
+								} else {
+									wrong_analysis = true;
+									System.out.println("OWL Restriction not allowed");
+								}
 							}
 							if (!cons.isEmpty()) {
 								cons = cons.substring(0, cons.length() - 1);
 							}
+
 							rules.get(current).add(cons);
-							 
+
 						}
 					}
 				}
 			}
 
 			@Override
-			public void visit(OWLDataSomeValuesFrom arg0) {			 
+			public void visit(OWLDataSomeValuesFrom arg0) {
 			}
 
 			@Override
@@ -2042,49 +1986,41 @@ public class TSPARQL {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-							String cons = "";						
-							for (Node var : vars_) {					
+							String cons = "";
+							for (Node var : vars_) {
 								if (value.isInteger()) {
-											if (var.isVariable())
-											{
-											cons = cons + 
-												var.toString().substring(1).toUpperCase() + "#=" + value.getLiteral();
-											constraints_elements.add("("+var.toString().toUpperCase() + "=" 
-												+ value.getLiteral()+")");
-											}
-											else 
-											{
-												cons = cons + 
-														var.getLiteralValue().toString() + "#=" + value.getLiteral();
-													constraints_elements.add("("+var.getLiteralValue().toString() + "=" 
-														+ value.getLiteral()+")");
-											}
+									if (var.isVariable()) {
+										cons = cons + var.toString().substring(1).toUpperCase() + "#="
+												+ value.getLiteral();
+										constraints_elements.add(
+												"(" + var.toString().toUpperCase() + "=" + value.getLiteral() + ")");
+									} else {
+										cons = cons + var.getLiteralValue().toString() + "#=" + value.getLiteral();
+										constraints_elements.add("(" + var.getLiteralValue().toString() + "="
+												+ value.getLiteral() + ")");
 									}
-								 else 
-									if (value.isFloat() || 
-											value.isDouble() 
-										) {
-										        if (var.isVariable())
-										        {
-												cons = cons + 
-												"{" + var.toString().substring(1).toUpperCase() + "=:=" + value.getLiteral() +"}";
-												constraints_elements.add("("+var.toString().toUpperCase() + "=" 
-												+ value.getLiteral()+")");
-										        }
-										        else
-										        {
-										        	cons = cons + 
-															"{" + var.getLiteralValue().toString() + "=:=" + value.getLiteral() +"}";
-															constraints_elements.add("("+var.getLiteralValue().toString() + "=" 
-															+ value.getLiteral()+")");
-										        }
-										}
-									 else {wrong_analysis=true;System.out.println("OWL Restriction not allowed");}
+								} else if (value.isFloat() || value.isDouble()) {
+									if (var.isVariable()) {
+										cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=:="
+												+ value.getLiteral() + "}";
+										constraints_elements.add(
+												"(" + var.toString().toUpperCase() + "=" + value.getLiteral() + ")");
+									} else {
+										cons = cons + "{" + var.getLiteralValue().toString() + "=:="
+												+ value.getLiteral() + "}";
+										constraints_elements.add("(" + var.getLiteralValue().toString() + "="
+												+ value.getLiteral() + ")");
+									}
+								} else {
+									wrong_analysis = true;
+									System.out.println("OWL Restriction not allowed");
+								}
 							}
 							if (!cons.isEmpty()) {
 								cons = cons.substring(0, cons.length() - 1);
 							}
-							rules.get(current).add(cons);					 
+
+							rules.get(current).add(cons);
 						}
 					}
 				}
@@ -2095,21 +2031,21 @@ public class TSPARQL {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
 				wrong_analysis = true;
-				 
+
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
-				wrong_analysis = true;			 
+				wrong_analysis = true;
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
 				System.out.println("This type is not supported by consistency analysis:");
 				System.out.println(arg0);
-				wrong_analysis = true;				 
+				wrong_analysis = true;
 			}
 		};
 		ce.accept(cv);
@@ -2124,17 +2060,14 @@ public class TSPARQL {
 				pt = st.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase();
 		} else if (st.isURI()) {
 			pt = "'" + st.toString() + "'";
-		}
-		else if (st.isLiteral()) {
-			if (st.getLiteralDatatypeURI() == null)
-			{
+		} else if (st.isLiteral()) {
+			if (st.getLiteralDatatypeURI() == null) {
 				if (st.toString().startsWith("\"#")) {
 					pt = st.toString().replaceAll("\"", "");
 				} else {
 					pt = st.toString() + "^^" + "'http://www.w3.org/2001/XMLSchema#string'";
 				}
-			}
-			else {
+			} else {
 				pt = st.getLiteralValue() + "^^'" + st.getLiteralDatatypeURI() + "'";
 			}
 		}
@@ -2148,8 +2081,7 @@ public class TSPARQL {
 				pt.add(st.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
 			} else if (st.isConstant()) {
 				pt.add(st.toString() + "^^'" + st.getConstant().getDatatypeURI() + "'");
-			}
-			else if (st.isFunction()) {
+			} else if (st.isFunction()) {
 				if (st.getFunction().getFunctionIRI() == null) {
 					Integer act = nvar;
 					nvar++;
@@ -2165,21 +2097,16 @@ public class TSPARQL {
 						pt.add(ss2.get(i));
 					}
 					if (types_literals.containsKey("A" + act)) {
-						types_literals.put("B" + act,
-								types_literals.get("A" + act));
+						types_literals.put("B" + act, types_literals.get("A" + act));
 						addTypeVariable("B" + act, types_literals.get("A" + act));
-					} else
-					if (types_literals.containsKey("B" + act)) {
-						types_literals.put("A" + act,
-								types_literals.get("B" + act));
+					} else if (types_literals.containsKey("B" + act)) {
+						types_literals.put("A" + act, types_literals.get("B" + act));
 						addTypeVariable("A" + act, types_literals.get("B" + act));
-					}
-					else {
+					} else {
 						System.out.println("Error: Some variable is not typed");
 						wrong_analysis = true;
 					}
-					if (types_literals.containsKey("B" + act))
-					{
+					if (types_literals.containsKey("B" + act)) {
 						if (types_literals.get("B" + act).equals("http://www.types.org#xsd:integer")
 								|| types_literals.get("B" + act).equals("http://www.types.org#xsd:string")
 								|| types_literals.get("B" + act).equals("http://www.types.org#xsd:dateTime")) {
@@ -2238,8 +2165,7 @@ public class TSPARQL {
 							}
 							pt.add("A" + act + Op + "B" + act);
 							pt.add("B" + act + "#=<0");
-						} else
-						if (types_literals.get("B" + act).equals("http://www.types.org#xsd:double")
+						} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:double")
 								|| types_literals.get("B" + act).equals("http://www.types.org#xsd:float")
 								|| types_literals.get("B" + act).equals("http://www.types.org#xsd:decimal")) {
 							String Op = "";
@@ -2251,8 +2177,7 @@ public class TSPARQL {
 								Op = st.getFunction().getOpName();
 							}
 							pt.add("{" + "A" + act + Op + "B" + act + " }");
-						}
-						else {
+						} else {
 							System.out.println("Error: Some variable is not typed");
 							wrong_analysis = true;
 						}
@@ -2264,8 +2189,7 @@ public class TSPARQL {
 				} else {
 				}
 			}
-		} else
-		if (st.isVariable()) {
+		} else if (st.isVariable()) {
 			String v = var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase();
 			String sv = st.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase();
 			if (types_literals.containsKey(sv)) {
@@ -2307,13 +2231,14 @@ public class TSPARQL {
 
 		} else if (st.isConstant()) {
 
-			 
-			if (isValidFormat("dd/MM/yyyy", st.toString(), Locale.ENGLISH)) {
-				
+			if (st.toString().endsWith("^^<http://www.w3.org/2001/XMLSchema#dateTime>")) {
+
+				String date = st.toString().split("\"")[1];
 				addTypeVariable(var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase(),
 						"http://www.types.org#xsd:dateTime");
-				DateTimeFormatter fomatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH);
-				LocalDateTime ldt = LocalDateTime.parse(st.toString(), fomatter);
+				DateTimeFormatter fomatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'",
+						Locale.ENGLISH);
+				LocalDateTime ldt = LocalDateTime.parse(date, fomatter);
 				Integer result = ldt.hashCode();
 				pt.add(result + "=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
 			} else if ((isInteger(st.toString()) || (isReal(st.toString())))) {
@@ -2329,8 +2254,7 @@ public class TSPARQL {
 					result += pow(27, MAX_LENGTH - i - 1) * (1 + st.toString().charAt(i));
 				pt.add(result + "=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
 			}
-		}
-		else if (st.isFunction()) {
+		} else if (st.isFunction()) {
 			if (st.getFunction().getFunctionIRI() == null) {
 				Integer act = nvar;
 				nvar++;
@@ -2345,8 +2269,7 @@ public class TSPARQL {
 					pt.add(ss2.get(i));
 				types_literals.put("U" + act, types_literals.get("A" + act));
 				types_literals.put("V" + act, types_literals.get("B" + act));
-				if (types_literals.containsKey("A" + act))
-				{
+				if (types_literals.containsKey("A" + act)) {
 					if (types_literals.get("A" + act).equals("http://www.types.org#xsd:integer")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:string")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:dateTime")) {
@@ -2393,8 +2316,7 @@ public class TSPARQL {
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:nonPositiveInteger")) {
 						pt.add("B" + act + " #= " + "V" + act);
 						pt.add("B" + act + " #=< 0");
-					}
-					else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:double")
+					} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:double")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:float")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:decimal")) {
 						pt.add("{" + "B" + act + " =:= " + "V" + act + " }");
@@ -2412,8 +2334,7 @@ public class TSPARQL {
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:string")
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:dateTime")) {
 						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
-					}
-					else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:positiveInteger")) {
+					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:positiveInteger")) {
 						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
 						pt.add("W" + act + " #> 0");
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:negativeInteger")) {
@@ -2458,8 +2379,7 @@ public class TSPARQL {
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:nonPositiveInteger")) {
 						pt.add(res + " #=" + "W" + act);
 						pt.add(res + " #=< 0");
-					}
-					else if (types_literals.get(res).equals("http://www.types.org#xsd:float")
+					} else if (types_literals.get(res).equals("http://www.types.org#xsd:float")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:double")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:decimal")) {
 						pt.add("{" + res + " =:=" + "W" + act + " }");
@@ -2472,7 +2392,8 @@ public class TSPARQL {
 					wrong_analysis = true;
 				}
 				nvar++;
-			} else {}
+			} else {
+			}
 		}
 		return pt;
 	}
@@ -2559,10 +2480,8 @@ public class TSPARQL {
 		else
 			return a * pow(a * a, b / 2);
 	}
-	
-	
-	public void SPARQL_CORRECTNESS(String query)
-	{
+
+	public void SPARQL_CORRECTNESS(String query) {
 		copy(file);
 		next = 1;
 		current = 0;
@@ -2574,42 +2493,43 @@ public class TSPARQL {
 		if (!wrong_analysis) {
 			r = sparql_consistency();
 			if (r == "true") {
-			r = sparql_constraint_checking();
-			if (r == "true") {System.out.println("Successful correctness checking");}
-			else {System.out.println("Unsuccessful correctness checking due to:");
-				  System.out.print(r);}
-			} else {	
+				r = sparql_constraint_checking();
+				if (r == "true") {
+					System.out.println("Successful correctness checking");
+				} else {
+					System.out.println("Unsuccessful correctness checking due to:");
+					System.out.print(r);
+				}
+			} else {
 				System.out.println("Unsuccessful correctness checking due to:");
 				System.out.print(r);
 			}
-		} else {}
-		
-		restore(file);	
-	};
-	
+		} else {
+		}
 
-	public void SPARQL_TYPE_VALIDITY(String query, String var_name, String type_name)
-	{
+		restore(file);
+	};
+
+	public void SPARQL_TYPE_VALIDITY(String query, String var_name, String type_name) {
 		copy(file);
 		next = 1;
 		current = 0;
 		nvar = 0;
 		vars.clear();
 		rules.clear();
-		SPARQL_ANALYSIS(file, query, 0);		
+		SPARQL_ANALYSIS(file, query, 0);
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		OWLClass ce = dataFactory.getOWLClass(IRI.create(type_name));
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
 		owl_type_validity(ce, in, Node.createVariable(var_name));
 		if (!error && !wrong_analysis) {
 			System.out.println("Successful type validity. The property has been proved");
-		}	
+		}
 		restore(file);
-		
+
 	};
 
-
-	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, Node var_name) {		
+	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, Node var_name) {
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
 			@Override
 			public void visit(OWLClass arg0) {
@@ -2622,11 +2542,11 @@ public class TSPARQL {
 					if (consistency == "true") {
 					} else {
 						error = true;
- 							System.out
-									.println("Unsuccessful type validity. Case 1. Caused by the following inconsistency:");
-							System.out.print(explanations());
-							System.out.println(arg0);
- 					}
+						System.out
+								.println("Unsuccessful type validity. Case 1. Caused by the following inconsistency:");
+						System.out.print(explanations());
+						System.out.println(arg0);
+					}
 					removeTypeAssertion(arg0, in);
 					Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
 					for (OWLClassExpression e : ec) {
@@ -2653,12 +2573,11 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				
+
 				System.out.println("This type is not supported by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
-		 
-				
+
 			}
 
 			@Override
@@ -2670,48 +2589,46 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectSomeValuesFrom arg0) {
-				
+
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
-					 OWLClassExpression filler = someValuesFrom.getFiller();
-				
+					OWLClassExpression filler = someValuesFrom.getFiller();
+
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-							 						
+
 							for (Node var : vars_) {
 								String urio = ontology.getOntologyID().getOntologyIRI().toString();
 								OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var));
-								owl_type_validity(filler.asOWLClass(),in,var);
+								owl_type_validity(filler.asOWLClass(), in, var);
 							}
 						}
 					}
-					}
-				
-				
-				
+				}
+
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
- 							System.out.println(
-									"Unsuccessful type validity. Case 2. The following class membership cannot be proved:");
-							System.out.println(in);
-							System.out.println("rdf:type");
-							System.out.println(arg0);
- 					} else {
+						System.out.println(
+								"Unsuccessful type validity. Case 2. The following class membership cannot be proved:");
+						System.out.println(in);
+						System.out.println("rdf:type");
+						System.out.println(arg0);
+					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 2.1. Caused by the following inconsistency:");
-								System.out.print(explanations());
-								System.out.println(arg0);
- 						}
+							System.out.println(
+									"Unsuccessful type validity. Case 2.1. Caused by the following inconsistency:");
+							System.out.print(explanations());
+							System.out.println(arg0);
+						}
 						removeTypeAssertion(arg0, in);
 					}
 				}
@@ -2719,35 +2636,35 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectAllValuesFrom arg0) {
-			
+
 				System.out.println("This type cannot be proved by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
 			}
 
 			@Override
-			public void visit(OWLObjectHasValue arg0) {	 
+			public void visit(OWLObjectHasValue arg0) {
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
- 							System.out.println(
-									"Unsuccessful type validity. Case 4. The following class membership cannot be proved:");
-							System.out.println(in);
-							System.out.println("rdf:type");
-							System.out.println(arg0);
- 					} else {
+						System.out.println(
+								"Unsuccessful type validity. Case 4. The following class membership cannot be proved:");
+						System.out.println(in);
+						System.out.println("rdf:type");
+						System.out.println(arg0);
+					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 4.1. Caused by the following inconsistency:");
-								System.out.print(explanations());
-								System.out.println(arg0);
- 						}
+							System.out.println(
+									"Unsuccessful type validity. Case 4.1. Caused by the following inconsistency:");
+							System.out.print(explanations());
+							System.out.println(arg0);
+						}
 						removeTypeAssertion(arg0, in);
 					}
 				}
@@ -2781,22 +2698,22 @@ public class TSPARQL {
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
- 							System.out.println(
-									"Unsuccessful type validity. Case 10. The following class membership cannot be proved:");
-							System.out.println(in);
-							System.out.println("rdf:type");
-							System.out.println(arg0);
- 					} else {
+						System.out.println(
+								"Unsuccessful type validity. Case 10. The following class membership cannot be proved:");
+						System.out.println(in);
+						System.out.println("rdf:type");
+						System.out.println(arg0);
+					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 10.1. Caused by the following inconsistency:");
-								System.out.print(explanations());
-								System.out.println(arg0);
- 						}
+							System.out.println(
+									"Unsuccessful type validity. Case 10.1. Caused by the following inconsistency:");
+							System.out.print(explanations());
+							System.out.println(arg0);
+						}
 						removeTypeAssertion(arg0, in);
 					}
 				}
@@ -2809,22 +2726,22 @@ public class TSPARQL {
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
 						error = true;
- 							System.out.println(
-									"Unsuccessful type validity. Case 11. The following class membership cannot be proved:");
-							System.out.println(in);
-							System.out.println("rdf:type");
-							System.out.println(arg0);
- 					} else {
+						System.out.println(
+								"Unsuccessful type validity. Case 11. The following class membership cannot be proved:");
+						System.out.println(in);
+						System.out.println("rdf:type");
+						System.out.println(arg0);
+					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 						} else {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 11.1. Caused by the following inconsistency:");
-								System.out.print(explanations());
-								System.out.println(arg0);
- 						}
+							System.out.println(
+									"Unsuccessful type validity. Case 11.1. Caused by the following inconsistency:");
+							System.out.print(explanations());
+							System.out.println(arg0);
+						}
 						removeTypeAssertion(arg0, in);
 					}
 				}
@@ -2832,7 +2749,7 @@ public class TSPARQL {
 			}
 
 			@Override
-			public void visit(OWLDataAllValuesFrom arg0) {				
+			public void visit(OWLDataAllValuesFrom arg0) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
@@ -2846,22 +2763,22 @@ public class TSPARQL {
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 13. The following class membership cannot be proved:");
-								System.out.println(in);
-								System.out.println("rdf:type");
-								System.out.println(arg0);
- 						} else {
+							System.out.println(
+									"Unsuccessful type validity. Case 13. The following class membership cannot be proved:");
+							System.out.println(in);
+							System.out.println("rdf:type");
+							System.out.println(arg0);
+						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
 							if (consistency == "true") {
 							} else {
 								error = true;
- 									System.out.println(
-											"Unsuccessful type validity. Case 13.1. Caused by the following inconsistency:");
-									System.out.print(explanations());
-									System.out.println(arg0);
- 							}
+								System.out.println(
+										"Unsuccessful type validity. Case 13.1. Caused by the following inconsistency:");
+								System.out.print(explanations());
+								System.out.println(arg0);
+							}
 							removeTypeAssertion(arg0, in);
 						}
 					} else { // arg0.isDataRestriction()
@@ -2899,376 +2816,364 @@ public class TSPARQL {
 									String cons = "";
 									for (Node var : vars_) {
 										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-										if (r.getDatatype().isInteger()) { //CHANGED , by ;
+										if (r.getDatatype().isInteger()) { // CHANGED , by ;
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 												if (fr.getFacet().toString() == "maxExclusive") {
-													if (var.isVariable())
-													{
-													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#<"
-															+ fr.getFacetValue().getLiteral() + ";"; 
-													constraints_elements.add("("+var.toString().toUpperCase() + "<"
-															+ fr.getFacetValue().getLiteral()+")");
-													}
-													else 
-													{
+													if (var.isVariable()) {
+														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
+																+ "#<" + fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "<" + fr.getFacetValue().getLiteral() + ")");
+													} else {
 														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<"
-																+ fr.getFacetValue().getLiteral() + ";"; 
-														constraints_elements.add("("+var.getLiteralValue().toString() + "<"
-																+ fr.getFacetValue().getLiteral()+")");
-													}	
+																+ fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "<" + fr.getFacetValue().getLiteral() + ")");
+													}
 												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable())
-													{
-													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#<="
-															+ fr.getFacetValue().getLiteral() + ";"; 
-													constraints_elements.add("("+var.toString().toUpperCase() + "<="
-															+ fr.getFacetValue().getLiteral()+")");
-													}
-													else 
-													{
+													if (var.isVariable()) {
+														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
+																+ "#<=" + fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "<=" + fr.getFacetValue().getLiteral() + ")");
+													} else {
 														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<="
-																+ fr.getFacetValue().getLiteral() + ";"; 
-														constraints_elements.add("("+var.getLiteralValue().toString() + "<="
-																+ fr.getFacetValue().getLiteral()+")");
-													}	
+																+ fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "<=" + fr.getFacetValue().getLiteral() + ")");
+													}
 												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable())
-													{
-													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#>"
-															+ fr.getFacetValue().getLiteral() + ";"; 
-													constraints_elements.add("("+var.toString().toUpperCase() + ">"
-															+ fr.getFacetValue().getLiteral()+")");
-													}
-													else 
-													{
+													if (var.isVariable()) {
+														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
+																+ "#>" + fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ ">" + fr.getFacetValue().getLiteral() + ")");
+													} else {
 														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>"
-																+ fr.getFacetValue().getLiteral() + ";"; 
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">"
-																+ fr.getFacetValue().getLiteral()+")");
-													}	
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable())
-													{
-													cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#>="
-															+ fr.getFacetValue().getLiteral() + ";"; 
-													constraints_elements.add("("+var.toString().toUpperCase() + ">="
-															+ fr.getFacetValue().getLiteral()+")");
+																+ fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ ">" + fr.getFacetValue().getLiteral() + ")");
 													}
-													else 
-													{
+												} else if (fr.getFacet().toString() == "minInclusive") {
+													if (var.isVariable()) {
+														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
+																+ "#>=" + fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ ">=" + fr.getFacetValue().getLiteral() + ")");
+													} else {
 														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>="
-																+ fr.getFacetValue().getLiteral() + ";"; 
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">="
-																+ fr.getFacetValue().getLiteral()+")");
-													}	
+																+ fr.getFacetValue().getLiteral() + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ ">=" + fr.getFacetValue().getLiteral() + ")");
+													}
 												}
 											}
-										}
-										else if (r.getDatatype().isDouble() //CHANGED , by ;
+										} else if (r.getDatatype().isDouble() // CHANGED , by ;
 												|| r.getDatatype().isFloat()) {
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												
+
 												if (fr.getFacet().toString() == "maxExclusive") {
-												
-												if (var.isVariable())
-													{
-													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + ">="
-															+ fr.getFacetValue().getLiteral() +"}" + ";";
-													constraints_elements.add("("+var.toString().toUpperCase() + ">="
-															+ fr.getFacetValue().getLiteral()+")");
-													}	
-												else
-												{ 
-														cons = cons  + "{"+ var.getLiteralValue().toString() + ">="
-																+ fr.getFacetValue().getLiteral() +"}" + ";";
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">="
-																+ fr.getFacetValue().getLiteral()+")");
-												}	
-													
+
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ ">=" + fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ ">=" + fr.getFacetValue().getLiteral() + ")");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ ">=" + fr.getFacetValue().getLiteral() + ")");
+													}
+
 												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable())
-													{
-													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + ">"
-															+ fr.getFacetValue().getLiteral() +"}" + ";";
-													constraints_elements.add("("+var.toString().toUpperCase() + ">"
-															+ fr.getFacetValue().getLiteral()+")");
-													}	
-												else
-												{ 
-														cons = cons  + "{"+ var.getLiteralValue().toString() + ">"
-																+ fr.getFacetValue().getLiteral() +"}" + ";";
-														constraints_elements.add("("+var.getLiteralValue().toString() + ">"
-																+ fr.getFacetValue().getLiteral()+")");
-												}	
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ ">" + fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ ">" + fr.getFacetValue().getLiteral() + ")");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ ">" + fr.getFacetValue().getLiteral() + ")");
+													}
 												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable())
-													{
-													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + "=<"
-															+ fr.getFacetValue().getLiteral() +"}" + ";";
-													constraints_elements.add("("+var.toString().toUpperCase() + "=<"
-															+ fr.getFacetValue().getLiteral()+")");
-													}	
-												else
-												{ 
-														cons = cons  + "{"+ var.getLiteralValue().toString() + "=<"
-																+ fr.getFacetValue().getLiteral() +"}" + ";";
-														constraints_elements.add("("+var.getLiteralValue().toString() + "=<"
-																+ fr.getFacetValue().getLiteral()+")");
-												}	
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ "=<" + fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "=<" + fr.getFacetValue().getLiteral() + ")");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "=<"
+																+ fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "=<" + fr.getFacetValue().getLiteral() + ")");
+													}
 												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable())
-													{
-													cons = cons  + "{"+ var.toString().substring(1).toUpperCase() + "<"
-															+ fr.getFacetValue().getLiteral() +"}" + ";";
-													constraints_elements.add("("+var.toString().toUpperCase() + "<"
-															+ fr.getFacetValue().getLiteral()+")");
-													}	
-												else
-												{ 
-														cons = cons  + "{"+ var.getLiteralValue().toString() + "<"
-																+ fr.getFacetValue().getLiteral() +"}" + ";";
-														constraints_elements.add("("+var.getLiteralValue().toString() + "<"
-																+ fr.getFacetValue().getLiteral()+")");
-												}	
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ "<" + fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "<" + fr.getFacetValue().getLiteral() + ")");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral() + "}" + ";";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "<" + fr.getFacetValue().getLiteral() + ")");
+													}
 												}
 											}
-										} else {error=true;System.out.println("OWL Restriction not allowed");}										
+										} else {
+											error = true;
+											System.out.println("OWL Restriction not allowed");
+										}
 									}
 									String domain = "";
 									Map<String, String> rename = new HashMap<String, String>();
 									for (Node v : vars_) {
-										if (v.isVariable())
-										{
-										if (types_literals.containsKey(v)) {
-											if (types_literals.get(v).equals("http://www.types.org#xsd:integer")
-													|| types_literals.get(v).equals("http://www.types.org#xsd:string")
-													|| types_literals.get(v).equals("http://www.types.org#xsd:dateTime")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:positiveInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:negativeInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:nonPositiveInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:nonNegativeInteger"))
-											{
-												Integer act = nvar;
-												nvar++;
-												domain = domain + "fd_dom(" + v + ",R" + act + ")" + ",";
-												rename.put("R" + act, v.toString());
-											
-											} else {
-												if (types_literals.get(v).equals("http://www.types.org#xsd:float")
-														|| types_literals.get(v)
-																.equals("http://www.types.org#xsd:double")
-														|| types_literals.get(v)
-																.equals("http://www.types.org#xsd:decimal")) {
+										if (v.isVariable()) {
+											if (types_literals.containsKey(v.toString().substring(1).toUpperCase())) {
+												if (types_literals.get(v.toString().substring(1).toUpperCase())
+														.equals("http://www.types.org#xsd:integer")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:string")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:dateTime")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:positiveInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:negativeInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:nonPositiveInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:nonNegativeInteger")) {
 													Integer act = nvar;
 													nvar++;
-													domain = domain + "(sup(" + v + ",S),inf(" + v + ",I)->R" + act
-															+ "=..['..',I,S];" + "(sup(" + v + ",S)->R" + act
-															+ "=..['..',inf,S];" + "inf(" + v + ",I)->R" + act
-															+ "=..['..',I,sup];" + "R" + act + "=..['..',inf,sup]))"
+													domain = domain + "fd_dom("
+															+ v.toString().substring(1).toUpperCase() + ",R" + act + ")"
 															+ ",";
-													rename.put("R" + act, v.toString());
+													rename.put("R" + act, v.toString().substring(1).toUpperCase());
+
+												} else {
+													if (types_literals.get(v.toString().substring(1).toUpperCase())
+															.equals("http://www.types.org#xsd:float")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:double")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:decimal")) {
+														Integer act = nvar;
+														nvar++;
+														domain = domain + "(sup("
+																+ v.toString().substring(1).toUpperCase() + ",S),"
+																+ "inf(" + v.toString().substring(1).toUpperCase()
+																+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
+																+ v.toString().substring(1).toUpperCase() + ",S)->R"
+																+ act + "=..['..',inf,S];" + "inf("
+																+ v.toString().substring(1).toUpperCase() + ",I)->R"
+																+ act + "=..['..',I,sup];" + "R" + act
+																+ "=..['..',inf,sup]))" + ",";
+														rename.put("R" + act, v.toString().substring(1).toUpperCase());
+													}
 												}
 											}
-										}
 										}
 									}
 									if (!domain.isEmpty()) {
 										domain = domain.substring(0, domain.length() - 1);
 									}
+
 									if (!cons.isEmpty()) {
 										cons = cons.substring(0, cons.length() - 1);
 									}
+
 									String newhead = "";
 									for (int i = 1; i < rules.get(0).size(); i++) {
 										newhead = newhead + rules.get(0).get(i) + ',';
 									}
-									
+
 									if (!newhead.isEmpty()) {
 										newhead = newhead.substring(0, newhead.length() - 1);
-										String head = newhead + "," + cons + "," + domain;
+
+										String head;
+										head = newhead + "," + cons + "," + domain;
+
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
 										if (qimpl.hasSolution())
-										//COUNTEREXAMPLE
+										// COUNTEREXAMPLE
 										{
 											error = true;
- 												System.out.println("Unsuccessful type validity. Case 14. Counterexample:");
-												Map<String, Term>[] sols = qimpl.allSolutions();
-												for (Map<String, Term> s : sols) {
-													for (String key : s.keySet())
-														if (s.get(key).isCompound()) {
-															System.out.println(rename.get(key) + "=" + s.get(key));
-														}
-												}
- 										} else {
+											System.out.println("Unsuccessful type validity. Case 14. Counterexample:");
+											Map<String, Term>[] sols = qimpl.allSolutions();
+											for (Map<String, Term> s : sols) {
+												for (String key : s.keySet())
+													if (s.get(key).isCompound()) {
+														System.out.println(rename.get(key) + "=" + s.get(key));
+													}
+											}
+										} else {
 											cons = "";
 											for (Node var : vars_) {
 												OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-												if (r.getDatatype().isInteger()) { //CHANGED ; by ,
+												if (r.getDatatype().isInteger()) { // CHANGED ; by ,
 													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 														if (fr.getFacet().toString() == "maxExclusive") {
-															
-															if (var.isVariable())
-															{
-															cons = cons + var.toString().substring(1).toUpperCase() + "#<"
-																	+ fr.getFacetValue().getLiteral() + ",";
-															}
-															else
-															{
+
+															if (var.isVariable()) {
+																cons = cons + var.toString().substring(1).toUpperCase()
+																		+ "#<" + fr.getFacetValue().getLiteral() + ",";
+															} else {
 																cons = cons + var.getLiteralValue().toString() + "#<"
-																		+ fr.getFacetValue().getLiteral() + ",";	
+																		+ fr.getFacetValue().getLiteral() + ",";
 															}
-																
+
 														} else if (fr.getFacet().toString() == "maxInclusive") {
-															if (var.isVariable())
-															{
-															cons = cons + var.toString().substring(1).toUpperCase() + "#<="
-																	+ fr.getFacetValue().getLiteral() + ",";
-															}
-															else
-															{
+															if (var.isVariable()) {
+																cons = cons + var.toString().substring(1).toUpperCase()
+																		+ "#<=" + fr.getFacetValue().getLiteral() + ",";
+															} else {
 																cons = cons + var.getLiteralValue().toString() + "#<="
-																		+ fr.getFacetValue().getLiteral() + ",";	
+																		+ fr.getFacetValue().getLiteral() + ",";
 															}
 														} else if (fr.getFacet().toString() == "minExclusive") {
-															if (var.isVariable())
-															{
-															cons = cons + var.toString().substring(1).toUpperCase() + "#>"
-																	+ fr.getFacetValue().getLiteral() + ",";
-															}
-															else
-															{
+															if (var.isVariable()) {
+																cons = cons + var.toString().substring(1).toUpperCase()
+																		+ "#>" + fr.getFacetValue().getLiteral() + ",";
+															} else {
 																cons = cons + var.getLiteralValue().toString() + "#>"
-																		+ fr.getFacetValue().getLiteral() + ",";	
+																		+ fr.getFacetValue().getLiteral() + ",";
 															}
 														} else if (fr.getFacet().toString() == "minInclusive") {
-															if (var.isVariable())
-															{
-															cons = cons + var.toString().substring(1).toUpperCase() + "#>="
-																	+ fr.getFacetValue().getLiteral() + ",";
-															}
-															else
-															{
+															if (var.isVariable()) {
+																cons = cons + var.toString().substring(1).toUpperCase()
+																		+ "#>=" + fr.getFacetValue().getLiteral() + ",";
+															} else {
 																cons = cons + var.getLiteralValue().toString() + "#>="
-																		+ fr.getFacetValue().getLiteral() + ",";	
+																		+ fr.getFacetValue().getLiteral() + ",";
 															}
 														}
 													}
-												} else
-													if (r.getDatatype().isFloat()|| //CHANGED ; by ,
-															r.getDatatype().isDouble()) {
-														for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-															if (fr.getFacet().toString() == "maxExclusive") {
-																if (var.isVariable())
-																{
-																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-																else 
-																{
-																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<"
-																			+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-															} else if (fr.getFacet().toString() == "maxInclusive") {
-																if (var.isVariable())
-																{
-																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<="
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-																else 
-																{
-																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "<="
-																			+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-															} else if (fr.getFacet().toString() == "minExclusive") {
-																if (var.isVariable())
-																{
-																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-																else 
-																{
-																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">"
-																			+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-															} else if (fr.getFacet().toString() == "minInclusive") {
-																if (var.isVariable())
-																{
-																cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">="
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
-																else 
-																{
-																	cons = cons + "{"+ var.toString().substring(1).toUpperCase() + ">="
-																			+ fr.getFacetValue().getLiteral() + "}" + ",";
-																}
+												} else if (r.getDatatype().isFloat() || // CHANGED ; by ,
+												r.getDatatype().isDouble()) {
+													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+														if (fr.getFacet().toString() == "maxExclusive") {
+															if (var.isVariable()) {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "<" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															} else {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "<" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															}
+														} else if (fr.getFacet().toString() == "maxInclusive") {
+															if (var.isVariable()) {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "<=" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															} else {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "<=" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															}
+														} else if (fr.getFacet().toString() == "minExclusive") {
+															if (var.isVariable()) {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															} else {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															}
+														} else if (fr.getFacet().toString() == "minInclusive") {
+															if (var.isVariable()) {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">=" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
+															} else {
+																cons = cons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">=" + fr.getFacetValue().getLiteral() + "}"
+																		+ ",";
 															}
 														}
-													} else {error=true;System.out.println("OWL Restriction not allowed");}
+													}
+												} else {
+													error = true;
+													System.out.println("OWL Restriction not allowed");
+												}
 											}
 											if (!cons.isEmpty()) {
 												cons = cons.substring(0, cons.length() - 1);
 											}
+
 											newhead = "";
 											for (int i = 1; i < rules.get(0).size(); i++) {
 												newhead = newhead + rules.get(0).get(i) + ',';
 											}
-											if (!newhead.isEmpty())
-											{
+											if (!newhead.isEmpty()) {
 												newhead = newhead.substring(0, newhead.length() - 1);
-												head = newhead + "," + cons;
+
+												head = newhead + "," + cons + "," + domain;
+
 												org.jpl7.Query qcons = new org.jpl7.Query(head);
 												if (!qcons.hasSolution()) {
-													//INCONSISTENCY
+													// INCONSISTENCY
 													error = true;
- 														System.out.println(
-																"Unsuccessful type validity. Case 14.1. Caused by the following inconsistency");
-														System.out.println(head);
- 												} else {
-													//ENTAILMENT
+													System.out.println(
+															"Unsuccessful type validity. Case 14.1. Caused by the following inconsistency");
+													System.out.println(head);
+												} else {
+													// ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
-													} else {}
+													} else {
+													}
 												}
-											}
-											else {
-												//INCOMPLETENESS
+											} else {
+												// INCOMPLETENESS
 												error = true;
- 													System.out.println(
-															"Unsuccessful type validity. Case 14.2. The following expression cannot be proved");
-													System.out.println(head);
- 											}
+												System.out.println(
+														"Unsuccessful type validity. Case 14.2. The following expression cannot be proved");
+												System.out.println(head);
+											}
+										}
+									} else {
+										// INCOMPLETENESS
+										error = true;
+										System.out.println(
+												"Unsuccessful type validity. Case 14.3. The following expression cannot be proved");
+										for (String c : constraints_elements) {
+											System.out.print(c);
 										}
 									}
-									else {
-										//INCOMPLETENESS
-										error = true;
- 											System.out.println(
-													"Unsuccessful type validity. Case 14.3. The following expression cannot be proved");
-											for (String c : constraints_elements) {
-												System.out.print(c);
-											}
- 									}
 								} else {
-									//INCOMPLETENESS
+									// INCOMPLETENESS
 									error = true;
- 										System.out.println(
-												"Unsuccessful type validity. Case 14.4. The property cannot be proved. "
-														+ "Not enough information for:");
-										System.out.println(dp.getIRI().toString());
- 								}
+									System.out.println(
+											"Unsuccessful type validity. Case 14.4. The property cannot be proved. "
+													+ "Not enough information for:");
+									System.out.println(dp.getIRI().toString());
+								}
 							}
 						} else {
-							//INCOMPLETENESS
+							// INCOMPLETENESS
 							error = true;
- 								System.out.println("Unsuccessful type validity. Case 14.5 . The property cannot be proved. "
-										+ "Not enough information for:");
-								System.out.println(var_name);
- 						}
+							System.out.println("Unsuccessful type validity. Case 14.5 . The property cannot be proved. "
+									+ "Not enough information for:");
+							System.out.println(var_name);
+						}
 					}
 				}
 			}
@@ -3281,22 +3186,22 @@ public class TSPARQL {
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
 							error = true;
- 								System.out.println(
-										"Unsuccessful type validity. Case 17. The following class membership cannot be proved:");
-								System.out.println(in);
-								System.out.println("rdf:type");
-								System.out.println(arg0);
- 						} else {
+							System.out.println(
+									"Unsuccessful type validity. Case 17. The following class membership cannot be proved:");
+							System.out.println(in);
+							System.out.println("rdf:type");
+							System.out.println(arg0);
+						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
 							if (consistency == "true") {
 							} else {
 								error = true;
- 									System.out.println(
-											"Unsuccessful type validity. Case 17.1. Caused by the following inconsistency:");
-									System.out.print(explanations());
-									System.out.println(arg0);
- 							}
+								System.out.println(
+										"Unsuccessful type validity. Case 17.1. Caused by the following inconsistency:");
+								System.out.print(explanations());
+								System.out.println(arg0);
+							}
 							removeTypeAssertion(arg0, in);
 						}
 					} else { // arg0.isDataRestriction()
@@ -3334,69 +3239,80 @@ public class TSPARQL {
 									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 									for (Node var : vars_) {
 										if (val.isInteger()) {
-											if (var.isVariable())
-											{
-											cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#=" + val.getLiteral();
-											constraints_elements.add("("+var.toString().toUpperCase() + "=" + val.getLiteral()+")");
+											if (var.isVariable()) {
+												cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#="
+														+ val.getLiteral();
+												constraints_elements.add("(" + var.toString().toUpperCase() + "="
+														+ val.getLiteral() + ")");
+											} else {
+												cons = cons + "#\\" + var.getLiteralValue().toString() + "#="
+														+ val.getLiteral();
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "="
+														+ val.getLiteral() + ")");
 											}
-											else
-											{
-												cons = cons + "#\\" + var.getLiteralValue().toString() + "#=" + val.getLiteral();
-												constraints_elements.add("("+var.getLiteralValue().toString() + "=" + val.getLiteral()+")");
-											}
-										}
-										else if (val.isFloat() || val.isDouble() ) {
-											if (var.isVariable())
-											{
-											cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "=\\=" + val.getLiteral();
-											constraints_elements.add("("+var.toString().toUpperCase() + "=" + val.getLiteral()+")");
-											}
-											else
-											{
-												cons = cons + "#\\" + var.getLiteralValue().toString() + "=\\=" + val.getLiteral();
-												constraints_elements.add("("+var.getLiteralValue().toString() + "=" + val.getLiteral()+")");
+										} else if (val.isFloat() || val.isDouble()) {
+											if (var.isVariable()) {
+												cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "=\\="
+														+ val.getLiteral();
+												constraints_elements.add("(" + var.toString().toUpperCase() + "="
+														+ val.getLiteral() + ")");
+											} else {
+												cons = cons + "#\\" + var.getLiteralValue().toString() + "=\\="
+														+ val.getLiteral();
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "="
+														+ val.getLiteral() + ")");
 											}
 										}
 									}
 									String domain = "";
 									Map<String, String> rename = new HashMap<String, String>();
 									for (Node v : vars_) {
-										if (v.isVariable())
-										{
-										if (types_literals.containsKey(v)) {
-											if (types_literals.get(v).equals("http://www.types.org#xsd:integer")
-													|| types_literals.get(v).equals("http://www.types.org#xsd:string")
-													|| types_literals.get(v).equals("http://www.types.org#xsd:dateTime")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:positiveInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:negativeInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:nonPositiveInteger")
-													|| types_literals.get(v)
-															.equals("http://www.types.org#xsd:nonNegativeInteger"))
-											{
-												Integer act = nvar;
-												nvar++;
-												domain = domain + "fd_dom(" + v + ",R" + act + ")" + ",";
-												rename.put("R" + act, v.toString());
-											} else {
-												if (types_literals.get(v).equals("http://www.types.org#xsd:float")
-														|| types_literals.get(v)
-																.equals("http://www.types.org#xsd:double")
-														|| types_literals.get(v)
-																.equals("http://www.types.org#xsd:decimal")) {
+										if (v.isVariable()) {
+											if (types_literals.containsKey(v.toString().substring(1).toUpperCase())) {
+												if (types_literals.get(v.toString().substring(1).toUpperCase())
+														.equals("http://www.types.org#xsd:integer")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:string")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:dateTime")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:positiveInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:negativeInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:nonPositiveInteger")
+														|| types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:nonNegativeInteger")) {
 													Integer act = nvar;
 													nvar++;
-													domain = domain + "(sup(" + v + ",S),inf(" + v + ",I)->R" + act
-															+ "=..['..',I,S];" + "(sup(" + v + ",S)->R" + act
-															+ "=..['..',inf,S];" + "inf(" + v + ",I)->R" + act
-															+ "=..['..',I,sup];" + "R" + act + "=..['..',inf,sup]))"
+													domain = domain + "fd_dom("
+															+ v.toString().substring(1).toUpperCase() + ",R" + act + ")"
 															+ ",";
-													rename.put("R" + act, v.toString());
+													rename.put("R" + act, v.toString().substring(1).toUpperCase());
+												} else {
+													if (types_literals.get(v.toString().substring(1).toUpperCase())
+															.equals("http://www.types.org#xsd:float")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:double")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:decimal")) {
+														Integer act = nvar;
+														nvar++;
+														domain = domain + "(sup("
+																+ v.toString().substring(1).toUpperCase() + ",S),"
+																+ "inf(" + v.toString().substring(1).toUpperCase()
+																+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
+																+ v.toString().substring(1).toUpperCase() + ",S)->R"
+																+ act + "=..['..',inf,S];" + "inf("
+																+ v.toString().substring(1).toUpperCase() + ",I)->R"
+																+ act + "=..['..',I,sup];" + "R" + act
+																+ "=..['..',inf,sup]))" + ",";
+														rename.put("R" + act, v.toString().substring(1).toUpperCase());
+													}
 												}
 											}
-										}
 										}
 									}
 									if (!domain.isEmpty()) {
@@ -3408,141 +3324,142 @@ public class TSPARQL {
 									}
 									if (!newhead.isEmpty()) {
 										newhead = newhead.substring(0, newhead.length() - 1);
-										String head = newhead + "," + cons + "," + domain;
+
+										String head;
+
+										head = newhead + "," + cons + "," + domain;
+
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
-										if (qimpl.hasSolution())
-										{ //COUNTEREXAMPLE
+										if (qimpl.hasSolution()) { // COUNTEREXAMPLE
 											error = true;
- 												System.out.println("Unsuccessful type validity. Case 18. Counterexample:");
-												Map<String, Term>[] sols = qimpl.allSolutions();
-												for (Map<String, Term> s : sols) {
-													for (String key : s.keySet())
-														if (s.get(key).isCompound()) {
-															System.out.println(rename.get(key) + "=" + s.get(key));
-														}
-												}
- 										}
-										else {
+											System.out.println("Unsuccessful type validity. Case 18. Counterexample:");
+											Map<String, Term>[] sols = qimpl.allSolutions();
+											for (Map<String, Term> s : sols) {
+												for (String key : s.keySet())
+													if (s.get(key).isCompound()) {
+														System.out.println(rename.get(key) + "=" + s.get(key));
+													}
+											}
+										} else {
 											vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 											cons = "";
 											for (Node var : vars_) {
-												
+
 												if (val.isInteger()) {
-													if (var.isVariable())
-													{
-													cons = cons + var.toString().substring(1).toUpperCase() + "#=" + val.getLiteral();
-													}
-													else
-													{
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#="
+																+ val.getLiteral();
+													} else {
 														cons = cons + var.getLiteral() + "#=" + val.getLiteral();
 													}
+												} else if (val.isFloat() || val.isDouble()) {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ "=:=" + val.getLiteral() + "}";
+													} else {
+														cons = cons + "{" + var.getLiteral() + "=:=" + val.getLiteral()
+																+ "}";
+													}
+												} else {
+													error = true;
+													System.out.println("OWL Restriction not allowed");
 												}
-												else if (val.isFloat() || val.isDouble()) {
-													if (var.isVariable())
-													{
-													cons = cons + "{"+ var.toString().substring(1).toUpperCase() + "=:=" + val.getLiteral() +"}";
-													}
-													else
-													{
-													cons = cons + "{"+ var.getLiteral() + "=:=" + val.getLiteral() +"}";
-													}
-												} else {error=true;System.out.println("OWL Restriction not allowed");}
 											}
 											newhead = "";
 											for (int i = 1; i < rules.get(0).size(); i++) {
 												newhead = newhead + rules.get(0).get(i) + ',';
 											}
 											if (!newhead.isEmpty()) {
+
 												newhead = newhead.substring(0, newhead.length() - 1);
+
 												head = newhead + "," + cons;
+
 												org.jpl7.Query qcons = new org.jpl7.Query(head);
 												if (!qcons.hasSolution()) {
-													//INCONSISTENCY
+													// INCONSISTENCY
 													error = true;
- 														System.out.println(
-																"Unsuccessful type validity. Case 18.1. Caused by the following inconsistency");
-														System.out.println(head);
- 												} else {
-													//ENTAILMENT
+													System.out.println(
+															"Unsuccessful type validity. Case 18.1. Caused by the following inconsistency");
+													System.out.println(head);
+												} else {
+													// ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
-													} else {}
+													} else {
+													}
 												}
 											} else {
-												//INCOMPLETENESS
+												// INCOMPLETENESS
 												error = true;
- 													System.out.println(
-															"Unsuccessful type validity. Case 18.2. The following expression cannot be proved");
-													System.out.println(cons);
-												 											}
+												System.out.println(
+														"Unsuccessful type validity. Case 18.2. The following expression cannot be proved");
+												System.out.println(cons);
+											}
 										}
 									} else {
-										//INCOMPLETENESS
+										// INCOMPLETENESS
 										error = true;
- 											System.out.println(
-													"Unsuccessful type validity. Case 18.3. The following expression cannot be proved:");
-											for (String c : constraints_elements)
-											{System.out.print(c);							
-											}
- 									    }
+										System.out.println(
+												"Unsuccessful type validity. Case 18.3. The following expression cannot be proved:");
+										for (String c : constraints_elements) {
+											System.out.print(c);
 										}
-										else {
-											//INCOMPLETENESS
-											error = true;
- 												System.out.println(
-														"Unsuccessful type validity. Case 18.4. The property cannot be proved. "
-																+ "Not enough information for: ");
-												System.out.println(dp.getIRI().toString());
- 										}
 									}
-								}
-								else {
-									//INCOMPLETENESS
+								} else {
+									// INCOMPLETENESS
 									error = true;
- 										System.out.println(
-												"Unsuccessful type validity. Case 18.5. The property cannot be proved. "
-														+ "Not enough information for: ");
-										System.out.println(var_name);
- 								}
+									System.out.println(
+											"Unsuccessful type validity. Case 18.4. The property cannot be proved. "
+													+ "Not enough information for: ");
+									System.out.println(dp.getIRI().toString());
+								}
 							}
+						} else {
+							// INCOMPLETENESS
+							error = true;
+							System.out.println("Unsuccessful type validity. Case 18.5. The property cannot be proved. "
+									+ "Not enough information for: ");
+							System.out.println(var_name);
 						}
+					}
+				}
 			}
 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
-				
+
 				System.out.println("This type cannot be proved by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
-				
-				 
+
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				
+
 				System.out.println("This type cannot be proved by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
-				
-				 
+
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				
+
 				System.out.println("This type cannot be proved by type validity analysis:");
 				System.out.println(arg0);
 				error = true;
-				
-				 
+
 			}
-		
+
 		};
-		
-		if (!wrong_analysis) {ce.accept(cv);}
-		
+
+		if (!wrong_analysis) {
+			ce.accept(cv);
+		}
+
 	}
 
 	public void copy(String file) {
@@ -3595,540 +3512,308 @@ public class TSPARQL {
 
 	};
 
+	 
+
 	public static void main(String[] args) {
 
-		//CORRECTNESS
-		
-		//First Method. Wrongly Typed Query.
+		// CORRECTNESS
+
+		// First Method. Wrongly Typed Query.
+
+		String ex0 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE { ?USER sn:age ?AGE . FILTER(?AGE = 20 && ?AGE = 30 && ?AGE=50 && ?AGE=90) }\n";
 		
 		String ex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER "
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
 				+ "WHERE { sn:foo sn:unknown sn:bad }\n";
 
 		String ex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:attends_to ?EVENT . \r\n" + 
-				"?USER sn:friend_of ?EVENT\r\n" + 
-				"}";
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
+				+ "?USER sn:friend_of ?EVENT\r\n" + "}";
 
 		String ex3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:attends_to ?USER\r\n" + 
-				"}\r\n" + 
-				"\r\n" + 
-				"";
+				+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?USER\r\n" + "}\r\n" + "\r\n" + "";
 
-		
 		String ex4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:likes ?EVENT\r\n ." +
-				"?EVENT rdf:type sn:User\r\n" +
-				"}";
-		
- 		String ex5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
- 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:attends_to ?EVENT . \r\n" + 
-				"?USER sn:age ?EVENT\r\n" + 
-				"}\n";
-		
-		
- 		String ex6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:age ?EVENT .\r\n" + 
-				"?EVENT rdf:type sn:Event\r\n" + 
-				"}";
+				+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:likes ?EVENT\r\n ." + "?EVENT rdf:type sn:User\r\n"
+				+ "}";
 
- 		
-		String ex7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:age ?EVENT .\r\n" + 
-				"?EVENT rdf:type ?TYPE\r\n" + 
-				"}";
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
+				+ "?USER sn:age ?EVENT\r\n" + "}\n";
+
+		String ex6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n"
+				+ "?EVENT rdf:type sn:Event\r\n" + "}";
+
+		String ex7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n" + "?EVENT rdf:type ?TYPE\r\n"
+				+ "}";
 
 		String ex8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?P ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER ?P ?EVENT . \r\n" + 
-				"?USER sn:age ?P\r\n" + 
-				"}";
+				+ "SELECT ?USER ?P ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?P ?EVENT . \r\n" + "?USER sn:age ?P\r\n"
+				+ "}";
 
-		
 		String ex9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER rdf:type sn:Event .\r\n" + 
-				"?USER rdf:type sn:User  \r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type sn:User  \r\n" + "}";
 
 		String ex10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER rdf:type sn:Event .\r\n" + 
-				"?USER rdf:type ?TYPE .\r\n" + 
-				"?TYPE rdfs:subClassOf sn:User\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type ?TYPE .\r\n"
+				+ "?TYPE rdfs:subClassOf sn:User\r\n" + "}";
 
-		
 		String ex11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER rdf:type 10\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type 10\r\n" + "}";
 
-		
 		String ex12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?VALUE WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER sn:name ?VALUE .\r\n" + 
-				"FILTER (?VALUE > 10) \r\n" + 
-				"}";
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "?USER sn:name ?VALUE .\r\n"
+				+ "FILTER (?VALUE > 10) \r\n" + "}";
 
-		 
-		
 		String ex13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?VALUE WHERE \r\n" + 
-				"{ \r\n" + 
-				"sn:jesus sn:name ?VALUE .\r\n" + 
-				"FILTER (?VALUE > 10) \r\n" + 
-				"}";
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?VALUE .\r\n"
+				+ "FILTER (?VALUE > 10) \r\n" + "}";
 
-		
 		String ex14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + 
-				"{ \r\n" + 
-				"sn:jesus sn:name ?NAME .\r\n" + 
-				"sn:jesus sn:age ?NAME\r\n" + 
-				"}";
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
+				+ "sn:jesus sn:age ?NAME\r\n" + "}";
 
-		
- 		String ex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
- 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + 
-				"{ \r\n" + 
-				"sn:jesus sn:name ?NAME .\r\n" + 
-				"sn:jesus sn:age ?AGE .\r\n" + 
-				"FILTER (?NAME > ?AGE) \r\n" + 
-				"}";
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
+				+ "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?NAME > ?AGE) \r\n" + "}";
 
- 		
 		String ex16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?EVENT WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER ?PROP ?EVENT . \r\n" + 
-				"FILTER (?USER > 10)\r\n" + 
-				"}";
-		
-		//First Method. Inconsistent Query.
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?PROP ?EVENT . \r\n" + "FILTER (?USER > 10)\r\n"
+				+ "}";
 
-		//MIRAR
+		// First Method. Inconsistent Query.
+
+		// MIRAR
 		String ex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER "
-				+ "WHERE {\n" 
-				+ "?USER sn:age ?AGE .\n" 
-				+ "FILTER (?AGE = 50) "
-				+ ". BIND ((?AGE+?AGE) AS ?U) "
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE = 50) " + ". BIND ((?AGE+?AGE) AS ?U) "
 				+ ". FILTER(?U = 10)}";
 
 		String ex18 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER1 ?USER2 "
-				+ "WHERE {\n" 
-				+ "?USER1 sn:age ?AU1 . "
-				+ "?USER2 sn:age ?AU2 . \n "
-				+ "FILTER(?AU1-?AU2 < 10) .\n" 
-				+ "FILTER(?AU1 > 40 ).\n" 
-				+ "FILTER (?AU2 < 18) }\n";
+				+ "SELECT ?USER1 ?USER2 " + "WHERE {\n" + "?USER1 sn:age ?AU1 . " + "?USER2 sn:age ?AU2 . \n "
+				+ "FILTER(?AU1-?AU2 < 10) .\n" + "FILTER(?AU1 > 40 ).\n" + "FILTER (?AU2 < 18) }\n";
 
 		String ex19 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER "
-				+ "WHERE {\n" 
-				+ "?USER sn:age ?AU . " 
-				+ "FILTER(?AU > 30 ).\n" 
-				+ "FILTER (?AU < 31) }\n";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:age ?AU . " + "FILTER(?AU > 30 ).\n" + "FILTER (?AU < 31) }\n";
 
 		String ex20 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER "
-				+ "WHERE {\n" 
-				+ "?USER sn:height ?HU  . " 
-				+ "FILTER(?HU > 130 ).\n"
-				+ "FILTER (?HU < 131) }\n";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:height ?HU  . " + "FILTER(?HU > 130 ).\n" + "FILTER (?HU < 131) }\n";
 
 		String ex21 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER sn:friend_of ?USER \r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:friend_of ?USER \r\n" + "}";
 
 		String ex22 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" 
-				+ "?USER sn:height ?H .\n" 
-				+ "FILTER (?H > 175) .\n"
-				+ "FILTER EXISTS "
-				+ "{SELECT ?USER2 WHERE {\n" 
-				+ "?USER2 sn:height ?H2 .\n" 
-				+ "FILTER (?H2 < 176) .\n"
-				+ "FILTER (?H < ?H2 ) }\n" 
-				+ "}}\n";
+				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n" + "FILTER EXISTS "
+				+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
+				+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
 
-		
 		String ex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"sn:jesus sn:friend_of sn:jesus\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:friend_of sn:jesus\r\n" + "}";
 
-		
 		String ex24 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?DA \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER rdf:type sn:Active . \r\n" + 
-				"?USER sn:dailyActivity ?DA . \r\n" + 
-				"FILTER (?DA<=4) \r\n" + 
-				"}";
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Active . \r\n"
+				+ "?USER sn:dailyActivity ?DA . \r\n" + "FILTER (?DA<=4) \r\n" + "}";
 
 		String ex25 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"sn:jesus sn:age ?AGE .\r\n" + 
-				"FILTER (?AGE = 50) .\r\n" + 
-				"FILTER (?AGE = 100)\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?AGE = 50) .\r\n"
+				+ "FILTER (?AGE = 100)\r\n" + "}";
+
+		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER2 sn:age ?AGE2 . \r\n"
+				+ "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
+				+ "FILTER (?SUM < 10)\r\n" + "}";
 
 		
-		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER sn:age ?AGE .\r\n" + 
-				"?USER2 sn:age ?AGE2 . \r\n" + 
-				"FILTER (?AGE2 < 50) .\r\n" + 
-				"FILTER (?AGE > 100) .\r\n" + 
-				"BIND((?AGE + ?AGE2) AS ?SUM) .\r\n" + 
-				"FILTER (?SUM < 10)\r\n" + 
-				"}";
-
-		//MIRAR
 		String ex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?MESSAGE\r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?MESSAGE sn:date ?DATE .\r\n" + 
-				"FILTER (?DATE < '09/04/2015') .\r\n" + 
-				"FILTER (?DATE > '09/04/2015')\r\n" + 
-				"}";
+				+ "SELECT ?MESSAGE\r\n" + "WHERE \r\n" + "{ \r\n" + "?MESSAGE sn:date ?DATE .\r\n"
+				+ "FILTER (?DATE < '2017-09-04T01:00:00Z'^^xsd:dateTime) .\r\n"
+				+ "FILTER (?DATE > '2017-09-04T01:00:00Z'^^xsd:dateTime)\r\n" + "}";
 
 		String ex28 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER\r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER sn:name ?NAME .\r\n" + 
-				"FILTER (?NAME < 'a') .\r\n" + 
-				"FILTER (?NAME > 'z')\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER\r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:name ?NAME .\r\n" + "FILTER (?NAME < 'a') .\r\n"
+				+ "FILTER (?NAME > 'z')\r\n" + "}";
 
 		String ex29 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER sn:age ?AGE .\r\n" + 
-				"?USER sn:age ?AGE2\r\n" + 
-				"FILTER (?AGE != ?AGE2) \r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER sn:age ?AGE2\r\n"
+				+ "FILTER (?AGE != ?AGE2) \r\n" + "}";
 
 		String ex30 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER \r\n" + 
-				"WHERE \r\n" + 
-				"{ \r\n" + 
-				"?USER rdf:type sn:OpinionLeader .\r\n" + 
-				"?USER sn:creates ?MESSAGE\r\n" + 
-				"}";
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:OpinionLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
+				+ "}";
 
 		String ex31 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:SocialLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
+				+ "}";
+
+		// TYPE VALIDITY
+
+		// Second Method. Incomplete Query. Missing Triple Pattern.
+
+		String ex32 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER WHERE {\n" 
-				+ "?USER sn:name ?name . "
-				+ "FILTER ('z' < ?name) . "
-				+ "FILTER (?name < 'a') }\n";
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n"
+				+ "?USER2 sn:likes ?MESSAGE\r\n" + "}";
 
-		//MIRAR
-		String ex32 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex33 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?EVENT "
-				+ "WHERE {\n" 
-				+ "?EVENT sn:date ?date . "
-				+ "FILTER ('2017-09-04T01:00:00Z' < ?date) . "
-				+ "FILTER (?date < '2017-09-04T02:00:00Z') }\n";
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:likes ?MESSAGE .\r\n"
+				+ "?USER2 sn:shares ?MESSAGE\r\n" + "}";
 
-		
-		String ex33 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER \r\n" + 
-						"WHERE \r\n" + 
-						"{ \r\n" + 
-						"?USER rdf:type sn:SocialLeader .\r\n" + 
-						"?USER sn:creates ?MESSAGE\r\n" + 
-						"}";
-
-		//TYPE VALIDITY
-		
-		//Second Method. Incomplete Query. Missing Triple Pattern.
-		
-		
-		String ex34 = "# ?USER : sn:SocialLeader\n" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex34 = "# ?USER : sn:OpinionLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:creates ?MESSAGE .\r\n" + 
-				"?USER2 sn:likes ?MESSAGE\r\n" + 
-				"}";
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n" + "}";
 
-		String ex35 = "# ?USER : sn:SocialLeader\n"
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		// Second Method. Incomplete Query. Missing Filter Condition.
+
+		String ex35 = "# ?USER : sn:Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:likes ?MESSAGE .\r\n" + 
-				"?USER2 sn:shares ?MESSAGE\r\n" + 
-				"}";
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL \r\n" + "}";
 
-		String ex36 = "# ?USER : sn:OpinionLeader\n" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		// Second Method. Inconsistent Variable Typing. Ontology Inconsistency.
+
+		String ex36 = "# ?USER : sn:Message" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER sn:creates ?MESSAGE .\r\n" + 
-				"}";
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
 
-		//Second Method. Incomplete Query. Missing Filter Condition.
-		
-		
-		String ex37 = "# ?USER : sn:Influencer" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex37 = "# ?USER : sn:User" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?DL \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER rdf:type sn:User .\r\n" + 
-				"?USER sn:dailyLikes ?DL \r\n" + 
-				"}";
-		
-		//Second Method. Inconsistent Variable Typing. Ontology Inconsistency.
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
 
-		String ex38 = "# ?USER : sn:Message" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		// Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
+
+		String ex38 = "# ?USER : sn:Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?MESSAGE sn:attends_to ?USER\r\n" + 
-				"}";
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL < 200) \r\n" + "}";
 		
-		String ex39 = "# ?USER : sn:User" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		String ex39 = "# ?USER : sn:Active" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?MESSAGE sn:attends_to ?USER\r\n" + 
-				"}";
-		
-		//Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyActivity ?DA .\r\n" + "FILTER (?DA < 200) \r\n" + "}";
 
-		
-		String ex40 = "# ?USER : sn:Influencer" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+		// Second Method. Counterexamples of Variable Typing.
+
+		String ex40 = "# ?USER : sn:Influencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?DL \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER rdf:type sn:User .\r\n" + 
-				"?USER sn:dailyLikes ?DL .\r\n" + 
-				"FILTER (?DL < 5) \r\n" + 
-				"}";
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
 
-		//Second Method. Counterexamples of Variable Typing.
-		
-		//Mirar
-		String ex41 = "# ?USER : sn:Influencer" 
-				+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" 
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?DL \r\n" + 
-				"WHERE \r\n" + 
-				"{\r\n" + 
-				"?USER rdf:type sn:User .\r\n" + 
-				"?USER sn:dailyLikes ?DL .\r\n" + 
-				"FILTER (?DL < 200) \r\n" + 
-				"}";
-
-		 
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;
 		OWLOntologyManager manager_owl;
@@ -4179,17 +3864,17 @@ public class TSPARQL {
 			e2.printStackTrace();
 		}
 
-		
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/social-network-2019.owl");
 
-		//t.SPARQL_CORRECTNESS(ex27);
+		t.SPARQL_CORRECTNESS(ex0);
+
+		// t.SPARQL_TYPE_VALIDITY(ex40, "USER",
+		// "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer");
+
+		 
 		
-		t.SPARQL_TYPE_VALIDITY(ex40, "USER", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer");
-		
-       
+
 	};
-	 
-	
-	
+
 }

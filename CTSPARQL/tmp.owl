@@ -162,7 +162,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyActivity">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
     </owl:DatatypeProperty>
     
 
@@ -171,7 +171,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyLikes">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
     </owl:DatatypeProperty>
     
 
@@ -466,6 +466,23 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#AGE -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#AGE">
+        <rdf:type rdf:resource="http://www.types.org#xsd:integer"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#USER -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#USER">
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </owl:NamedIndividual>
     
 
 

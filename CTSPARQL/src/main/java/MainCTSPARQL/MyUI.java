@@ -19,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 
 import org.apache.log4j.varia.NullAppender;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -42,6 +43,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
@@ -67,6 +69,7 @@ import com.vaadin.server.ErrorHandler;
 @Theme("mytheme")
 public class MyUI extends UI {
 
+	String current_ontology="social-network-2019.owl";
 	OWLOntologyManager manager = null;
 	OWLOntologyManager manager_rdf = null;
 	OWLOntologyManager manager_owl = null;
@@ -79,6 +82,7 @@ public class MyUI extends UI {
 	String rdf = "C:/rdf-vocabulary.owl";
 	String owl = "C:/owl-vocabulary.owl";
 	OWLReasoner reasoner;	
+	ComboBox<String> ontologies = new ComboBox<String>();
 	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>(); 
 	public static String readStringFromURL(String requestURL) throws IOException {
@@ -92,47 +96,75 @@ public class MyUI extends UI {
 	protected void init(VaadinRequest vaadinRequest) {
 	
 		final VerticalLayout layout = new VerticalLayout();		 
-		Image lab = new Image(null, new ThemeResource("banner-tsparql.jpg"));
+		Image lab = new Image(null, new ThemeResource("banner.jpg"));
 		lab.setWidth("100%");
 		lab.setHeight("200px");
-		TextField filet = new TextField();
-		filet.setStyleName("multi-line-caption");
-		filet.setSizeFull();
-		filet.setValue("social-network-2019.owl");
+		//TextField filet = new TextField();
+		//filet.setStyleName("multi-line-caption");
+		//filet.setSizeFull();
+		//filet.setValue("social-network-2019.owl");
+		ontologies.setItems("social-network-2019.owl");
+		ontologies.setEmptySelectionCaption("Please select an ontology:");
+		ontologies.setWidth("100%");
+		ontologies.setEmptySelectionAllowed(false);
+		
+		
+		ontologies.addValueChangeListener(event -> {
+		    if (event.getSource().isEmpty()) {
+		       Notification.show("Empty Selection");
+		    } else {
+		        current_ontology = event.getValue();
+		    }
+		});
 
-		/*setErrorHandler(new ErrorHandler() {
+		setErrorHandler(new ErrorHandler() {
             
             @Override
             public void error(com.vaadin.server.ErrorEvent event) {
                 //System.out.println(event.getThrowable().getMessage());
                 Notification.show(event.getThrowable().getMessage());
-                restore("C:/"+filet.getValue());
+                restore("C:/"+current_ontology);
             }
             
-        });*/
+        });
 
 		HorizontalLayout hlb = new HorizontalLayout();
+		
 		Button correctness = new Button("Correctness");
 		correctness.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		correctness.setIcon(VaadinIcons.AMBULANCE);  
+		correctness.setWidth("100%");
+		
 		Button type_validity = new Button("Type Validity");
 		type_validity.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		type_validity.setIcon(VaadinIcons.HEART);
+		type_validity.setWidth("100%");
+		
 		Button run_type_validity = new Button("Run Type Validity");
 		run_type_validity.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		run_type_validity.setIcon(VaadinIcons.PLAY);	
+		run_type_validity.setWidth("100%");
+		
 		HorizontalLayout hlt = new HorizontalLayout();
 		hlb.addComponent(correctness);
 		hlb.addComponent(type_validity);
+		hlb.setWidth("100%");
+		
 		hlt.addComponent(cb_type_validity);
 		hlt.addComponent(cb_vars);
 		hlt.addComponent(run_type_validity);
+		hlt.setWidth("100%");
+		
 		cb_type_validity.setVisible(false);
-		cb_type_validity.setWidth("600px");
-		cb_vars.setVisible(false);
+		cb_type_validity.setWidth("100%");
 		cb_type_validity.setEmptySelectionAllowed(false);
-		cb_vars.setEmptySelectionAllowed(false);	
+		
+		cb_vars.setVisible(false);
+		cb_vars.setEmptySelectionAllowed(false);
+		cb_vars.setWidth("100%");
+		
 		run_type_validity.setVisible(false);		
+		
 		Panel edS = new Panel();
 		Panel resP = new Panel();
 		edS.setSizeFull();
@@ -452,6 +484,7 @@ public class MyUI extends UI {
 			
 		 
 		ComboBox<String> examplest = new ComboBox<>("Examples of Typing");
+		examplest.setWidth("100%");
 		examplest.setEmptySelectionAllowed(false);
 		examplest.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9", "Example 10","Example 11", "Example 12", "Example 13", "Example 14", "Example 15", 
@@ -459,6 +492,8 @@ public class MyUI extends UI {
 				"Example 18", "Example 19", "Example 20","Example 21", "Example 22", "Example 23", "Example 24", 
 				"Example 25", "Example 26", "Example 27",
 				"Example 28", "Example 29", "Example 30","Example 31", "Example 32");
+		
+		examplest.setPageLength(32);
 		
 		/*ComboBox<String> examplesc = new ComboBox<>("Examples of Consistency Checking");
 		examplesc.setEmptySelectionAllowed(false);
@@ -469,6 +504,7 @@ public class MyUI extends UI {
 		examplestst.setEmptySelectionAllowed(false);
 		examplestst.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9");
+		examplestst.setWidth("100%");
 
 		examplest.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -545,7 +581,7 @@ public class MyUI extends UI {
 			}
 		});
 		
-		 
+		
 		
 		examplestst.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -591,7 +627,7 @@ public class MyUI extends UI {
 				manager = OWLManager.createOWLOntologyManager();		
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
-				File fileName = new File("C:/"+filet.getValue());
+				File fileName = new File("C:/"+current_ontology);
 				try {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
@@ -623,7 +659,7 @@ public class MyUI extends UI {
 				PrintStream old = System.out;
 				System.setOut(ps);
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
-						df_rdf, df_owl,"C:/"+filet.getValue());
+						df_rdf, df_owl,"C:/"+current_ontology);
 				long startTime = System.currentTimeMillis();
 				t.SPARQL_CORRECTNESS(editor.getValue());
 				long estimatedTime = System.currentTimeMillis() - startTime;
@@ -643,7 +679,7 @@ public class MyUI extends UI {
 				manager = OWLManager.createOWLOntologyManager();
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
-				File fileName = new File("C:/"+filet.getValue());
+				File fileName = new File("C:/"+current_ontology);
 				try {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
@@ -654,10 +690,10 @@ public class MyUI extends UI {
 				cb_type_validity.setVisible(true);
 				cb_vars.setVisible(true);
 				run_type_validity.setVisible(true);			
-				Set<OWLClass> classes_testing = ontology.getClassesInSignature();
+				Set<OWLClass> classes_type_validity = ontology.getClassesInSignature();
 				List<String> names = new ArrayList<String>();
 				String urio = ontology.getOntologyID().getOntologyIRI().toString();
-				for (OWLClass c:classes_testing)
+				for (OWLClass c:classes_type_validity)
 				{
 				if (c.getIRI().getStart().equals(urio+"#")) {names.add(c.getIRI().toString());}
 				}
@@ -703,11 +739,11 @@ public class MyUI extends UI {
 				PrintStream old = System.out;
 				System.setOut(ps);	 
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
-						df_rdf, df_owl,"C:/"+filet.getValue());
-				Optional<Var> variable_testing = cb_vars.getSelectedItem();
-				Optional<String> type_testing = cb_type_validity.getSelectedItem();
-				String var_name = variable_testing.get().getName().replace('?', ' ').replaceAll("\\s", "");  
-				String type_name = type_testing.get();		
+						df_rdf, df_owl,"C:/"+current_ontology);
+				Optional<Var> variable_type_validity = cb_vars.getSelectedItem();
+				Optional<String> type_type_validity = cb_type_validity.getSelectedItem();
+				String var_name = variable_type_validity.get().getName().replace('?', ' ').replaceAll("\\s", "");  
+				String type_name = type_type_validity.get();		
 				long startTime = System.currentTimeMillis();
 				t.SPARQL_TYPE_VALIDITY(editor.getValue(),var_name,type_name);		
 				cb_type_validity.setVisible(false);
@@ -729,18 +765,19 @@ public class MyUI extends UI {
 		resP.setContent(result);
 		HorizontalLayout examplesall = new HorizontalLayout();
 		layout.addComponent(lab);
-		examplesall.addComponent(examplest);
-	 
+		layout.setWidth("100%");
+		examplesall.setWidth("100%");
+		examplesall.addComponent(examplest); 
 		examplesall.addComponent(examplestst);
-		layout.addComponent(examplesall);
-		layout.addComponent(filet);
+		layout.addComponent(ontologies);
+		layout.addComponent(examplesall);	
 		layout.addComponent(edS);
 		layout.addComponent(hlb);
 		layout.addComponent(hlt);
 		layout.addComponent(resP);
 		String ontology;
 		try {
-			ontology = readStringFromURL("file:///C:/" + filet.getValue());
+			ontology = readStringFromURL("file:///C:/" +  current_ontology);
 			editorOntology.setValue(ontology);
 		} catch (IOException e) {
 			Notification.show(e.getMessage());

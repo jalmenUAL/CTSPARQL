@@ -3933,7 +3933,7 @@ public class TSPARQL {
 		//t.SPARQL_CORRECTNESS(ex31);
 
 		 t.SPARQL_TYPE_VALIDITY(ex41, "USER",
-		 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influcncer");
+		 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer");
 
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");

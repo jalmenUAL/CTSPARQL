@@ -469,21 +469,7 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#AGE -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#AGE">
-        <rdf:type rdf:resource="http://www.types.org#xsd:integer"/>
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#USER -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#USER">
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    </owl:NamedIndividual>
-    
+ 
 
 
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#jesus -->

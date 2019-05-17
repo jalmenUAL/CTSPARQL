@@ -2585,8 +2585,14 @@ public class TSPARQL {
 				if (entailment == "true") {
 				} else {
 					addTypeAssertion(arg0, in);
+					
+					
+					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+					addTypeAssertion(res,in);
+					
 					String consistency = consistency();
-					if (consistency == "true") {
+					
+					if (consistency == "true") {  
 					} else {
 						error = true;
 						System.out
@@ -3932,8 +3938,8 @@ public class TSPARQL {
 
 		//t.SPARQL_CORRECTNESS(ex31);
 
-		 t.SPARQL_TYPE_VALIDITY(ex41, "USER",
-		 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer");
+		 t.SPARQL_TYPE_VALIDITY(ex41, "DL",
+		 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User");
 
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");

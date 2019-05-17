@@ -167,6 +167,8 @@ public class MyUI extends UI {
 		
 		Panel edS = new Panel();
 		Panel resP = new Panel();
+		
+		
 		edS.setSizeFull();
 		resP.setSizeFull();
 		AceEditor editor = new AceEditor();
@@ -695,7 +697,8 @@ public class MyUI extends UI {
 				String urio = ontology.getOntologyID().getOntologyIRI().toString();
 				for (OWLClass c:classes_type_validity)
 				{
-				if (c.getIRI().getStart().equals(urio+"#")) {names.add(c.getIRI().toString());}
+				if (c.getIRI().getStart().equals(urio+"#")
+						) {names.add(c.getIRI().toString());}
 				}
 				cb_type_validity.setItems(names);				
 				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());

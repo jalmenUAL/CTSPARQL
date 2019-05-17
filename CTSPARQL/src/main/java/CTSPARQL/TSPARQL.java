@@ -199,7 +199,7 @@ public class TSPARQL {
 			ontology = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
 
-			e2.printStackTrace();
+			System.out.println(e2.getMessage());
 		}
 		PelletReasonerFactory f = new PelletReasonerFactory();
 		OWLReasoner reasoner = f.createReasoner(ontology);
@@ -230,7 +230,7 @@ public class TSPARQL {
 			ontology = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
 
-			e2.printStackTrace();
+			System.out.println(e2.getMessage());
 		}
 		ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 		PelletReasonerFactory f = new PelletReasonerFactory();
@@ -255,7 +255,7 @@ public class TSPARQL {
 		try {
 			ontology = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
-			e2.printStackTrace();
+			System.out.println(e2.getMessage());
 		}
 		PelletReasonerFactory f = new PelletReasonerFactory();
 		OWLReasoner reasoner = f.createReasoner(ontology);
@@ -276,7 +276,7 @@ public class TSPARQL {
 		try {
 			ontology = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
-			e2.printStackTrace();
+			System.out.println(e2.getMessage());
 		}
 		PelletReasonerFactory f = new PelletReasonerFactory();
 		OWLReasoner reasoner = f.createReasoner(ontology);
@@ -455,7 +455,7 @@ public class TSPARQL {
 			ont = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
 
-			e2.printStackTrace();
+			System.out.println(e2.getMessage());
 		}
 		OWLNamedIndividual indi = df.getOWLNamedIndividual(iri);
 		Set<OWLClassExpression> types = indi.getTypes(ont);
@@ -529,11 +529,11 @@ public class TSPARQL {
 
 				} catch (IOException e) {
 
-					e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 			} catch (FileNotFoundException e1) {
 
-				e1.printStackTrace();
+				System.out.println(e1.getMessage());
 			}
 
 			String s = "";
@@ -541,7 +541,7 @@ public class TSPARQL {
 				s = readFile(fileName);
 			} catch (IOException e) {
 
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 
 			final File[] files = theDir.listFiles();
@@ -566,18 +566,18 @@ public class TSPARQL {
 
 				} catch (IOException e) {
 
-					e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 			} catch (FileNotFoundException e1) {
 
-				e1.printStackTrace();
+				System.out.println(e1.getMessage());
 			}
 			String s = "";
 			try {
 				s = readFile(fileName);
 			} catch (IOException e) {
 
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 			final File[] files = theDir.listFiles();
 			for (File g : files)
@@ -602,17 +602,17 @@ public class TSPARQL {
 
 				} catch (IOException e) {
 
-					e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
+				System.out.println(e1.getMessage());
 			}
 			String s = "";
 			try {
 				s = readFile(fileName);
 			} catch (IOException e) {
 
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 			final File[] files = theDir.listFiles();
 			for (File g : files)
@@ -773,7 +773,7 @@ public class TSPARQL {
 							try {
 								mng.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
-								e.printStackTrace();
+								System.out.println(e.getMessage());
 							}
 						} else {
 							System.out.println("Literal used with an object property:");
@@ -793,7 +793,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 						// STORE TRIPLE PATTERN
@@ -828,7 +828,7 @@ public class TSPARQL {
 							try {
 								manager.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
-								e.printStackTrace();
+								System.out.println(e.getMessage());
 							}
 						} else {
 							System.out.println("Literal used with an object property:");
@@ -851,7 +851,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(
@@ -863,7 +863,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 					} else if (tp.getSubject().isURI()) /* UVL */ {
@@ -880,7 +880,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 					} else /* LVL */ {
 						{
@@ -923,7 +923,7 @@ public class TSPARQL {
 								try {
 									mng.saveOntology(ont);
 								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 								}
 
 								// STORE TRIPLE PATTERN
@@ -959,7 +959,7 @@ public class TSPARQL {
 								try {
 									mng.saveOntology(ont);
 								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 								}
 
 							} else {
@@ -988,7 +988,7 @@ public class TSPARQL {
 								try {
 									mng.saveOntology(ont);
 								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 								}
 							} else if (tp.getSubject().isURI()) /* UVU */ {
 								/* V should be an object property */
@@ -1005,7 +1005,7 @@ public class TSPARQL {
 								try {
 									mng.saveOntology(ont);
 								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 								}
 							} else /* LVU */ {
 								System.out.println("Literal cannot be used as subject:");
@@ -1056,7 +1056,7 @@ public class TSPARQL {
 								try {
 									mng.saveOntology(ont);
 								} catch (OWLOntologyStorageException e) {
-									e.printStackTrace();
+									System.out.println(e.getMessage());
 								}
 							} else {
 								System.out.println("Individual used with a data property:");
@@ -1114,7 +1114,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
@@ -1125,7 +1125,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 						// ADD TYPE
@@ -1141,7 +1141,7 @@ public class TSPARQL {
 							try {
 								mng.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
-								e.printStackTrace();
+								System.out.println(e.getMessage());
 							}
 							addTypeVariable(tp.getObject().getName().substring(0).toUpperCase(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
@@ -1162,7 +1162,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 						OWLNamedIndividual ni2 = null;
 						ni2 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
@@ -1173,7 +1173,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 						// STORE TRIPLE PATTERN
@@ -1209,7 +1209,7 @@ public class TSPARQL {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
 
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 					} else {
 						wrong_analysis = true;
@@ -1233,7 +1233,7 @@ public class TSPARQL {
 					try {
 						mng.saveOntology(ont);
 					} catch (OWLOntologyStorageException e) {
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				}
 			} else {
@@ -1275,7 +1275,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 						// ADD TYPE
@@ -1291,7 +1291,7 @@ public class TSPARQL {
 							try {
 								mng.saveOntology(ont);
 							} catch (OWLOntologyStorageException e) {
-								e.printStackTrace();
+								System.out.println(e.getMessage());
 							}
 							addTypeVariable(tp.getObject().getName().substring(0).toUpperCase(),
 									"http://www.types.org#" + t.substring(t.lastIndexOf('#') + 1));
@@ -1311,7 +1311,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 
 						// STORE TRIPLE PATTERN
@@ -1346,7 +1346,7 @@ public class TSPARQL {
 						try {
 							mng.saveOntology(ont);
 						} catch (OWLOntologyStorageException e) {
-							e.printStackTrace();
+							System.out.println(e.getMessage());
 						}
 					} else {
 					}
@@ -1363,7 +1363,7 @@ public class TSPARQL {
 					try {
 						mng.saveOntology(ont);
 					} catch (OWLOntologyStorageException e) {
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				}
 			}
@@ -1449,7 +1449,7 @@ public class TSPARQL {
 			manager.saveOntology(ontology);
 		} catch (OWLOntologyStorageException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 		final Query query = QueryFactory.create(queryString);
@@ -2475,7 +2475,7 @@ public class TSPARQL {
 				manager.saveOntology(ontology);
 			} catch (OWLOntologyStorageException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
 	}
@@ -2487,7 +2487,7 @@ public class TSPARQL {
 		try {
 			manager.saveOntology(ontology);
 		} catch (OWLOntologyStorageException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -2499,7 +2499,7 @@ public class TSPARQL {
 		try {
 			manager.saveOntology(ontology);
 		} catch (OWLOntologyStorageException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -2585,8 +2585,6 @@ public class TSPARQL {
 				if (entailment == "true") {
 				} else {
 					addTypeAssertion(arg0, in);
-					
-					
 					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 					addTypeAssertion(res,in);
 					
@@ -3528,12 +3526,12 @@ public class TSPARQL {
 		try {
 			source = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		try {
 			dest = new FileOutputStream("tmp.owl");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		byte[] buffer = new byte[1024];
 		int length;
@@ -3542,7 +3540,7 @@ public class TSPARQL {
 				dest.write(buffer, 0, length);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	};
@@ -3553,12 +3551,12 @@ public class TSPARQL {
 		try {
 			source2 = new FileInputStream("tmp.owl");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		try {
 			dest2 = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		byte[] buffer2 = new byte[1024];
 		int length2;
@@ -3567,7 +3565,7 @@ public class TSPARQL {
 				dest2.write(buffer2, 0, length2);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	};

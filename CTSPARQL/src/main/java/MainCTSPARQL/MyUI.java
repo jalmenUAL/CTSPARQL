@@ -38,6 +38,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -56,6 +57,7 @@ import CTSPARQL.TSPARQL;
 
 import com.vaadin.server.ErrorEvent;
 import com.vaadin.server.ErrorHandler;
+import com.vaadin.server.Page;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -99,10 +101,7 @@ public class MyUI extends UI {
 		Image lab = new Image(null, new ThemeResource("banner.jpg"));
 		lab.setWidth("100%");
 		lab.setHeight("200px");
-		//TextField filet = new TextField();
-		//filet.setStyleName("multi-line-caption");
-		//filet.setSizeFull();
-		//filet.setValue("social-network-2019.owl");
+	 
 		ontologies.setItems("social-network-2019.owl");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
@@ -121,8 +120,16 @@ public class MyUI extends UI {
             
             @Override
             public void error(com.vaadin.server.ErrorEvent event) {
-                //System.out.println(event.getThrowable().getMessage());
-                Notification.show(event.getThrowable().getMessage());
+                
+            	
+            	Notification notif = new Notification(
+            	"Fail loading query or ontology",
+                        "Please revise syntax of query or ontology",
+                        Notification.Type.ERROR_MESSAGE);
+            	notif.setDelayMsec(20000);
+            	notif.setPosition(Position.BOTTOM_RIGHT);
+            	notif.show(Page.getCurrent());
+               
                 restore("C:/"+current_ontology);
             }
             
@@ -497,10 +504,7 @@ public class MyUI extends UI {
 		
 		examplest.setPageLength(32);
 		
-		/*ComboBox<String> examplesc = new ComboBox<>("Examples of Consistency Checking");
-		examplesc.setEmptySelectionAllowed(false);
-		examplesc.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
-				"Example 8", "Example 9", "Example 10");*/
+	 
 		
 		ComboBox<String> examplestst = new ComboBox<>("Examples of Type Validity");
 		examplestst.setEmptySelectionAllowed(false);
@@ -634,7 +638,7 @@ public class MyUI extends UI {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
 
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}
 				manager_owl = OWLManager.createOWLOntologyManager();
 				df_owl = manager_owl.getOWLDataFactory();
@@ -643,7 +647,7 @@ public class MyUI extends UI {
 				try {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}
 
 				manager_rdf = OWLManager.createOWLOntologyManager();
@@ -653,7 +657,7 @@ public class MyUI extends UI {
 				try {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -685,7 +689,7 @@ public class MyUI extends UI {
 				try {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}		
 				cb_type_validity.clear();
 				cb_vars.clear();			
@@ -725,7 +729,7 @@ public class MyUI extends UI {
 				try {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}
 				manager_rdf = OWLManager.createOWLOntologyManager();
 				df_rdf = manager_rdf.getOWLDataFactory();
@@ -734,7 +738,7 @@ public class MyUI extends UI {
 				try {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
-					e2.printStackTrace();
+					System.out.println(e2.getMessage());
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -783,7 +787,7 @@ public class MyUI extends UI {
 			ontology = readStringFromURL("file:///C:/" +  current_ontology);
 			editorOntology.setValue(ontology);
 		} catch (IOException e) {
-			Notification.show(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 		edO.setContent(editorOntology);
 		editorOntology.setHeight("300px");
@@ -808,12 +812,12 @@ public class MyUI extends UI {
 		try {
 			source2 = new FileInputStream("tmp.owl");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		try {
 			dest2 = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		byte[] buffer2 = new byte[1024];
 		int length2;
@@ -822,7 +826,7 @@ public class MyUI extends UI {
 				dest2.write(buffer2, 0, length2);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	};

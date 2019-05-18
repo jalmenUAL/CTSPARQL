@@ -75,7 +75,9 @@ import com.vaadin.server.Page;
 @Theme("mytheme")
 public class MyUI extends UI {
 
-	String error = "Problem with query syntax.";
+	
+	 
+	
 	String current_ontology="social-network-2019.owl";
 	OWLOntologyManager manager = null;
 	OWLOntologyManager manager_rdf = null;
@@ -102,6 +104,7 @@ public class MyUI extends UI {
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 	
+		
 		AceEditor editorOntology = new AceEditor();
 		final VerticalLayout layout = new VerticalLayout();		
 		layout.setMargin(false);
@@ -122,7 +125,8 @@ public class MyUI extends UI {
 		
 		ontologies.addValueChangeListener(event -> {
 		    if (event.getSource().isEmpty()) {
-		       Notification.show("Empty Selection");
+		       error("","Empty Selection");
+		        
 		    } else {
 		        current_ontology = event.getValue();
 		        String ontology="";
@@ -131,7 +135,7 @@ public class MyUI extends UI {
 					editorOntology.setValue(ontology);
 				} catch (IOException e) {
 					System.out.println(e.getMessage());
-					error=e.getMessage();
+					error("Error Loading Ontology",e.getMessage());
 				}
 		        
 				try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
@@ -148,21 +152,13 @@ public class MyUI extends UI {
             
             @Override
             public void error(com.vaadin.server.ErrorEvent event) {
-                
-            	
-            	Notification notif = new Notification(
-            	"Fail loading query or ontology",
-                        error,
-                        Notification.Type.ERROR_MESSAGE);
-            	notif.setDelayMsec(20000);
-            	notif.setPosition(Position.BOTTOM_RIGHT);
-            	notif.show(Page.getCurrent());
-               
+            	 
                 restore("C:/working_ontology.owl");
             }
             
         });
 
+		
 		HorizontalLayout hlb = new HorizontalLayout();
 		
 		Button correctness = new Button("Correctness");
@@ -542,7 +538,7 @@ public class MyUI extends UI {
 
 		examplest.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
-				Notification.show("No example selected");
+				error("","No Example Selected"); 
 			} else {
 				if (event.getValue() == "Example 1") {					 
 					editor.setValue(ex1);
@@ -619,7 +615,8 @@ public class MyUI extends UI {
 		
 		examplestst.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
-				Notification.show("No example selected");
+				error("","No Example Eelected");
+				 
 			} else {
 				if (event.getValue() == "Example 1") {
  					editor.setValue(ex33);
@@ -667,7 +664,7 @@ public class MyUI extends UI {
 				} catch (OWLOntologyCreationException e2) {
 
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontology",e2.getMessage());
 				}
 				manager_owl = OWLManager.createOWLOntologyManager();
 				df_owl = manager_owl.getOWLDataFactory();
@@ -677,7 +674,7 @@ public class MyUI extends UI {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontology",e2.getMessage());
 				}
 
 				manager_rdf = OWLManager.createOWLOntologyManager();
@@ -688,7 +685,7 @@ public class MyUI extends UI {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontologgy",e2.getMessage());
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -698,7 +695,13 @@ public class MyUI extends UI {
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
 						df_rdf, df_owl,"C:/working_ontology.owl");
 				long startTime = System.currentTimeMillis();
-				t.SPARQL_CORRECTNESS(editor.getValue());
+				try {
+					t.SPARQL_CORRECTNESS(editor.getValue());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					error("Error Loading Query",e.getMessage());
+					
+				}
 				long estimatedTime = System.currentTimeMillis() - startTime;
 				System.out.println("");
 				System.out.println("Analysis done in " +estimatedTime + " ms");
@@ -721,7 +724,7 @@ public class MyUI extends UI {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontology",e2.getMessage());
 				}		
 				cb_type_validity.clear();
 				cb_vars.clear();			
@@ -750,7 +753,9 @@ public class MyUI extends UI {
 			@Override
 			public void buttonClick(ClickEvent event) {		
 				if (cb_type_validity.isEmpty() || cb_vars.isEmpty())
-				{Notification.show("Please select a class and an individual");
+				{
+					error("","Please select a class and an individual");
+					 
 				}
 				else
 				{
@@ -762,7 +767,7 @@ public class MyUI extends UI {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontology",e2.getMessage());
 				}
 				manager_rdf = OWLManager.createOWLOntologyManager();
 				df_rdf = manager_rdf.getOWLDataFactory();
@@ -772,7 +777,7 @@ public class MyUI extends UI {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
-					error=e2.getMessage();
+					error("Error Loading Ontology",e2.getMessage());
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -789,7 +794,14 @@ public class MyUI extends UI {
 				
 				 
 				
-				t.SPARQL_TYPE_VALIDITY(editor.getValue(),var_name,type_name);		
+				try {
+					t.SPARQL_TYPE_VALIDITY(editor.getValue(),var_name,type_name);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					error("Error Loading Query",e.getMessage());
+					 
+
+				}		
 				cb_type_validity.setVisible(false);
 				cb_vars.setVisible(false);
 				run_type_validity.setVisible(false);	
@@ -861,6 +873,17 @@ public class MyUI extends UI {
 		}
 
 	};
+	
+	public void error(String type, String message)
+	{
+		Notification notif = new Notification(
+	        	type,
+	                    message,
+	                    Notification.Type.ERROR_MESSAGE);
+		notif.setDelayMsec(20000);
+    	notif.setPosition(Position.BOTTOM_RIGHT);
+    	notif.show(Page.getCurrent());
+	}
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {

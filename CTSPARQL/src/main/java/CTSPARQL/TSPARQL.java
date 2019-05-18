@@ -2517,7 +2517,7 @@ public class TSPARQL {
 			return a * pow(a * a, b / 2);
 	}
 
-	public void SPARQL_CORRECTNESS(String query) {
+	public void SPARQL_CORRECTNESS(String query) throws Exception {
 		copy(file);
 		next = 1;
 		current = 0;
@@ -2557,7 +2557,7 @@ public class TSPARQL {
 		restore(file);
 	};
 
-	public void SPARQL_TYPE_VALIDITY(String query, String var_name, String type_name) {
+	public void SPARQL_TYPE_VALIDITY(String query, String var_name, String type_name)throws Exception {
 		copy(file);
 		next = 1;
 		current = 0;
@@ -3936,8 +3936,13 @@ public class TSPARQL {
 
 		//t.SPARQL_CORRECTNESS(ex31);
 
-		 t.SPARQL_TYPE_VALIDITY(ex41, "DL",
-		 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User");
+		 try {
+			t.SPARQL_TYPE_VALIDITY(ex41, "DL",
+			 "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");

@@ -11,7 +11,9 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
@@ -19,6 +21,7 @@ import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 
 import org.apache.log4j.varia.NullAppender;
+import org.jpl7.Term;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -31,10 +34,16 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -46,6 +55,7 @@ import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.ItemCaptionGenerator;
@@ -88,12 +98,16 @@ public class MyUI extends UI {
 	OWLDataFactory dataFactory = null;
 	OWLDataFactory df_rdf = null;
 	OWLDataFactory df_owl = null;
+	
 	String rdf = "C:/rdf-vocabulary.owl";
 	String owl = "C:/owl-vocabulary.owl";
+	
 	OWLReasoner reasoner;	
+	
 	ComboBox<String> ontologies = new ComboBox<String>();
 	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>(); 
+	
 	public static String readStringFromURL(String requestURL) throws IOException {
 		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString())) {
 			scanner.useDelimiter("\\A");
@@ -106,8 +120,9 @@ public class MyUI extends UI {
 	
 		
 		AceEditor editorOntology = new AceEditor();
-		final VerticalLayout layout = new VerticalLayout();		
-		layout.setMargin(false);
+		
+		final VerticalLayout main = new VerticalLayout();		
+		main.setMargin(false);
 		Image lab = new Image(null, new ThemeResource("banner.jpg"));
 		
 		lab.setWidth("100%");
@@ -148,7 +163,7 @@ public class MyUI extends UI {
 		    
 		});
 
-		setErrorHandler(new ErrorHandler() {
+		/*setErrorHandler(new ErrorHandler() {
             
             @Override
             public void error(com.vaadin.server.ErrorEvent event) {
@@ -156,7 +171,13 @@ public class MyUI extends UI {
                 restore("C:/working_ontology.owl");
             }
             
-        });
+        });*/
+		
+		VerticalLayout debug = new VerticalLayout();
+		debug.setWidth("100%");
+		debug.setHeight("100%");
+		debug.setMargin(false);
+		debug.setVisible(false);
 
 		
 		HorizontalLayout hlb = new HorizontalLayout();
@@ -199,9 +220,20 @@ public class MyUI extends UI {
 		Panel edS = new Panel();
 		Panel resP = new Panel();
 		
+		Button run_button = new Button("Execute Query");
+		run_button.setWidth("100%");
+		run_button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		run_button.setIcon(VaadinIcons.PLAY);
+		Button debug_button = new Button("Debug Query");
+		debug_button.setWidth("100%");
+		debug_button.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		debug_button.setIcon(VaadinIcons.TOOLS);
+		
+		
 		
 		edS.setSizeFull();
 		resP.setSizeFull();
+		
 		AceEditor editor = new AceEditor();
 		editor.setHeight("300px");
 		editor.setWidth("100%");
@@ -643,6 +675,7 @@ public class MyUI extends UI {
 
 		editor.setValue(ex1);
 		editor.setDescription("SPARQL Query");
+		
 		TextArea result = new TextArea();
 		result.setHeight("300px");
 		result.setWidth("100%");
@@ -651,6 +684,52 @@ public class MyUI extends UI {
 		Panel edO = new Panel();
 		edO.setSizeFull();
 
+		Grid<HashMap<String, RDFNode>> answers = new Grid<>();
+		answers.setWidth("100%");
+		List<HashMap<String, RDFNode>> rows = new ArrayList<>();
+		 
+		
+		
+		run_button.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {	
+				OntModel model = ModelFactory.createOntologyModel();
+				model.read("C:/working_ontology.owl");
+				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
+				ResultSet result = (ResultSet) QueryExecutionFactory.create(query, model).execSelect();
+				answers.removeAllColumns();
+				List<String> variables = result.getResultVars();
+				HashMap<String,RDFNode> sol = new HashMap<String,RDFNode>();
+				while (result.hasNext())
+				{
+				QuerySolution solution = result.next();
+				for (String vari : variables)
+				{
+					sol.put(vari,solution.get(vari));
+					 
+				}
+				rows.add(sol);
+				}
+				answers.setItems(rows);
+				if (rows.size() > 0) {
+					HashMap<String, RDFNode> sr = rows.get(0);
+					 
+					for (Map.Entry<String, RDFNode> entry : sr.entrySet()) {
+						answers.addColumn(h -> h.get(entry.getKey())).setCaption(entry.getKey());
+					}
+				}
+			}
+		});
+		
+		debug_button.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {	
+			if (!debug.isVisible()) {debug.setVisible(true); debug_button.setCaption("Close Debug");}
+			else {debug.setVisible(false); debug_button.setCaption("Debug Query");}
+			
+			}
+		});
+		
 		correctness.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {	
@@ -817,20 +896,35 @@ public class MyUI extends UI {
 			}
 			}
 		});
+		
 		edS.setContent(editor);
 		resP.setContent(result);
 		HorizontalLayout examplesall = new HorizontalLayout();
-		layout.addComponent(lab);
-		layout.setWidth("100%");
+		
+		
+		main.addComponent(lab);
+		main.setWidth("100%");
+		
 		examplesall.setWidth("100%");
 		examplesall.addComponent(examplest); 
 		examplesall.addComponent(examplestst);
-		layout.addComponent(ontologies);
-		layout.addComponent(examplesall);	
-		layout.addComponent(edS);
-		layout.addComponent(hlb);
-		layout.addComponent(hlt);
-		layout.addComponent(resP);
+		
+		main.addComponent(ontologies);
+		main.addComponent(examplesall);	
+		
+		
+		
+		
+		main.addComponent(edS);
+		main.addComponent(run_button);
+	    main.addComponent(debug_button);
+	    main.addComponent(answers);
+		
+		debug.addComponent(hlb);
+		debug.addComponent(hlt);
+		debug.addComponent(resP);
+		
+		main.addComponent(debug);
 		
 		edO.setContent(editorOntology);
 		editorOntology.setHeight("300px");
@@ -844,8 +938,9 @@ public class MyUI extends UI {
 		editorOntology.setShowGutter(false);
 		editorOntology.setShowPrintMargin(false);
 		editorOntology.setUseSoftTabs(false);
-		layout.addComponent(edO);
-		setContent(layout);
+		
+		main.addComponent(edO);
+		setContent(main);
 		this.setSizeFull();
 	}
 	

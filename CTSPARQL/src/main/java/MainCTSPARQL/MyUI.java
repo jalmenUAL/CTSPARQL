@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -30,7 +31,10 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
+import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -71,6 +75,7 @@ import com.vaadin.server.Page;
 @Theme("mytheme")
 public class MyUI extends UI {
 
+	String error = "Problem with query syntax. Please revise";
 	String current_ontology="social-network-2019.owl";
 	OWLOntologyManager manager = null;
 	OWLOntologyManager manager_rdf = null;
@@ -97,12 +102,17 @@ public class MyUI extends UI {
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 	
+		AceEditor editorOntology = new AceEditor();
 		final VerticalLayout layout = new VerticalLayout();		 
 		Image lab = new Image(null, new ThemeResource("banner.jpg"));
 		lab.setWidth("100%");
 		lab.setHeight("200px");
 	 
-		ontologies.setItems("social-network-2019.owl");
+		ontologies.setItems("file:///C:/social-network-2019.owl","http://owl.man.ac.uk/2006/07/sssw/people.owl",
+				"https://protege.stanford.edu/ontologies/camera.owl","https://protege.stanford.edu/ontologies/koala.owl",
+				"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
+				"https://protege.stanford.edu/ontologies/travel.owl",
+				"https://www.w3.org/TR/owl-guide/wine.rdf");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
 		ontologies.setEmptySelectionAllowed(false);
@@ -113,7 +123,23 @@ public class MyUI extends UI {
 		       Notification.show("Empty Selection");
 		    } else {
 		        current_ontology = event.getValue();
+		        String ontology="";
+				try {
+					ontology = readStringFromURL(current_ontology);
+					editorOntology.setValue(ontology);
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+					error=e.getMessage();
+				}
+		        
+				try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
+				    out.println(ontology);
+				} catch (FileNotFoundException e2) {
+					// TODO Auto-generated catch block
+					System.out.println(e2.getMessage());
+				}
 		    }
+		    
 		});
 
 		setErrorHandler(new ErrorHandler() {
@@ -124,13 +150,13 @@ public class MyUI extends UI {
             	
             	Notification notif = new Notification(
             	"Fail loading query or ontology",
-                        "Please revise syntax of query or ontology",
+                        error,
                         Notification.Type.ERROR_MESSAGE);
             	notif.setDelayMsec(20000);
             	notif.setPosition(Position.BOTTOM_RIGHT);
             	notif.show(Page.getCurrent());
                
-                restore("C:/"+current_ontology);
+                restore("C:/working_ontology.owl");
             }
             
         });
@@ -306,7 +332,7 @@ public class MyUI extends UI {
 
 		// First Method. Inconsistent Query.
 
-		// MIRAR
+	 
 		String ex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -622,7 +648,7 @@ public class MyUI extends UI {
 		result.setHeight("300px");
 		result.setWidth("100%");
 		result.setStyleName("multi-line-caption");
-		AceEditor editorOntology = new AceEditor();
+		
 		Panel edO = new Panel();
 		edO.setSizeFull();
 
@@ -633,12 +659,13 @@ public class MyUI extends UI {
 				manager = OWLManager.createOWLOntologyManager();		
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
-				File fileName = new File("C:/"+current_ontology);
+				File fileName = new File("C:/working_ontology.owl");
 				try {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
 
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}
 				manager_owl = OWLManager.createOWLOntologyManager();
 				df_owl = manager_owl.getOWLDataFactory();
@@ -648,6 +675,7 @@ public class MyUI extends UI {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}
 
 				manager_rdf = OWLManager.createOWLOntologyManager();
@@ -658,6 +686,7 @@ public class MyUI extends UI {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -665,7 +694,7 @@ public class MyUI extends UI {
 				PrintStream old = System.out;
 				System.setOut(ps);
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
-						df_rdf, df_owl,"C:/"+current_ontology);
+						df_rdf, df_owl,"C:/working_ontology.owl");
 				long startTime = System.currentTimeMillis();
 				t.SPARQL_CORRECTNESS(editor.getValue());
 				long estimatedTime = System.currentTimeMillis() - startTime;
@@ -685,11 +714,12 @@ public class MyUI extends UI {
 				manager = OWLManager.createOWLOntologyManager();
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
-				File fileName = new File("C:/"+current_ontology);
+				File fileName = new File("C:/working_ontology.owl");
 				try {
 					ontology = manager.loadOntologyFromOntologyDocument(fileName);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}		
 				cb_type_validity.clear();
 				cb_vars.clear();			
@@ -730,6 +760,7 @@ public class MyUI extends UI {
 					ont_owl = manager_owl.loadOntologyFromOntologyDocument(file_owl);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}
 				manager_rdf = OWLManager.createOWLOntologyManager();
 				df_rdf = manager_rdf.getOWLDataFactory();
@@ -739,6 +770,7 @@ public class MyUI extends UI {
 					ont_rdf = manager_rdf.loadOntologyFromOntologyDocument(file_rdf);
 				} catch (OWLOntologyCreationException e2) {
 					System.out.println(e2.getMessage());
+					error=e2.getMessage();
 				}
 				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -746,12 +778,15 @@ public class MyUI extends UI {
 				PrintStream old = System.out;
 				System.setOut(ps);	 
 				TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory,
-						df_rdf, df_owl,"C:/"+current_ontology);
+						df_rdf, df_owl,"C:/working_ontology.owl");
 				Optional<Var> variable_type_validity = cb_vars.getSelectedItem();
 				Optional<String> type_type_validity = cb_type_validity.getSelectedItem();
 				String var_name = variable_type_validity.get().getName().replace('?', ' ').replaceAll("\\s", "");  
 				String type_name = type_type_validity.get();		
 				long startTime = System.currentTimeMillis();
+				
+				 
+				
 				t.SPARQL_TYPE_VALIDITY(editor.getValue(),var_name,type_name);		
 				cb_type_validity.setVisible(false);
 				cb_vars.setVisible(false);
@@ -782,13 +817,7 @@ public class MyUI extends UI {
 		layout.addComponent(hlb);
 		layout.addComponent(hlt);
 		layout.addComponent(resP);
-		String ontology;
-		try {
-			ontology = readStringFromURL("file:///C:/" +  current_ontology);
-			editorOntology.setValue(ontology);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
+		
 		edO.setContent(editorOntology);
 		editorOntology.setHeight("300px");
 		editorOntology.setWidth("100%");

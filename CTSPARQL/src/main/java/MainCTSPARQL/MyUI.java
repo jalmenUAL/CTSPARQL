@@ -75,7 +75,7 @@ import com.vaadin.server.Page;
 @Theme("mytheme")
 public class MyUI extends UI {
 
-	String error = "Problem with query syntax. Please revise";
+	String error = "Problem with query syntax.";
 	String current_ontology="social-network-2019.owl";
 	OWLOntologyManager manager = null;
 	OWLOntologyManager manager_rdf = null;
@@ -103,8 +103,10 @@ public class MyUI extends UI {
 	protected void init(VaadinRequest vaadinRequest) {
 	
 		AceEditor editorOntology = new AceEditor();
-		final VerticalLayout layout = new VerticalLayout();		 
+		final VerticalLayout layout = new VerticalLayout();		
+		layout.setMargin(false);
 		Image lab = new Image(null, new ThemeResource("banner.jpg"));
+		
 		lab.setWidth("100%");
 		lab.setHeight("200px");
 	 

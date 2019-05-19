@@ -43,6 +43,7 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLFacetRestriction;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -1372,6 +1373,53 @@ public class TSPARQL {
 	};
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
+		
+		
+Set<OWLClass> classes = ontology.getClassesInSignature();
+		
+		for (OWLClass cl: classes)
+		{
+			for (OWLClass cl2: classes)
+			{
+				/*if (!cl.getSubClasses(ontology).contains(cl2) &&
+					!cl.getEquivalentClasses(ontology).contains(cl2) &&
+					!cl.getSuperClasses(ontology).contains(cl2) &&
+					!cl.isOWLThing() &&
+					!cl2.isOWLThing())*/
+				if (cl.getSuperClasses(ontology).isEmpty() && cl2.getSuperClasses(ontology).isEmpty() && !cl.isOWLThing() &&
+					!cl2.isOWLThing())
+				{
+				OWLDisjointClassesAxiom ax = dataFactory.getOWLDisjointClassesAxiom(cl, cl2);
+				AddAxiom addAxiom = new AddAxiom(ontology, ax);
+				manager.applyChange(addAxiom);
+				 
+			}
+		}
+		
+		Set<OWLNamedIndividual> individuals = ontology.getIndividualsInSignature();
+		for (OWLNamedIndividual i: individuals)
+		{
+			for (OWLNamedIndividual i2: individuals)
+			{
+				if (! i.equals(i2))
+				{
+				OWLDifferentIndividualsAxiom ax = dataFactory.getOWLDifferentIndividualsAxiom(i2);
+				AddAxiom addAxiom = new AddAxiom(ontology, ax);
+				manager.applyChange(addAxiom);
+				}
+			}
+		}
+			
+			try {
+				manager.saveOntology(ontology);
+			} catch (OWLOntologyStorageException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+			}
+			}
+		
+			
+		
 		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 
@@ -1445,13 +1493,9 @@ public class TSPARQL {
 		manager.applyChange(addAxiom17);
 		AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
 		manager.applyChange(addAxiom18);
-		try {
-			manager.saveOntology(ontology);
-		} catch (OWLOntologyStorageException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
-		}
-
+		 
+		
+		
 		final Query query = QueryFactory.create(queryString);
 		if (query.isConstructType() || query.isAskType() || query.isDescribeType() || query.isDistinct()
 				|| query.hasAggregators() || query.hasOrderBy() || query.hasGroupBy() || query.hasHaving()
@@ -2618,7 +2662,9 @@ public class TSPARQL {
 			public void visit(OWLObjectIntersectionOf arg0) {
 				Set<OWLClassExpression> ec = arg0.getOperands();
 				for (OWLClassExpression e : ec) {
-					e.accept(this);
+					if (!error) {
+						e.accept(this);
+					}
 				}
 			}
 

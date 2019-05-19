@@ -694,15 +694,16 @@ public class MyUI extends UI {
 			@Override
 			public void buttonClick(ClickEvent event) {	
 				OntModel model = ModelFactory.createOntologyModel();
-				model.read("C:/working_ontology.owl");
+				model.read("file:C://working_ontology.owl");
 				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
 				ResultSet result = (ResultSet) QueryExecutionFactory.create(query, model).execSelect();
 				answers.removeAllColumns();
 				List<String> variables = result.getResultVars();
-				HashMap<String,RDFNode> sol = new HashMap<String,RDFNode>();
+				rows.clear();
 				while (result.hasNext())
 				{
 				QuerySolution solution = result.next();
+				HashMap<String,RDFNode> sol = new HashMap<String,RDFNode>();
 				for (String vari : variables)
 				{
 					sol.put(vari,solution.get(vari));

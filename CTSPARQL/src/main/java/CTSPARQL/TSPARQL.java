@@ -42,6 +42,7 @@ import org.semanticweb.owlapi.model.OWLDataMinCardinality;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
@@ -100,9 +101,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 
 public class TSPARQL {
 
-	// ONTOLOGÍAS REMOTAS VAADIN
-	// Mejorar salida
-	// Camino de las ontologías
+	 
 
 	Integer next = 1;
 	Integer current = 0;
@@ -132,6 +131,8 @@ public class TSPARQL {
 	public TSPARQL(OWLOntologyManager manager, OWLOntologyManager manager_rdf, OWLOntologyManager manager_owl,
 			OWLOntology ontology, OWLOntology ont_rdf, OWLOntology ont_owl, OWLDataFactory dataFactory,
 			OWLDataFactory df_rdf, OWLDataFactory df_owl, String file) {
+		
+		
 		this.rename.clear();
 		this.constraints_elements.clear();
 		this.vars.clear();
@@ -449,17 +450,17 @@ public class TSPARQL {
 		return result;
 	}
 
-	public Set<OWLClassExpression> ClassOfVariable(OWLOntology ont, OWLDataFactory df, IRI iri) {
+	public Set<OWLClassExpression> ClassOfVariable(IRI iri) {
 		File fileName = new File(file);
-		manager.removeOntology(ont);
+		manager.removeOntology(ontology);
 		try {
-			ont = manager.loadOntologyFromOntologyDocument(fileName);
+			ontology = manager.loadOntologyFromOntologyDocument(fileName);
 		} catch (OWLOntologyCreationException e2) {
 
 			System.out.println(e2.getMessage());
 		}
-		OWLNamedIndividual indi = df.getOWLNamedIndividual(iri);
-		Set<OWLClassExpression> types = indi.getTypes(ont);
+		OWLNamedIndividual indi = dataFactory.getOWLNamedIndividual(iri);
+		Set<OWLClassExpression> types = indi.getTypes(ontology);
 		Set<OWLClassExpression> result = new HashSet<OWLClassExpression>();
 		for (OWLClassExpression type : types) {
 			result.add(type);
@@ -796,7 +797,6 @@ public class TSPARQL {
 						} catch (OWLOntologyStorageException e) {
 							System.out.println(e.getMessage());
 						}
-
 						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
@@ -1371,29 +1371,65 @@ public class TSPARQL {
 		} else {
 		}
 	};
+	
+	 
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
 		
 		
-Set<OWLClass> classes = ontology.getClassesInSignature();
+		Set<OWLAxiom> axs = ontology.getABoxAxioms(true);
+		  for(OWLAxiom ax : axs)
+		  {
+		  manager.removeAxiom(ontology,ax);
+		  }
+		 
+		  try {
+				manager.saveOntology(ontology);
+			} catch (OWLOntologyStorageException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+			}
+		
+	
+		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
+		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+		
+		Set<OWLClass> classes = ontology.getClassesInSignature();
 		
 		for (OWLClass cl: classes)
 		{
 			for (OWLClass cl2: classes)
 			{
-				/*if (!cl.getSubClasses(ontology).contains(cl2) &&
-					!cl.getEquivalentClasses(ontology).contains(cl2) &&
-					!cl.getSuperClasses(ontology).contains(cl2) &&
-					!cl.isOWLThing() &&
-					!cl2.isOWLThing())*/
-				if (cl.getSuperClasses(ontology).isEmpty() && cl2.getSuperClasses(ontology).isEmpty() && !cl.isOWLThing() &&
-					!cl2.isOWLThing())
+				 
+				if (cl.getSuperClasses(ontology).isEmpty() 
+						&& cl2.getSuperClasses(ontology).isEmpty() 
+						&& !cl.isOWLThing() && !cl2.isOWLThing() 
+						&& !cl.equals(lit) && !cl2.equals(lit) 
+						&& !cl.equals(res) && !cl2.equals(res))
 				{
 				OWLDisjointClassesAxiom ax = dataFactory.getOWLDisjointClassesAxiom(cl, cl2);
 				AddAxiom addAxiom = new AddAxiom(ontology, ax);
 				manager.applyChange(addAxiom);
-				 
-			}
+				try {
+					manager.saveOntology(ontology);
+				} catch (OWLOntologyStorageException e) {
+					System.out.println(e.getMessage());
+				}
+			    
+				if (!(consistency()=="true")) {
+
+					RemoveAxiom rem = new RemoveAxiom(ontology,ax);
+						manager.applyChange(rem);
+						try {
+							manager.saveOntology(ontology);
+						} catch (OWLOntologyStorageException e) {
+							System.out.println(e.getMessage());
+						}
+					    }						
+			     
+				
+				
+		}
 		}
 		
 		Set<OWLNamedIndividual> individuals = ontology.getIndividualsInSignature();
@@ -1416,12 +1452,11 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 				// TODO Auto-generated catch block
 				System.out.println(e.getMessage());
 			}
-			}
+			
 		
 			
 		
-		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
-		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+		
 
 		OWLClass dt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:dateTime"));
 		OWLClass st = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:string"));
@@ -1494,6 +1529,13 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 		AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
 		manager.applyChange(addAxiom18);
 		 
+		try {
+			manager.saveOntology(ontology);
+		} catch (OWLOntologyStorageException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		}
 		
 		
 		final Query query = QueryFactory.create(queryString);
@@ -1536,7 +1578,7 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 			String urio = ontology.getOntologyID().getOntologyIRI().toString();
 			for (TriplePath tp : ctriples) {
 				if (tp.getSubject().isVariable()) {
-					Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
+					Set<OWLClassExpression> typ = ClassOfVariable(
 							IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 					datatriples.add(tp);
 					if (!(typ == null)) {
@@ -1584,7 +1626,7 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 			}
 			String urio = ontology.getOntologyID().getOntologyIRI().toString();
 			for (TriplePath tp : ctriples) {
-				Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
+				Set<OWLClassExpression> typ = ClassOfVariable(
 						IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 				datatriples.add(tp);
 				if (!(typ == null)) {
@@ -1784,7 +1826,7 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 		}
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		for (TriplePath tp : ctriples) {
-			Set<OWLClassExpression> typ = ClassOfVariable(ontology, dataFactory,
+			Set<OWLClassExpression> typ = ClassOfVariable( 
 					IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
 			datatriples.add(tp);
 			if (!(typ == null)) {
@@ -1851,19 +1893,23 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
+				if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
 				wrong_analysis = true;
+				}
 
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
+				if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
 				wrong_analysis = true;
+				}
 
 			}
 
@@ -1896,26 +1942,35 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
+				 
+				/*OWLObjectMinCardinality min = (OWLObjectMinCardinality) arg0;
+				if (min.getCardinality()==1) {}
+				
+				else {
+				if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;}
+				}*/
 			}
 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
+				/*if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;}*/
 			}
 
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
+				/*if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;}*/
 			}
 
 			@Override
@@ -2045,11 +2100,12 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 										}
 									}
 								} else {
+									if (!wrong_analysis) {
 									wrong_analysis = true;
 									System.out.println("OWL Restriction not allowed:");
 									ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 									System.out.println(rendering.render(arg0));
-									
+									}
 								}
 							}
 							if (!cons.isEmpty()) {
@@ -2102,10 +2158,12 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 												+ value.getLiteral() + " )");
 									}
 								} else {
+									if (!wrong_analysis) {
 									wrong_analysis = true;
 									System.out.println("OWL Restriction not allowed:");
 									ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 									System.out.println(rendering.render(arg0));
+									}
 								}
 							}
 							if (!cons.isEmpty()) {
@@ -2120,27 +2178,34 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
+				
+				/*OWLDataMinCardinality min = (OWLDataMinCardinality) arg0;
+				if (min.getCardinality()==1) {}
+				
+				else {
+				if (!wrong_analysis) {
 				System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;}
+				}*/
 
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				System.out.println("This type is not supported by consistency analysis:");
+				/*if (!wrong_analysis) {System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;}*/
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				System.out.println("This type is not supported by consistency analysis:");
+				/*System.out.println("This type is not supported by consistency analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				wrong_analysis = true;
+				wrong_analysis = true;*/
 			}
 		};
 		ce.accept(cv);
@@ -2608,10 +2673,14 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 		nvar = 0;
 		vars.clear();
 		rules.clear();
+		
+		
+		
 		SPARQL_ANALYSIS(file, query, 0);
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		OWLClass ce = dataFactory.getOWLClass(IRI.create(type_name));
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
+			  
 		owl_type_validity(ce, in, Node.createVariable(var_name));
 		if (!error && !wrong_analysis) {
 			System.out.println("Successful type validity checking. The property has been proved.");
@@ -2671,19 +2740,20 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
 
+				if (!error) {
 				System.out.println("This type is not supported by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				System.out.println("This type is not supported by type validity analysis:");
+				if (!error) {System.out.println("This type is not supported by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 			}
 
 			@Override
@@ -2734,10 +2804,11 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 			@Override
 			public void visit(OWLObjectAllValuesFrom arg0) {
 
+				if (!error) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 		        ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 			}
 
 			@Override
@@ -2768,26 +2839,36 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
+				 
+				
+				/*if (!error) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}*/
+				
 			}
 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
-				System.out.println("This type cannot be proved by type validity analysis:");
+				if (!error) {
+					System.out.println("This type cannot be proved by type validity analysis:");
+				
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
 				error = true;
+				}
 			}
 
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
-				System.out.println("This type cannot be proved by type validity analysis:");
+				if (!error) {
+					System.out.println("This type cannot be proved by type validity analysis:");
+				
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
 				error = true;
+				}
 			}
 
 			@Override
@@ -2845,10 +2926,12 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
+				
+				if (!error) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 			}
 
 			@Override
@@ -3020,10 +3103,12 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 												}
 											}
 										} else {
+											if (!error) {
 											error = true;
 											System.out.println("OWL Restriction not allowed:");
 											ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 											System.out.println(rendering.render(arg0));
+											}
 										}
 									}
 									String domain = "";
@@ -3206,10 +3291,10 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 														}
 													}
 												} else {
-													error = true;
+													if (!error) {error = true;
 													System.out.println("OWL Restriction not allowed:");
 													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-													System.out.println(rendering.render(arg0));
+													System.out.println(rendering.render(arg0));}
 												}
 											}
 											if (!cons.isEmpty()) {
@@ -3459,10 +3544,10 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 																+ "}";
 													}
 												} else {
-													error = true;
+													if (!error) {error = true;
 													System.out.println("OWL Restriction not allowed:");
 													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-													System.out.println(rendering.render(arg0));
+													System.out.println(rendering.render(arg0));}
 												}
 											}
 											newhead = "";
@@ -3531,30 +3616,31 @@ Set<OWLClass> classes = ontology.getClassesInSignature();
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
 
-				System.out.println("This type cannot be proved by type validity analysis:");
+				/*if (!error) {System.out.println("This type cannot be proved by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}*/
 
 			}
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
 
+				if (!error) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 
 			}
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-
+				if (!error) {
 				System.out.println("This type cannot be proved by type validity analysis:");
 				ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 				System.out.println(rendering.render(arg0));
-				error = true;
+				error = true;}
 
 			}
 

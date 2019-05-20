@@ -725,8 +725,8 @@ public class MyUI extends UI {
 		debug_button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {	
-			if (!debug.isVisible()) {debug.setVisible(true); debug_button.setCaption("Close Debug");}
-			else {debug.setVisible(false); debug_button.setCaption("Debug Query");}
+			if (!debug.isVisible()) {debug.setVisible(true); debug_button.setCaption("Close Debug"); answers.setVisible(false);}
+			else {debug.setVisible(false); debug_button.setCaption("Debug Query");answers.setVisible(true);}
 			
 			}
 		});

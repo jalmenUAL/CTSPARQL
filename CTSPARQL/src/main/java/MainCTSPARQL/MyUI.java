@@ -129,8 +129,7 @@ public class MyUI extends UI {
 		lab.setHeight("200px");
 	 
 		ontologies.setItems("file:///C:/social-network-2019.owl","http://owl.man.ac.uk/2006/07/sssw/people.owl",
-				"https://protege.stanford.edu/ontologies/camera.owl","https://protege.stanford.edu/ontologies/koala.owl",
-				"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
+ 				"http://www.co-ode.org/ontologies/pizza",
 				"https://protege.stanford.edu/ontologies/travel.owl",
 				"https://www.w3.org/TR/owl-guide/wine.rdf");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");

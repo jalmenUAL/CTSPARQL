@@ -28,6 +28,7 @@ import java.util.Stack;
 import org.jpl7.Term;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddAxiom;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -964,9 +965,9 @@ public class TSPARQL {
 								}
 
 							} else {
-								System.out.println("Individual used with a data property:");
+								if (!wrong_analysis) {System.out.println("Class or Individual used as data property:");
 								System.out.println(tp);
-								wrong_analysis = true;
+								wrong_analysis = true;}
 							}
 						} else { /* second V should be an object property */
 							if (tp.getSubject().isVariable()) /* VVU */ {
@@ -1213,7 +1214,10 @@ public class TSPARQL {
 							System.out.println(e.getMessage());
 						}
 					} else {
-						wrong_analysis = true;
+						if (!wrong_analysis) {wrong_analysis = true;
+						System.out.println("Class or Individual used as property:");
+						System.out.println(tp);
+						}
 					}
 
 				} else /* VVV */
@@ -1350,6 +1354,12 @@ public class TSPARQL {
 							System.out.println(e.getMessage());
 						}
 					} else {
+					if (!wrong_analysis)
+					{	
+					wrong_analysis = true;
+					System.out.println("Class or Individual used as property:");
+					System.out.println(tp);
+					}
 					}
 				} else /* UVV */
 				{
@@ -1380,7 +1390,8 @@ public class TSPARQL {
 		Set<OWLAxiom> axs = ontology.getABoxAxioms(true);
 		  for(OWLAxiom ax : axs)
 		  {
-		  manager.removeAxiom(ontology,ax);
+		  if (!ax.isOfType(AxiomType.CLASS_ASSERTION)) {manager.removeAxiom(ontology,ax);}
+		  
 		  }
 		 
 		  try {
@@ -1394,45 +1405,9 @@ public class TSPARQL {
 		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 		
-		Set<OWLClass> classes = ontology.getClassesInSignature();
 		
-		for (OWLClass cl: classes)
-		{
-			for (OWLClass cl2: classes)
-			{
-				 
-				if (cl.getSuperClasses(ontology).isEmpty() 
-						&& cl2.getSuperClasses(ontology).isEmpty() 
-						&& !cl.isOWLThing() && !cl2.isOWLThing() 
-						&& !cl.equals(lit) && !cl2.equals(lit) 
-						&& !cl.equals(res) && !cl2.equals(res))
-				{
-				OWLDisjointClassesAxiom ax = dataFactory.getOWLDisjointClassesAxiom(cl, cl2);
-				AddAxiom addAxiom = new AddAxiom(ontology, ax);
-				manager.applyChange(addAxiom);
-				try {
-					manager.saveOntology(ontology);
-				} catch (OWLOntologyStorageException e) {
-					System.out.println(e.getMessage());
-				}
-			    
-				if (!(consistency()=="true")) {
-
-					RemoveAxiom rem = new RemoveAxiom(ontology,ax);
-						manager.applyChange(rem);
-						try {
-							manager.saveOntology(ontology);
-						} catch (OWLOntologyStorageException e) {
-							System.out.println(e.getMessage());
-						}
-					    }						
-			     
-				
-				
-		}
-		}
 		
-		Set<OWLNamedIndividual> individuals = ontology.getIndividualsInSignature();
+		/*Set<OWLNamedIndividual> individuals = ontology.getIndividualsInSignature();
 		for (OWLNamedIndividual i: individuals)
 		{
 			for (OWLNamedIndividual i2: individuals)
@@ -1452,7 +1427,7 @@ public class TSPARQL {
 				// TODO Auto-generated catch block
 				System.out.println(e.getMessage());
 			}
-			
+		*/	
 		
 			
 		
@@ -1535,7 +1510,7 @@ public class TSPARQL {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
-		}
+		
 		
 		
 		final Query query = QueryFactory.create(queryString);
@@ -2685,6 +2660,7 @@ public class TSPARQL {
 		if (!error && !wrong_analysis) {
 			System.out.println("Successful type validity checking. The property has been proved.");
 		}
+		
 		restore(file);
 
 	};
@@ -2704,10 +2680,14 @@ public class TSPARQL {
 					String consistency = consistency();
 					
 					if (consistency == "true") {  
+						
+						
+						 
+						
 					} else {
 						error = true;
 						System.out
-								.println("Unsuccessful type validity checking. Case 1. Caused by the following inconsistency:");
+								.println("Unsuccessful type validity checking. Case 1.\n Caused by the following inconsistency:");
 						System.out.print(explanations());
 						 
 					}
@@ -2724,6 +2704,17 @@ public class TSPARQL {
 							e.accept(this);
 						}
 					}
+					if (consistency == "true" && !error) {  
+						
+						error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0),rendering.render(in));	
+						 
+						
+					}
+					
 				}
 			}
 
@@ -2783,17 +2774,22 @@ public class TSPARQL {
 					if (entailment == "false") {
 						error = true;
 						System.out.println(
-								"Unsuccessful type validity checking. Case 2. The following class membership cannot be proved:");
+								"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0),rendering.render(in));
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							error = true;
+							System.out.println(
+									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 2.1. Caused by the following inconsistency:");
+									"Unsuccessful type validity checking. Case 2.1.\n Caused by the following inconsistency:");
 							System.out.print(explanations());
  						}
 						removeTypeAssertion(arg0, in);
@@ -2819,17 +2815,21 @@ public class TSPARQL {
 					if (entailment == "false") {
 						error = true;
 						System.out.println(
-								"Unsuccessful type validity checking. Case 4. The following class membership cannot be proved:");
+								"Unsuccessful type validity checking. Case 3.\n The following class membership cannot be proved:");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0),rendering.render(in));
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
-						if (consistency == "true") {
+						if (consistency == "true") {error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 4.1. Caused by the following inconsistency:");
+									"Unsuccessful type validity checking. Case 3.1.\n Caused by the following inconsistency:");
 							System.out.print(explanations());
  						}
 						removeTypeAssertion(arg0, in);
@@ -2879,17 +2879,21 @@ public class TSPARQL {
 					if (entailment == "false") {
 						error = true;
 						System.out.println(
-								"Unsuccessful type validity checking. Case 10. The following class membership cannot be proved:");
+								"Unsuccessful type validity checking. Case 4.\n The following class membership cannot be proved:");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0),rendering.render(in));
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
-						if (consistency == "true") {
+						if (consistency == "true") {error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 10.1. Caused by the following inconsistency:");
+									"Unsuccessful type validity checking. Case 4.1.\n Caused by the following inconsistency:");
 							System.out.print(explanations());
  						}
 						removeTypeAssertion(arg0, in);
@@ -2905,17 +2909,21 @@ public class TSPARQL {
 					if (entailment == "false") {
 						error = true;
 						System.out.println(
-								"Unsuccessful type validity checking. Case 11. The following class membership cannot be proved:");
+								"Unsuccessful type validity checking. Case 5.\n The following class membership cannot be proved:");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0),rendering.render(in));
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
-						if (consistency == "true") {
+						if (consistency == "true") {error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 11.1. Caused by the following inconsistency:");
+									"Unsuccessful type validity checking. Case 5.1.\n Caused by the following inconsistency:");
 							System.out.print(explanations());
  						}
 						removeTypeAssertion(arg0, in);
@@ -2943,17 +2951,21 @@ public class TSPARQL {
 						if (entailment == "false") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 13. The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 6.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
-							if (consistency == "true") {
+							if (consistency == "true") {error = true;
+							System.out.println(
+									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0),rendering.render(in));
 							} else {
 								error = true;
 								System.out.println(
-										"Unsuccessful type validity checking. Case 13.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity checking. Case 6.1.\n Caused by the following inconsistency:");
 								System.out.print(explanations());
 								 
 							}
@@ -3187,7 +3199,7 @@ public class TSPARQL {
 										// COUNTEREXAMPLE
 										{
 											error = true;
-											System.out.println("Unsuccessful type validity checking. Case 14. Counterexample:");
+											System.out.println("Unsuccessful type validity checking. Case 7. Counterexample:");
 											Map<String, Term>[] sols = qimpl.allSolutions();
 											for (Map<String, Term> s : sols) {
 												for (String key : s.keySet())
@@ -3315,7 +3327,7 @@ public class TSPARQL {
 													// INCONSISTENCY
 													error = true;
 													System.out.println(
-															"Unsuccessful type validity checking. Case 14.1. Caused by the following inconsistency:");
+															"Unsuccessful type validity checking. Case 7.1.\n Caused by the following inconsistency:");
 													System.out.println(head);
 												} else {
 													// ENTAILMENT
@@ -3323,13 +3335,21 @@ public class TSPARQL {
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
 													} else {
+														
+														error = true;
+														System.out.println(
+																"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+														printClass(rendering.render(arg0),rendering.render(in));
+														
+														
 													}
 												}
 											} else {
 												// INCOMPLETENESS
 												error = true;
 												System.out.println(
-														"Unsuccessful type validity checking. Case 14.2. The following expression cannot be proved:");
+														"Unsuccessful type validity checking. Case 7.2.\n The following expression cannot be proved:");
 												System.out.println(head);
 											}
 										}
@@ -3337,7 +3357,7 @@ public class TSPARQL {
 										// INCOMPLETENESS
 										error = true;
 										System.out.println(
-												"Unsuccessful type validity checking. Case 14.3. The following expression cannot be proved:");
+												"Unsuccessful type validity checking. Case 7.3.\n The following expression cannot be proved:");
 										for (String c : constraints_elements) {
 											System.out.print(c.replace("?", ""));
 										}
@@ -3347,7 +3367,7 @@ public class TSPARQL {
 									// INCOMPLETENESS
 									error = true;
 									System.out.print(
-											"Unsuccessful type validity checking. Case 14.4. The property cannot be proved. "
+											"Unsuccessful type validity checking. Case 7.4.\n The property cannot be proved.\n "
 													+ "Not enough information for: ");
 									System.out.println(dp.getIRI().toString().split("#")[1]);
 								}
@@ -3355,7 +3375,7 @@ public class TSPARQL {
 						} else {
 							// INCOMPLETENESS
 							error = true;
-							System.out.print("Unsuccessful type validity checking. Case 14.5 . The property cannot be proved. "
+							System.out.print("Unsuccessful type validity checking. Case 7.5 . The property cannot be proved. "
 									+ "Not enough information for: ");
 							System.out.println(var_name);
 						}
@@ -3372,17 +3392,21 @@ public class TSPARQL {
 						if (entailment == "false") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 17. The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 8.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0),rendering.render(in));
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
-							if (consistency == "true") {
+							if (consistency == "true") { error = true;
+							System.out.println(
+									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0),rendering.render(in));
 							} else {
 								error = true;
 								System.out.println(
-										"Unsuccessful type validity checking. Case 17.1. Caused by the following inconsistency:");
+										"Unsuccessful type validity checking. Case 8.1.\n Caused by the following inconsistency:");
 								System.out.print(explanations());
 								 
 							}
@@ -3515,7 +3539,7 @@ public class TSPARQL {
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
 										if (qimpl.hasSolution()) { // COUNTEREXAMPLE
 											error = true;
-											System.out.println("Unsuccessful type validity checking. Case 18. Counterexample:");
+											System.out.println("Unsuccessful type validity checking. Case 9. Counterexample:");
 											Map<String, Term>[] sols = qimpl.allSolutions();
 											for (Map<String, Term> s : sols) {
 												for (String key : s.keySet())
@@ -3565,21 +3589,25 @@ public class TSPARQL {
 													// INCONSISTENCY
 													error = true;
 													System.out.println(
-															"Unsuccessful type validity checking. Case 18.1. Caused by the following inconsistency:");
+															"Unsuccessful type validity checking. Case 9.1.\n Caused by the following inconsistency:");
 													System.out.println(head);
 												} else {
 													// ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
-													} else {
+													} else {error = true;
+													System.out.println(
+															"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+													printClass(rendering.render(arg0),rendering.render(in));
 													}
 												}
 											} else {
 												// INCOMPLETENESS
 												error = true;
 												System.out.println(
-														"Unsuccessful type validity checking. Case 18.2. The following expression cannot be proved:");
+														"Unsuccessful type validity checking. Case 9.2.\n The following expression cannot be proved:");
 												System.out.println(cons);
 											}
 										}
@@ -3587,7 +3615,7 @@ public class TSPARQL {
 										// INCOMPLETENESS
 										error = true;
 										System.out.println(
-												"Unsuccessful type validity checking. Case 18.3. The following expression cannot be proved:");
+												"Unsuccessful type validity checking. Case 9.3.\n The following expression cannot be proved:");
 										for (String c : constraints_elements) {
 											System.out.print(c.replace("?", ""));
 										}
@@ -3597,7 +3625,7 @@ public class TSPARQL {
 									// INCOMPLETENESS
 									error = true;
 									System.out.print(
-											"Unsuccessful type validity checking. Case 18.4. The property cannot be proved. "
+											"Unsuccessful type validity checking. Case 9.4.\n The property cannot be proved.\n "
 													+ "Not enough information for: ");
 									System.out.print(dp.getIRI().toString().split("#")[1]);
 								}
@@ -3605,7 +3633,7 @@ public class TSPARQL {
 						} else {
 							// INCOMPLETENESS
 							error = true;
-							System.out.print("Unsuccessful type validity checking. Case 18.5. The property cannot be proved. "
+							System.out.print("Unsuccessful type validity checking. Case 9.5. The property cannot be proved. "
 									+ "Not enough information for: ");
 							System.out.println(var_name);
 						}

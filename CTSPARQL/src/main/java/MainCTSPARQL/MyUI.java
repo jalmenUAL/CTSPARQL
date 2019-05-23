@@ -118,33 +118,11 @@ public class MyUI extends UI {
 		lab.setWidth("100%");
 		lab.setHeight("200px");
 		ontologies.setItems("file:///C:/social-network-2019.owl", "http://owl.man.ac.uk/2006/07/sssw/people.owl",
-				"http://www.co-ode.org/ontologies/pizza", "https://protege.stanford.edu/ontologies/travel.owl",
-				"https://www.w3.org/TR/owl-guide/wine.rdf");
+				"https://protege.stanford.edu/ontologies/pizza/pizza.owl");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
 		ontologies.setEmptySelectionAllowed(false);
-		ontologies.addValueChangeListener(event -> {
-			if (event.getSource().isEmpty()) {
-				error("", "Empty Selection. Please select an ontology.");
-			} else {
-				current_ontology = event.getValue();
-				String ontology = "";
-				try {
-					ontology = readStringFromURL(current_ontology);
-					editorOntology.setValue(ontology);
-				} catch (IOException e) {
-					System.out.println(e.getMessage());
-					error("Error Loading Ontology. Causes:", e.getMessage());
-				}
-				try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
-					out.println(ontology);
-				} catch (FileNotFoundException e2) {
-					// TODO Auto-generated catch block
-					System.out.println(e2.getMessage());
-				}
-			}
-
-		});
+		
 
 		setErrorHandler(new ErrorHandler() {
 
@@ -513,21 +491,23 @@ public class MyUI extends UI {
 		Grid<HashMap<String, RDFNode>> answers = new Grid<>();
 		answers.setWidth("100%");
 
-		ComboBox<String> examplest = new ComboBox<>("Examples of Typing");
-		examplest.setWidth("100%");
-		examplest.setEmptySelectionAllowed(false);
-		examplest.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
+		//EXAMPLES SOCIAL
+	
+		ComboBox<String> examplestsocial = new ComboBox<>("Examples of Typing");
+		examplestsocial.setWidth("100%");
+		examplestsocial.setEmptySelectionAllowed(false);
+		examplestsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9", "Example 10", "Example 11", "Example 12", "Example 13", "Example 14",
 				"Example 15", "Example 16", "Example 17", "Example 18", "Example 19", "Example 20", "Example 21",
 				"Example 22", "Example 23", "Example 24", "Example 25", "Example 26", "Example 27", "Example 28",
 				"Example 29", "Example 30", "Example 31", "Example 32");
-		examplest.setPageLength(32);
-		ComboBox<String> examplestst = new ComboBox<>("Examples of Type Validity");
-		examplestst.setEmptySelectionAllowed(false);
-		examplestst.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
+		examplestsocial.setPageLength(32);
+		ComboBox<String> examplestvsocial = new ComboBox<>("Examples of Type Validity");
+		examplestvsocial.setEmptySelectionAllowed(false);
+		examplestvsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9");
-		examplestst.setWidth("100%");
-		examplest.addValueChangeListener(event -> {
+		examplestvsocial.setWidth("100%");
+		examplestvsocial.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
@@ -602,7 +582,7 @@ public class MyUI extends UI {
 
 			}
 		});
-		examplestst.addValueChangeListener(event -> {
+		examplestvsocial.addValueChangeListener(event -> {
 			debug.setVisible(false);
 			debug_button.setCaption("Debug Query");
 			answers.setVisible(true);
@@ -630,7 +610,40 @@ public class MyUI extends UI {
 				}
 			}
 		});
-		examplestst.setPageLength(9);
+		examplestvsocial.setPageLength(9);
+		
+		// EXAMPLES SOCIAL
+		
+		HorizontalLayout examplesall = new HorizontalLayout();
+		examplesall.setWidth("100%");
+		
+		ontologies.addValueChangeListener(event -> {
+			if (event.getSource().isEmpty()) {
+				error("", "Empty Selection. Please select an ontology.");
+			} else {
+				current_ontology = event.getValue();
+				String ontology = "";
+				try {
+					ontology = readStringFromURL(current_ontology);
+					editorOntology.setValue(ontology);
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+					error("Error Loading Ontology. Causes:", e.getMessage());
+				}
+				try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
+					out.println(ontology);
+				} catch (FileNotFoundException e2) {
+					// TODO Auto-generated catch block
+					System.out.println(e2.getMessage());
+				}
+			}
+			
+			examplesall.addComponent(examplestsocial);
+			examplesall.addComponent(examplestvsocial);
+			
+
+		});
+		
 		editor.setValue(ex1);
 		editor.setDescription("SPARQL Query");
 		TextArea result = new TextArea();
@@ -767,9 +780,9 @@ public class MyUI extends UI {
 				int counter = 0;
 				for (OWLClass c : classes_type_validity) {
 					counter++;
-					if (c.getIRI().getStart().equals(urio + "#")) {
+					 
 						names.add(c.getIRI().toString());
-					}
+					 
 				}
 				cb_type_validity.setItems(names);
 				cb_type_validity.setPageLength(counter);
@@ -844,12 +857,10 @@ public class MyUI extends UI {
 
 		edS.setContent(editor);
 		resP.setContent(result);
-		HorizontalLayout examplesall = new HorizontalLayout();
+		
 		main.addComponent(lab);
 		main.setWidth("100%");
-		examplesall.setWidth("100%");
-		examplesall.addComponent(examplest);
-		examplesall.addComponent(examplestst);
+		
 		main.addComponent(ontologies);
 		main.addComponent(examplesall);
 		main.addComponent(edS);

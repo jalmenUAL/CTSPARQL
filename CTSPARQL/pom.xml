@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>sparql.tsparql</groupId>
-	<artifactId>WSPARQL</artifactId>
+	<artifactId>CTSPARQL</artifactId>
 	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>WSPARQL</name>
+	<name>CTSPARQL</name>
 
 	<prerequisites>
 		<maven>3</maven>

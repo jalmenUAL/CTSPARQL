@@ -1926,12 +1926,12 @@ public class TSPARQL {
 
 										} else if (fr.getFacet().toString() == "maxInclusive") {
 											if (var.isVariable()) {
-												cons = cons + var.toString().substring(1).toUpperCase() + "#<="
+												cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
 														+ fr.getFacetValue().getLiteral() + ",";
 												constraints_elements.add("( " + var.toString().toUpperCase() + " <= "
 														+ fr.getFacetValue().getLiteral() + " )");
 											} else {
-												cons = cons + var.getLiteralValue().toString() + "#<="
+												cons = cons + var.getLiteralValue().toString() + "#=<"
 														+ fr.getFacetValue().getLiteral() + ",";
 												constraints_elements.add("( " + var.getLiteralValue().toString()
 														+ " <= " + fr.getFacetValue().getLiteral() + " )");
@@ -1979,12 +1979,12 @@ public class TSPARQL {
 											}
 										} else if (fr.getFacet().toString() == "maxInclusive") {
 											if (var.isVariable()) {
-												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<="
+												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
 														+ fr.getFacetValue().getLiteral() + "}" + ",";
 												constraints_elements.add("( " + var.toString().toUpperCase() + " <= "
 														+ fr.getFacetValue().getLiteral() + " )");
 											} else {
-												cons = cons + "{" + var.getLiteralValue().toString() + "<="
+												cons = cons + "{" + var.getLiteralValue().toString() + "=<"
 														+ fr.getFacetValue().getLiteral() + "}" + ",";
 												constraints_elements.add("(" + var.getLiteralValue().toString() + " <= "
 														+ fr.getFacetValue().getLiteral() + ")");
@@ -2565,9 +2565,12 @@ public class TSPARQL {
 			@Override
 			public void visit(OWLClass arg0) {
 				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+				System.out.println(axiom);
 				String entailment = entailment(axiom);
+				System.out.println(entailment);
 				if (entailment == "true") {
 				} else {
+					 
 					addTypeAssertion(arg0, in);
 					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 					addTypeAssertion(res, in);
@@ -2647,8 +2650,9 @@ public class TSPARQL {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							for (Node var : vars_) {
 								String urio = ontology.getOntologyID().getOntologyIRI().toString();
-								OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var));
-								owl_type_validity(filler.asOWLClass(), in, var);
+								OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
+								 
+								owl_type_validity(filler.asOWLClass(), in,var);
 							}
 						}
 					}
@@ -2657,19 +2661,20 @@ public class TSPARQL {
 				if (!error) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
-					if (entailment == "false") {
-						error = true;
-						System.out.println(
-								"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
+					
+					if (entailment == "true") {
+						//error = true;
+						//System.out.println(
+						//		"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
+						//ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						//printClass(rendering.render(arg0), rendering.render(in));
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 11.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						} else {
@@ -2710,7 +2715,7 @@ public class TSPARQL {
 						if (consistency == "true") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 12.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						} else {
@@ -2767,7 +2772,7 @@ public class TSPARQL {
 						if (consistency == "true") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 13.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						} else {
@@ -2798,7 +2803,7 @@ public class TSPARQL {
 						if (consistency == "true") {
 							error = true;
 							System.out.println(
-									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+									"Unsuccessful type validity checking. Case 14.\n The following class membership cannot be proved:");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						} else {
@@ -2840,7 +2845,7 @@ public class TSPARQL {
 							if (consistency == "true") {
 								error = true;
 								System.out.println(
-										"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+										"Unsuccessful type validity checking. Case 15.\n The following class membership cannot be proved:");
 								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 								printClass(rendering.render(arg0), rendering.render(in));
 							} else {
@@ -2880,12 +2885,15 @@ public class TSPARQL {
 							}
 							OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
 							OWLDataRange filler = someValuesFrom.getFiller();
+							
 							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
 								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 									String cons = "";
 									for (Node var : vars_) {
+										 
+										
 										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 										if (r.getDatatype().isInteger()) { // CHANGED , by ;
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
@@ -2904,11 +2912,11 @@ public class TSPARQL {
 												} else if (fr.getFacet().toString() == "maxInclusive") {
 													if (var.isVariable()) {
 														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
-																+ "#<=" + fr.getFacetValue().getLiteral() + ";";
+																+ "#=<" + fr.getFacetValue().getLiteral() + ";";
 														constraints_elements.add("( " + var.toString().toUpperCase()
 																+ " <= " + fr.getFacetValue().getLiteral() + " )");
 													} else {
-														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<="
+														cons = cons + "#\\" + var.getLiteralValue().toString() + "#=<"
 																+ fr.getFacetValue().getLiteral() + ";";
 														constraints_elements.add("( " + var.getLiteralValue().toString()
 																+ " <= " + fr.getFacetValue().getLiteral() + " )");
@@ -3106,9 +3114,9 @@ public class TSPARQL {
 														} else if (fr.getFacet().toString() == "maxInclusive") {
 															if (var.isVariable()) {
 																cons = cons + var.toString().substring(1).toUpperCase()
-																		+ "#<=" + fr.getFacetValue().getLiteral() + ",";
+																		+ "#=<" + fr.getFacetValue().getLiteral() + ",";
 															} else {
-																cons = cons + var.getLiteralValue().toString() + "#<="
+																cons = cons + var.getLiteralValue().toString() + "#=<"
 																		+ fr.getFacetValue().getLiteral() + ",";
 															}
 
@@ -3150,12 +3158,12 @@ public class TSPARQL {
 															if (var.isVariable()) {
 																cons = cons + "{"
 																		+ var.toString().substring(1).toUpperCase()
-																		+ "<=" + fr.getFacetValue().getLiteral() + "}"
+																		+ "=<" + fr.getFacetValue().getLiteral() + "}"
 																		+ ",";
 															} else {
 																cons = cons + "{"
 																		+ var.toString().substring(1).toUpperCase()
-																		+ "<=" + fr.getFacetValue().getLiteral() + "}"
+																		+ "=<" + fr.getFacetValue().getLiteral() + "}"
 																		+ ",";
 															}
 														} else if (fr.getFacet().toString() == "minExclusive") {
@@ -3219,7 +3227,7 @@ public class TSPARQL {
 													} else {
 														error = true;
 														System.out.println(
-																"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+																"Unsuccessful type validity checking. Case 16.\n The following class membership cannot be proved:");
 														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 														printClass(rendering.render(arg0), rendering.render(in));
 													}
@@ -3281,7 +3289,7 @@ public class TSPARQL {
 							if (consistency == "true") {
 								error = true;
 								System.out.println(
-										"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+										"Unsuccessful type validity checking. Case 17.\n The following class membership cannot be proved:");
 								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 								printClass(rendering.render(arg0), rendering.render(in));
 							} else {
@@ -3476,7 +3484,7 @@ public class TSPARQL {
 													} else {
 														error = true;
 														System.out.println(
-																"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+																"Unsuccessful type validity checking. Case 18.\n The following class membership cannot be proved:");
 														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 														printClass(rendering.render(arg0), rendering.render(in));
 													}
@@ -3907,7 +3915,28 @@ public class TSPARQL {
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
 				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
-
+		
+		
+		
+		String c = "# ?E: passed\r\n"+
+				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
+				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
+				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
+				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
+				"PREFIX co: <http://www.semanticweb.org/course#>\r\n" + 
+				"SELECT ?S ?E\r\n" + 
+				"WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
+		
+		String con10=
+				"# ?A : attendant\r\n" + 
+				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
+				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
+				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
+				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
+				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
+				"SELECT ?A ?P\r\n" + 
+				"WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
+		
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;
 		OWLOntologyManager manager_owl;
@@ -3917,7 +3946,7 @@ public class TSPARQL {
 		OWLDataFactory dataFactory;
 		OWLDataFactory df_rdf;
 		OWLDataFactory df_owl;
-		String file = "C:/social-network-2019.owl";
+		String file = "C:/conference.owl";
 		String rdf = "C:/rdf-vocabulary.owl";
 		String owl = "C:/owl-vocabulary.owl";
 
@@ -3961,12 +3990,12 @@ public class TSPARQL {
 		long startTime = System.currentTimeMillis();
 
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
-				df_owl, "C:/social-network-2019.owl");
+				df_owl, "C:/conference.owl");
 
 		// t.SPARQL_CORRECTNESS(ex31);
 
 		try {
-			t.SPARQL_TYPE_VALIDITY(ex41, "DL", "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User");
+			t.SPARQL_TYPE_VALIDITY(con10, "A", "http://www.semanticweb.org/conference#attendant");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

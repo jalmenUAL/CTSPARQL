@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#"
-     xml:base="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl"
-     xmlns:socialnetwork="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#"
-     xmlns:types="http://www.types.org#"
+<rdf:RDF xmlns="http://www.semanticweb.org/conference#"
+     xml:base="http://www.semanticweb.org/conference"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
-     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
-     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl"/>
+    <owl:Ontology rdf:about="http://www.semanticweb.org/conference">
+        <owl:versionIRI rdf:resource="http://www.semanticweb.org/conference"/>
+    </owl:Ontology>
     
 
 
@@ -25,108 +22,47 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#added_by -->
+    <!-- http://www.semanticweb.org/conference#attends -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#added_by">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Event"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#created_by"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#attends">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#author"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#conference"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#attends_to -->
+    <!-- http://www.semanticweb.org/conference#has_review -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#attends_to">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Event"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <owl:inverseOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#confirmed_by"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#has_review">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#review"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#confirmed_by -->
+    <!-- http://www.semanticweb.org/conference#receives -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#confirmed_by">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Event"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#receives">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#conference"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#created_by -->
+    <!-- http://www.semanticweb.org/conference#reviews -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#created_by">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <owl:inverseOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#creates"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#reviews">
+        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#creates -->
+    <!-- http://www.semanticweb.org/conference#submits -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#creates">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#friend_of -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#friend_of">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#liked_by -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#liked_by">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <owl:inverseOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#likes"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#likes -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#likes">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#sent_by -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#sent_by">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Message"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#created_by"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shared_by -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shared_by">
-        <owl:inverseOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shares"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shares -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shares">
-        <rdfs:range rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Message"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#submits">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#author"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
     </owl:ObjectProperty>
     
 
@@ -148,60 +84,20 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#age -->
+    <!-- http://www.semanticweb.org/conference#comment -->
 
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#age">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyActivity -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyActivity">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyLikes -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyLikes">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#date -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#date">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#height -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#height">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#name -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#name">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/conference#comment">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#review"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#score -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/conference#score">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
     </owl:DatatypeProperty>
     
 
@@ -217,19 +113,33 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Active -->
+    <!-- http://www.semanticweb.org/conference#acceptance -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Active">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#acceptance">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#paper"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyActivity"/>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#has_review"/>
+                <owl:allValuesFrom rdf:resource="http://www.semanticweb.org/conference#accepted"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#accepted -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#accepted">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#score"/>
                 <owl:allValuesFrom>
                     <rdfs:Datatype>
                         <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
                         <owl:withRestrictions rdf:parseType="Collection">
                             <rdf:Description>
-                                <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</xsd:minExclusive>
+                                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</xsd:minInclusive>
                             </rdf:Description>
                         </owl:withRestrictions>
                     </rdfs:Datatype>
@@ -240,36 +150,68 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity -->
+    <!-- http://www.semanticweb.org/conference#attendant -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity">
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Event -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Event">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Message"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#attendant">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#author"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#dailyLikes"/>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#submits"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#acceptance"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#author -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#author">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#submits"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#paper"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#conference"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#conference -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#conference">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#paper -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#paper">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#rejected -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#rejected">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#score"/>
                 <owl:someValuesFrom>
                     <rdfs:Datatype>
                         <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
                         <owl:withRestrictions rdf:parseType="Collection">
                             <rdf:Description>
-                                <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</xsd:minExclusive>
+                                <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</xsd:maxInclusive>
                             </rdf:Description>
                         </owl:withRestrictions>
                     </rdfs:Datatype>
@@ -280,74 +222,38 @@
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Message -->
+    <!-- http://www.semanticweb.org/conference#rejection -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Message">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#rejection">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#has_review"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#rejected"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#OpinionLeader -->
+    <!-- http://www.semanticweb.org/conference#review -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#OpinionLeader">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#creates"/>
-                        <owl:allValuesFrom rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Shared"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#review">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Shared -->
+    <!-- http://www.semanticweb.org/conference#reviewer -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Shared">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#shared_by"/>
-                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/conference#reviewer">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#reviews"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#paper"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#SocialLeader -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#SocialLeader">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#creates"/>
-                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Shared"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
     
 
 
@@ -452,12 +358,6 @@
     
 
 
-    <!-- http://www.w3.org/2002/07/owl#Thing -->
-
-    <owl:Class rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
-    
-
-
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -466,12 +366,120 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-   
+    
 
 
-    <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#jesus -->
+    <!-- http://www.semanticweb.org/conference#A1 -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#jesus"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#A1">
+        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#B1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#B1">
+        <rdf:type rdf:resource="http://www.types.org#xsd:float"/>
+        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#EDBT -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#EDBT"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#P -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#P">
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <has_review rdf:resource="http://www.semanticweb.org/conference#R"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#R -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#R">
+        <rdf:type rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#V -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#V">
+        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#VLDB -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#VLDB">
+        <rdf:type rdf:resource="http://www.semanticweb.org/conference#conference"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#antonio -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#antonio"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#frank -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#frank"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#jesus -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#jesus"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#paper1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#paper1"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#paper2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#paper2"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#review -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#review1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review1"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#review2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review2"/>
+    
+
+
+    <!-- http://www.semanticweb.org/conference#susan -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#susan"/>
 </rdf:RDF>
 
 

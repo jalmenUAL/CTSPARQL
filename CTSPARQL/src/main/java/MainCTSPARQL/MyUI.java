@@ -929,7 +929,7 @@ public class MyUI extends UI {
 					"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 					"PREFIX co: <http://www.semanticweb.org/course#>\r\n" + 
 					"SELECT ?S ?E\r\n" + 
-					"WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:finished}";
+					"WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:passed}";
 		
 		String c5 = "# ?E: passed\r\n"+
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
@@ -1078,10 +1078,10 @@ public class MyUI extends UI {
 				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
 				"SELECT ?A ?P\r\n" + 
-				"WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
+				"WHERE { ?A con:submits ?P . ?P con:has_review ?R  }";
 		
 		String con6 = 
-				"# ?P : acceptance" +
+				"# ?P : acceptance\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
@@ -1091,7 +1091,7 @@ public class MyUI extends UI {
 				"WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }"; 
 		
 		String con7 = 
-				"# ?P : rejection" +
+				"# ?P : rejection\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
@@ -1101,37 +1101,37 @@ public class MyUI extends UI {
 				"WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
 		
 		String con8 = 
-				"# ?A : attendant" +
+				"# ?A : attendant\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
 				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
 				"SELECT ?A ?P\r\n" + 
-				"WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance . ?P rdf:type con:paper }";
+				"WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
 		
 		String con9=
-				"# ?P : acceptance" +
+				"# ?P : acceptance\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
 				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
 				"SELECT ?P\r\n" + 
-				"WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 2) . ?R rdf:type con:review }";
+				"WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 2) }";
 		
 		String con10=
-				"# ?P : rejection" +
+				"# ?P : rejection\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
 				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
 				"SELECT ?P\r\n" + 
-				"WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 2) . ?R rdf:type con:review }";
+				"WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 0) }";
 		
 		String con11=
-				"# ?P : rejection" +
+				"# ?P : rejection\r\n" +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
@@ -1139,6 +1139,71 @@ public class MyUI extends UI {
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
 				"SELECT ?P\r\n" + 
 				"WHERE { ?P con:has_review ?R }";
+		
+		ComboBox<String> examplestconf = new ComboBox<>("Examples of Typing");
+		examplestconf.setWidth("100%");
+		examplestconf.setEmptySelectionAllowed(false);
+		examplestconf.setItems("Example 1", "Example 2","Example 3");
+		examplestconf.setPageLength(4);
+		
+		ComboBox<String> examplestvconf = new ComboBox<>("Examples of Type Validity");
+		examplestvconf.setEmptySelectionAllowed(false);
+		examplestvconf.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5","Example 6",
+				"Example 7","Example 8");
+		examplestvconf.setWidth("100%");
+		examplestvconf.setPageLength(8);
+		
+		
+		examplestconf.addValueChangeListener(event -> {
+			if (event.getSource().isEmpty()) {
+				error("", "No Example Selected. Please select an example.");
+			} else {
+				debug.setVisible(false);
+				debug_button.setCaption("Debug Query");
+				answers.setVisible(true);
+				if (event.getValue() == "Example 1") {
+					editor.setValue(con1);
+				} else if (event.getValue() == "Example 2") {
+					editor.setValue(con2);
+				} 
+				else if (event.getValue() == "Example 3") {
+					editor.setValue(con3);
+				} 
+				 
+
+			}
+		});
+		examplestvconf.addValueChangeListener(event -> {
+			debug.setVisible(false);
+			debug_button.setCaption("Debug Query");
+			answers.setVisible(true);
+			if (event.getSource().isEmpty()) {
+				error("", "No Example Eelected. Please select an example.");
+			} else {
+				if (event.getValue() == "Example 1") {
+					editor.setValue(con4);
+				} else if (event.getValue() == "Example 2") {
+					editor.setValue(con5);
+				} else if (event.getValue() == "Example 3") {
+					editor.setValue(con6);
+				}  
+				else if (event.getValue() == "Example 4") {
+					editor.setValue(con7);
+				} 
+				else if (event.getValue() == "Example 5") {
+					editor.setValue(con8);
+				} 
+				else if (event.getValue() == "Example 6") {
+					editor.setValue(con9);
+				} 
+				else if (event.getValue() == "Example 7") {
+					editor.setValue(con10);
+				} 
+				else if (event.getValue() == "Example 8") {
+					editor.setValue(con11);
+				} 
+			}
+		});
 		
 		HorizontalLayout examplesall = new HorizontalLayout();
 		examplesall.setWidth("100%");
@@ -1177,8 +1242,8 @@ public class MyUI extends UI {
 					if (current_ontology=="file:///C:/conference.owl")
 					{
 					examplesall.removeAllComponents();	
-					examplesall.addComponent(examplestpizza);
-					examplesall.addComponent(examplestvpizza);
+					examplesall.addComponent(examplestconf);
+					examplesall.addComponent(examplestvconf);
 					}
 					
 					

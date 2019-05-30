@@ -98,7 +98,7 @@ public class MyUI extends UI {
 	String owl = "C:/owl-vocabulary.owl";
 	OWLReasoner reasoner;
 
-	ComboBox<String> ontologies = new ComboBox<String>();
+	ComboBox<String> ontologies = new ComboBox<String>("Examples of Ontologies");
 	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>();
 
@@ -135,52 +135,70 @@ public class MyUI extends UI {
 		});
 
 		VerticalLayout debug = new VerticalLayout();
+		
 		debug.setWidth("100%");
 		debug.setHeight("100%");
 		debug.setMargin(false);
 		debug.setVisible(false);
+		
 		HorizontalLayout hlb = new HorizontalLayout();
+		
 		Button correctness = new Button("Correctness");
 		correctness.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		correctness.setIcon(VaadinIcons.AMBULANCE);
 		correctness.setWidth("100%");
+			
 		Button type_validity = new Button("Type Validity");
 		type_validity.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		type_validity.setIcon(VaadinIcons.HEART);
 		type_validity.setWidth("100%");
+		
 		Button run_type_validity = new Button("Run Type Validity");
 		run_type_validity.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		run_type_validity.setIcon(VaadinIcons.PLAY);
 		run_type_validity.setWidth("100%");
+		run_type_validity.setVisible(false);
+		
 		HorizontalLayout hlt = new HorizontalLayout();
+		
 		hlb.addComponent(correctness);
 		hlb.addComponent(type_validity);
 		hlb.setWidth("100%");
+		
 		hlt.addComponent(cb_type_validity);
 		hlt.addComponent(cb_vars);
 		hlt.addComponent(run_type_validity);
 		hlt.setWidth("100%");
+		
 		cb_type_validity.setVisible(false);
 		cb_type_validity.setWidth("100%");
 		cb_type_validity.setEmptySelectionAllowed(false);
+		
 		cb_vars.setVisible(false);
 		cb_vars.setEmptySelectionAllowed(false);
 		cb_vars.setWidth("100%");
-		run_type_validity.setVisible(false);
-		Panel edS = new Panel();
-		Panel resP = new Panel();
+		
+		Panel edS = new Panel("SPARQL Query");
+		Panel resP = new Panel("Debugging Result");
+		
 		Button run_button = new Button("Execute Query");
-		run_button.setVisible(false);
+		
+		
 		run_button.setWidth("100%");
 		run_button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		run_button.setIcon(VaadinIcons.PLAY);
+		run_button.setVisible(false);
+		
 		Button debug_button = new Button("Debug Query");
+		
 		debug_button.setWidth("100%");
 		debug_button.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		debug_button.setIcon(VaadinIcons.TOOLS);
 		debug_button.setVisible(false);
+		
 		edS.setSizeFull();
 		resP.setSizeFull();
+		
 		AceEditor editor = new AceEditor();
 		editor.setHeight("300px");
 		editor.setWidth("100%");
@@ -195,9 +213,9 @@ public class MyUI extends UI {
 		editor.setUseSoftTabs(false);
 		
 		
-		Grid<HashMap<String, RDFNode>> answers = new Grid<>();
+		Grid<HashMap<String, RDFNode>> answers = new Grid<>("Execution Result");
 		answers.setWidth("100%");
-		
+		answers.setVisible(false);
 		
 		//SOCIAL NETWORK
 		
@@ -500,7 +518,7 @@ public class MyUI extends UI {
 
 	
 	
-		ComboBox<String> examplestsocial = new ComboBox<>("Examples of Typing");
+		ComboBox<String> examplestsocial = new ComboBox<>("Examples of Correctness");
 		examplestsocial.setWidth("100%");
 		examplestsocial.setEmptySelectionAllowed(false);
 		examplestsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
@@ -509,11 +527,13 @@ public class MyUI extends UI {
 				"Example 22", "Example 23", "Example 24", "Example 25", "Example 26", "Example 27", "Example 28",
 				"Example 29", "Example 30", "Example 31", "Example 32");
 		examplestsocial.setPageLength(32);
+		
 		ComboBox<String> examplestvsocial = new ComboBox<>("Examples of Type Validity");
 		examplestvsocial.setEmptySelectionAllowed(false);
 		examplestvsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9");
 		examplestvsocial.setWidth("100%");
+		examplestvsocial.setPageLength(9);
 		
 		examplestsocial.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -521,9 +541,7 @@ public class MyUI extends UI {
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
-				debug_button.setCaption("Debug Query");
-				answers.setVisible(true);
+				
 				if (event.getValue() == "Example 1") {
 					editor.setValue(socex1);
 				} else if (event.getValue() == "Example 2") {
@@ -594,9 +612,7 @@ public class MyUI extends UI {
 		});
 		
 		examplestvsocial.addValueChangeListener(event -> {
-			debug.setVisible(false);
-			debug_button.setCaption("Debug Query");
-			answers.setVisible(true);
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
@@ -623,7 +639,7 @@ public class MyUI extends UI {
 				}
 			}
 		});
-		examplestvsocial.setPageLength(9);
+		
 		
 
 		//SOCIAL NETWORK
@@ -744,7 +760,7 @@ public class MyUI extends UI {
 				"SELECT ?P WHERE  {?P rdf:type pp:newspaper}";
 		
 		
-		ComboBox<String> examplestpeople = new ComboBox<>("Examples of Typing");
+		ComboBox<String> examplestpeople = new ComboBox<>("Examples of Correctness");
 		examplestpeople.setWidth("100%");
 		examplestpeople.setEmptySelectionAllowed(false);
 		examplestpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4");
@@ -755,7 +771,7 @@ public class MyUI extends UI {
 		examplestvpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9");
 		examplestvpeople.setWidth("100%");
-		
+		examplestvpeople.setPageLength(9);
 		
 		examplestpeople.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -763,9 +779,6 @@ public class MyUI extends UI {
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
-				debug_button.setCaption("Debug Query");
-				answers.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(peoplex1);
 				} else if (event.getValue() == "Example 2") {
@@ -779,15 +792,13 @@ public class MyUI extends UI {
 			}
 		});
 		examplestvpeople.addValueChangeListener(event -> {
-			debug.setVisible(false);
-			debug_button.setCaption("Debug Query");
-			answers.setVisible(true);
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
+				 
 				if (event.getValue() == "Example 1") {
 					editor.setValue(peoplex5);
 				} else if (event.getValue() == "Example 2") {
@@ -809,7 +820,7 @@ public class MyUI extends UI {
 				}
 			}
 		});
-		examplestvpeople.setPageLength(9);
+		
 		
         //PEOPLE
 		
@@ -864,7 +875,7 @@ public class MyUI extends UI {
 				"";
 		
 		
-		ComboBox<String> examplestpizza = new ComboBox<>("Examples of Typing");
+		ComboBox<String> examplestpizza = new ComboBox<>("Examples of Correctness");
 		examplestpizza.setWidth("100%");
 		examplestpizza.setEmptySelectionAllowed(false);
 		examplestpizza.setItems("Example 1", "Example 2");
@@ -883,9 +894,6 @@ public class MyUI extends UI {
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
-				debug_button.setCaption("Debug Query");
-				answers.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(pizz1);
 				} else if (event.getValue() == "Example 2") {
@@ -895,15 +903,12 @@ public class MyUI extends UI {
 			}
 		});
 		examplestvpizza.addValueChangeListener(event -> {
-			debug.setVisible(false);
-			debug_button.setCaption("Debug Query");
-			answers.setVisible(true);
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(pizz3);
 				} else if (event.getValue() == "Example 2") {
@@ -997,7 +1002,7 @@ public class MyUI extends UI {
 				"WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
 		
 		
-		ComboBox<String> examplestcourse = new ComboBox<>("Examples of Typing");
+		ComboBox<String> examplestcourse = new ComboBox<>("Examples of Correctness");
 		examplestcourse.setWidth("100%");
 		examplestcourse.setEmptySelectionAllowed(false);
 		examplestcourse.setItems("Example 1", "Example 2","Example 3","Example 4");
@@ -1016,9 +1021,6 @@ public class MyUI extends UI {
 			} else {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
-				debug.setVisible(false);
-				debug_button.setCaption("Debug Query");
-				answers.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(c1);
 				} else if (event.getValue() == "Example 2") {
@@ -1034,14 +1036,11 @@ public class MyUI extends UI {
 			}
 		});
 		examplestvcourse.addValueChangeListener(event -> {
-			debug.setVisible(false);
-			debug_button.setCaption("Debug Query");
-			answers.setVisible(true);
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
 				run_button.setVisible(true);
-				debug.setVisible(false);
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(c5);
@@ -1163,7 +1162,7 @@ public class MyUI extends UI {
 				"SELECT ?P\r\n" + 
 				"WHERE { ?P con:has_review ?R }";
 		
-		ComboBox<String> examplestconf = new ComboBox<>("Examples of Typing");
+		ComboBox<String> examplestconf = new ComboBox<>("Examples of Correctness");
 		examplestconf.setWidth("100%");
 		examplestconf.setEmptySelectionAllowed(false);
 		examplestconf.setItems("Example 1", "Example 2","Example 3");
@@ -1181,9 +1180,8 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
-				debug.setVisible(false);
-				debug_button.setCaption("Debug Query");
-				answers.setVisible(true);
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(con1);
 				} else if (event.getValue() == "Example 2") {
@@ -1197,12 +1195,12 @@ public class MyUI extends UI {
 			}
 		});
 		examplestvconf.addValueChangeListener(event -> {
-			debug.setVisible(false);
-			debug_button.setCaption("Debug Query");
-			answers.setVisible(true);
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(con4);
 				} else if (event.getValue() == "Example 2") {
@@ -1231,14 +1229,24 @@ public class MyUI extends UI {
 		HorizontalLayout examplesall = new HorizontalLayout();
 		examplesall.setWidth("100%");
 		
+		TextArea result = new TextArea();
+		result.setHeight("300px");
+		result.setWidth("100%");
+		result.setStyleName("multi-line-caption");
+		result.setVisible(true);
+		
 		ontologies.addValueChangeListener(event -> {
 			 
 			if (event.getSource().isEmpty()) {
 				error("", "Empty Selection. Please select an ontology.");
 			} else {
+				
+				 
+				
 				current_ontology = event.getValue();
 				String ontology = "";
 				editor.setValue("");
+				 
 				try {
 					ontology = readStringFromURL(current_ontology);
 					editorOntology.setValue(ontology);
@@ -1290,18 +1298,16 @@ public class MyUI extends UI {
 		});
 		
 		 
-		editor.setDescription("SPARQL Query");
-		TextArea result = new TextArea();
-		result.setHeight("300px");
-		result.setWidth("100%");
-		result.setStyleName("multi-line-caption");
-		Panel edO = new Panel();
-		edO.setSizeFull();
+ 		
+		
 		List<HashMap<String, RDFNode>> rows = new ArrayList<>();
+		
 		run_button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				answers.setVisible(true);
+				
+				
+				
 				OntModel model = ModelFactory.createOntologyModel();
 				model.read("file:C://working_ontology.owl");
 				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
@@ -1319,11 +1325,12 @@ public class MyUI extends UI {
 				}
 				answers.setItems(rows);
 				if (rows.size() > 0) {
+					answers.setVisible(true);
 					HashMap<String, RDFNode> sr = rows.get(0);
 					for (Map.Entry<String, RDFNode> entry : sr.entrySet()) {
 						answers.addColumn(h -> h.get(entry.getKey())).setCaption(entry.getKey());
 					}
-				}
+				} else {error("Successful Execution","Empty Answer of Query");}
 			}
 		});
 
@@ -1335,10 +1342,19 @@ public class MyUI extends UI {
 					debug.setVisible(true);
 					debug_button.setCaption("Close Debug");
 					answers.setVisible(false);
+					result.setVisible(true);
+					run_button.setVisible(false);
+					ontologies.setEnabled(false);
+					examplesall.setEnabled(false);
 				} else {
 					debug.setVisible(false);
 					debug_button.setCaption("Debug Query");
 					answers.setVisible(true);
+					result.setVisible(false);
+					run_button.setVisible(true);
+					answers.setVisible(false);
+					ontologies.setEnabled(true);
+					examplesall.setEnabled(true);
 				}
 			}
 		});
@@ -1519,7 +1535,11 @@ public class MyUI extends UI {
 		debug.addComponent(hlt);
 		debug.addComponent(resP);
 		main.addComponent(debug);
+		
+		Panel edO = new Panel("Loaded Ontology");
+		edO.setSizeFull();
 		edO.setContent(editorOntology);
+		
 		editorOntology.setHeight("300px");
 		editorOntology.setWidth("100%");
 		editorOntology.setFontSize("12pt");
@@ -1531,6 +1551,7 @@ public class MyUI extends UI {
 		editorOntology.setShowGutter(false);
 		editorOntology.setShowPrintMargin(false);
 		editorOntology.setUseSoftTabs(false);
+		
 		main.addComponent(edO);
 		setContent(main);
 		this.setSizeFull();

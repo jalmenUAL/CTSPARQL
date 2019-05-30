@@ -5,16 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,9 +36,7 @@ import org.semanticweb.owlapi.model.OWLDataMinCardinality;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
-import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLFacetRestriction;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -84,7 +75,6 @@ import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sparql.core.TriplePath;
-import com.hp.hpl.jena.sparql.engine.Rename;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
 import com.hp.hpl.jena.sparql.syntax.Element;
@@ -1907,138 +1897,137 @@ public class TSPARQL {
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							String cons = "";
-							
-							if (filler instanceof OWLDatatypeRestriction)
-							{
-							OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-							
-							for (Node var : vars_) {
-								
-								if (r.getDatatype().isInteger()) {
-									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-										if (fr.getFacet().toString() == "maxExclusive") {
-											if (var.isVariable()) {
-												cons = cons + var.toString().substring(1).toUpperCase() + "#<"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " < "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + var.getLiteralValue().toString() + "#<"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString() + " < "
-														+ fr.getFacetValue().getLiteral() + " )");
-											}
 
-										} else if (fr.getFacet().toString() == "maxInclusive") {
-											if (var.isVariable()) {
-												cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " <= "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + var.getLiteralValue().toString() + "#=<"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString()
-														+ " <= " + fr.getFacetValue().getLiteral() + " )");
-											}
-										} else if (fr.getFacet().toString() == "minExclusive") {
-											if (var.isVariable()) {
-												cons = cons + var.toString().substring(1).toUpperCase() + "#>"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " > "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + var.getLiteralValue().toString() + "#>"
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString() + " > "
-														+ fr.getFacetValue().getLiteral() + " )");
-											}
-										} else if (fr.getFacet().toString() == "minInclusive") {
-											if (var.isVariable()) {
-												cons = cons + var.toString().substring(1).toUpperCase() + "#>="
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + var.getLiteralValue().toString() + "#>="
-														+ fr.getFacetValue().getLiteral() + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString()
-														+ " >= " + fr.getFacetValue().getLiteral() + " )");
+							if (filler instanceof OWLDatatypeRestriction) {
+								OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+
+								for (Node var : vars_) {
+
+									if (r.getDatatype().isInteger()) {
+										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+											if (fr.getFacet().toString() == "maxExclusive") {
+												if (var.isVariable()) {
+													cons = cons + var.toString().substring(1).toUpperCase() + "#<"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase() + " < "
+															+ fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + var.getLiteralValue().toString() + "#<"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " < " + fr.getFacetValue().getLiteral() + " )");
+												}
+
+											} else if (fr.getFacet().toString() == "maxInclusive") {
+												if (var.isVariable()) {
+													cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase()
+															+ " <= " + fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + var.getLiteralValue().toString() + "#=<"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " <= " + fr.getFacetValue().getLiteral() + " )");
+												}
+											} else if (fr.getFacet().toString() == "minExclusive") {
+												if (var.isVariable()) {
+													cons = cons + var.toString().substring(1).toUpperCase() + "#>"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase() + " > "
+															+ fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + var.getLiteralValue().toString() + "#>"
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " > " + fr.getFacetValue().getLiteral() + " )");
+												}
+											} else if (fr.getFacet().toString() == "minInclusive") {
+												if (var.isVariable()) {
+													cons = cons + var.toString().substring(1).toUpperCase() + "#>="
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase()
+															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + var.getLiteralValue().toString() + "#>="
+															+ fr.getFacetValue().getLiteral() + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												}
 											}
 										}
-									}
-								} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
-									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-										if (fr.getFacet().toString() == "maxExclusive") {
+									} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
+										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+											if (fr.getFacet().toString() == "maxExclusive") {
 
-											if (var.isVariable()) {
-												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " < "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + "{" + var.getLiteralValue().toString() + "<"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString() + " < "
-														+ fr.getFacetValue().getLiteral() + " )");
-											}
-										} else if (fr.getFacet().toString() == "maxInclusive") {
-											if (var.isVariable()) {
-												cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " <= "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + "{" + var.getLiteralValue().toString() + "=<"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("(" + var.getLiteralValue().toString() + " <= "
-														+ fr.getFacetValue().getLiteral() + ")");
-											}
-										} else if (fr.getFacet().toString() == "minExclusive") {
-											if (var.isVariable()) {
-												cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " > "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + "{" + var.getLiteralValue().toString() + ">"
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString() + " > "
-														+ fr.getFacetValue().getLiteral() + " )");
-											}
-										} else if (fr.getFacet().toString() == "minInclusive") {
-											if (var.isVariable()) {
-												cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
-														+ fr.getFacetValue().getLiteral() + " )");
-											} else {
-												cons = cons + "{" + var.getLiteralValue().toString() + ">="
-														+ fr.getFacetValue().getLiteral() + "}" + ",";
-												constraints_elements.add("( " + var.getLiteralValue().toString()
-														+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												if (var.isVariable()) {
+													cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase() + " < "
+															+ fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + "{" + var.getLiteralValue().toString() + "<"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " < " + fr.getFacetValue().getLiteral() + " )");
+												}
+											} else if (fr.getFacet().toString() == "maxInclusive") {
+												if (var.isVariable()) {
+													cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase()
+															+ " <= " + fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + "{" + var.getLiteralValue().toString() + "=<"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("(" + var.getLiteralValue().toString()
+															+ " <= " + fr.getFacetValue().getLiteral() + ")");
+												}
+											} else if (fr.getFacet().toString() == "minExclusive") {
+												if (var.isVariable()) {
+													cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase() + " > "
+															+ fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + "{" + var.getLiteralValue().toString() + ">"
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " > " + fr.getFacetValue().getLiteral() + " )");
+												}
+											} else if (fr.getFacet().toString() == "minInclusive") {
+												if (var.isVariable()) {
+													cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.toString().toUpperCase()
+															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												} else {
+													cons = cons + "{" + var.getLiteralValue().toString() + ">="
+															+ fr.getFacetValue().getLiteral() + "}" + ",";
+													constraints_elements.add("( " + var.getLiteralValue().toString()
+															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												}
 											}
 										}
-									}
-								} else {
-									if (!wrong_analysis) {
-										wrong_analysis = true;
-										System.out.println("OWL Restriction not allowed:");
-										ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-										System.out.println(rendering.render(arg0));
+									} else {
+										if (!wrong_analysis) {
+											wrong_analysis = true;
+											System.out.println("OWL Restriction not allowed:");
+											ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+											System.out.println(rendering.render(arg0));
+										}
 									}
 								}
-							}
-							if (!cons.isEmpty()) {
-								cons = cons.substring(0, cons.length() - 1);
-							}
+								if (!cons.isEmpty()) {
+									cons = cons.substring(0, cons.length() - 1);
+								}
 
-							rules.get(current).add(cons);
+								rules.get(current).add(cons);
 
-						} else {
-						//NON OWL DATATYPE RESTRICTION	
-						
-						}
+							} else {
+								// NON OWL DATATYPE RESTRICTION
+
+							}
 						}
 					}
 				}
@@ -2577,13 +2566,13 @@ public class TSPARQL {
 				String entailment = entailment(axiom);
 				if (entailment == "true") {
 				} else {
-					 
+
 					addTypeAssertion(arg0, in);
 					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 					addTypeAssertion(res, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						
+
 						removeTypeAssertion(arg0, in);
 						Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
 						for (OWLClassExpression e : ec) {
@@ -2598,13 +2587,13 @@ public class TSPARQL {
 							}
 						}
 						if (!error) {
-						error = true;
-						System.out.println(
-								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));}
-						
-						
+							error = true;
+							System.out.println(
+									"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+
 					} else {
 						error = true;
 						System.out.println(
@@ -2612,7 +2601,7 @@ public class TSPARQL {
 						System.out.print(explanations());
 
 					}
-					
+
 				}
 			}
 
@@ -2652,52 +2641,54 @@ public class TSPARQL {
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
 					OWLClassExpression filler = someValuesFrom.getFiller();
-                    Boolean prop = false;
+					Boolean prop = false;
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							for (Node var : vars_) {
 								String urio = ontology.getOntologyID().getOntologyIRI().toString();
-								OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
-								 
-								owl_type_validity(filler.asOWLClass(), in,var);
+								OWLNamedIndividual in = dataFactory
+										.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
+
+								owl_type_validity(filler.asOWLClass(), in, var);
 							}
-						} else {prop = true;}
+						} else {
+							prop = true;
+						}
 					}
 					if (prop) {
-						 
+
 						System.out.println(
 								"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
-								}
-					
-				} else { 
-				error = true;		
-				System.out.print(
-						"Unsuccessful type validity checking. Case 2.1 . The property cannot be proved. "
-								+ "Not enough information for: ");
-				System.out.println(var_name);
+					}
+
+				} else {
+					error = true;
+					System.out.print("Unsuccessful type validity checking. Case 2.1 . The property cannot be proved. "
+							+ "Not enough information for: ");
+					System.out.println(var_name);
 				}
 
 				if (!error) {
-					
-						addTypeAssertion(arg0, in);
-						String consistency = consistency();
-						if (consistency == "true") {
-							error = true;
-							System.out.println(
-									"Unsuccessful type validity checking. Case 11.\n The following class membership cannot be proved:");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						} else {
-							error = true;
-							System.out.println(
-									"Unsuccessful type validity checking. Case 2.1.\n Caused by the following inconsistency:");
-							System.out.print(explanations());
-						}
-						removeTypeAssertion(arg0, in);
+
+					addTypeAssertion(arg0, in);
+					String consistency = consistency();
+					if (consistency == "true") {
+						error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 11.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 2.1.\n Caused by the following inconsistency:");
+						System.out.print(explanations());
+					}
+					removeTypeAssertion(arg0, in);
 				}
 			}
 
@@ -2898,381 +2889,414 @@ public class TSPARQL {
 							}
 							OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
 							OWLDataRange filler = someValuesFrom.getFiller();
-							
+
 							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
 								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) 
-								
+								if (uses.containsKey(Node.createURI(dp.getIRI().toString())))
+
 								{
 									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 									String cons = "";
 									if (filler instanceof OWLDatatypeRestriction) {
-									
-									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-									
-									for (Node var : vars_) {
-										 
-										
-										
-										if (r.getDatatype().isInteger()) { // CHANGED , by ;
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												if (fr.getFacet().toString() == "maxExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
-																+ "#<" + fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "#\\" + var.getLiteralValue().toString() + "#<"
-																+ fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
-																+ "#=<" + fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " <= " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "#\\" + var.getLiteralValue().toString() + "#=<"
-																+ fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " <= " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
-																+ "#>" + fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>"
-																+ fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "#\\" + var.toString().substring(1).toUpperCase()
-																+ "#>=" + fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " >= " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "#\\" + var.getLiteralValue().toString() + "#>="
-																+ fr.getFacetValue().getLiteral() + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " >= " + fr.getFacetValue().getLiteral() + ")");
-													}
-												}
-											}
-										} else if (r.getDatatype().isDouble() // CHANGED , by ;
-												|| r.getDatatype().isFloat()) {
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 
-												if (fr.getFacet().toString() == "maxExclusive") {
+										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">=" + fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " >= " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + ">="
-																+ fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " >= " + fr.getFacetValue().getLiteral() + " )");
-													}
+										for (Node var : vars_) {
 
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">" + fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + ">"
-																+ fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "=<" + fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " =< " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + "=<"
-																+ fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " =< " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "<" + fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + "<"
-																+ fr.getFacetValue().getLiteral() + "}" + ";";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													}
-												}
-											}
-										} else {
-											if (!error) {
-												error = true;
-												System.out.println("OWL Restriction not allowed:");
-												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-												System.out.println(rendering.render(arg0));
-											}
-										}
-									}
-									String domain = "";
-
-									for (Node v : vars_) {
-										if (v.isVariable()) {
-											if (types_literals.containsKey(v.toString().substring(1).toUpperCase())) {
-												if (types_literals.get(v.toString().substring(1).toUpperCase())
-														.equals("http://www.types.org#xsd:integer")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:string")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:dateTime")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:positiveInteger")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:negativeInteger")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:nonPositiveInteger")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:nonNegativeInteger")) {
-													Integer act = nvar;
-													nvar++;
-													domain = domain + "fd_dom("
-															+ v.toString().substring(1).toUpperCase() + ",R" + act + ")"
-															+ ",";
-													rename.put("R" + act, v.toString().substring(1).toUpperCase());
-
-												} else {
-													if (types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:float")
-															|| types_literals
-																	.get(v.toString().substring(1).toUpperCase())
-																	.equals("http://www.types.org#xsd:double")
-															|| types_literals
-																	.get(v.toString().substring(1).toUpperCase())
-																	.equals("http://www.types.org#xsd:decimal")) {
-														Integer act = nvar;
-														nvar++;
-														domain = domain + "(sup("
-																+ v.toString().substring(1).toUpperCase() + ",S),"
-																+ "inf(" + v.toString().substring(1).toUpperCase()
-																+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
-																+ v.toString().substring(1).toUpperCase() + ",S)->R"
-																+ act + "=..['..',inf,S];" + "inf("
-																+ v.toString().substring(1).toUpperCase() + ",I)->R"
-																+ act + "=..['..',I,sup];" + "R" + act
-																+ "=..['..',inf,sup]))" + ",";
-														rename.put("R" + act, v.toString().substring(1).toUpperCase());
-													}
-												}
-											}
-										}
-									}
-									if (!domain.isEmpty()) {
-										domain = domain.substring(0, domain.length() - 1);
-									}
-
-									if (!cons.isEmpty()) {
-										cons = cons.substring(0, cons.length() - 1);
-									}
-
-									String newhead = "";
-									for (int i = 1; i < rules.get(0).size(); i++) {
-										newhead = newhead + rules.get(0).get(i) + ',';
-									}
-
-									if (!newhead.isEmpty()) {
-										newhead = newhead.substring(0, newhead.length() - 1);
-										String head;
-										head = newhead + "," + cons + "," + domain;
-										org.jpl7.Query qimpl = new org.jpl7.Query(head);
-										if (qimpl.hasSolution())
-										// COUNTEREXAMPLE
-										{
-											error = true;
-											System.out.println(
-													"Unsuccessful type validity checking. Case 7. Counterexample:");
-											Map<String, Term>[] sols = qimpl.allSolutions();
-											for (Map<String, Term> s : sols) {
-												for (String key : s.keySet())
-													if (s.get(key).isCompound()) {
-														System.out.println(rename.get(key) + "=" + s.get(key));
-													}
-											}
-										} else {
-											cons = "";
-											for (Node var : vars_) {
-												 
-												if (r.getDatatype().isInteger()) { // CHANGED ; by ,
-													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-														if (fr.getFacet().toString() == "maxExclusive") {
-
-															if (var.isVariable()) {
-																cons = cons + var.toString().substring(1).toUpperCase()
-																		+ "#<" + fr.getFacetValue().getLiteral() + ",";
-															} else {
-																cons = cons + var.getLiteralValue().toString() + "#<"
-																		+ fr.getFacetValue().getLiteral() + ",";
-															}
-
-														} else if (fr.getFacet().toString() == "maxInclusive") {
-															if (var.isVariable()) {
-																cons = cons + var.toString().substring(1).toUpperCase()
-																		+ "#=<" + fr.getFacetValue().getLiteral() + ",";
-															} else {
-																cons = cons + var.getLiteralValue().toString() + "#=<"
-																		+ fr.getFacetValue().getLiteral() + ",";
-															}
-
-														} else if (fr.getFacet().toString() == "minExclusive") {
-															if (var.isVariable()) {
-																cons = cons + var.toString().substring(1).toUpperCase()
-																		+ "#>" + fr.getFacetValue().getLiteral() + ",";
-															} else {
-																cons = cons + var.getLiteralValue().toString() + "#>"
-																		+ fr.getFacetValue().getLiteral() + ",";
-															}
-
-														} else if (fr.getFacet().toString() == "minInclusive") {
-															if (var.isVariable()) {
-																cons = cons + var.toString().substring(1).toUpperCase()
-																		+ "#>=" + fr.getFacetValue().getLiteral() + ",";
-															} else {
-																cons = cons + var.getLiteralValue().toString() + "#>="
-																		+ fr.getFacetValue().getLiteral() + ",";
-															}
+											if (r.getDatatype().isInteger()) { // CHANGED , by ;
+												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+													if (fr.getFacet().toString() == "maxExclusive") {
+														if (var.isVariable()) {
+															cons = cons + "#\\"
+																	+ var.toString().substring(1).toUpperCase() + "#<"
+																	+ fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " < " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "#\\" + var.getLiteralValue().toString()
+																	+ "#<" + fr.getFacetValue().getLiteral() + ";";
+															constraints_elements
+																	.add("( " + var.getLiteralValue().toString() + " < "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+													} else if (fr.getFacet().toString() == "maxInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "#\\"
+																	+ var.toString().substring(1).toUpperCase() + "#=<"
+																	+ fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " <= " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "#\\" + var.getLiteralValue().toString()
+																	+ "#=<" + fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add(
+																	"( " + var.getLiteralValue().toString() + " <= "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+													} else if (fr.getFacet().toString() == "minExclusive") {
+														if (var.isVariable()) {
+															cons = cons + "#\\"
+																	+ var.toString().substring(1).toUpperCase() + "#>"
+																	+ fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " > " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "#\\" + var.getLiteralValue().toString()
+																	+ "#>" + fr.getFacetValue().getLiteral() + ";";
+															constraints_elements
+																	.add("( " + var.getLiteralValue().toString() + " > "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+													} else if (fr.getFacet().toString() == "minInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "#\\"
+																	+ var.toString().substring(1).toUpperCase() + "#>="
+																	+ fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " >= " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "#\\" + var.getLiteralValue().toString()
+																	+ "#>=" + fr.getFacetValue().getLiteral() + ";";
+															constraints_elements.add(
+																	"( " + var.getLiteralValue().toString() + " >= "
+																			+ fr.getFacetValue().getLiteral() + ")");
 														}
 													}
-												} else if (r.getDatatype().isFloat() || // CHANGED ; by ,
-												r.getDatatype().isDouble()) {
-													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-														if (fr.getFacet().toString() == "maxExclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ "<" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															} else {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ "<" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															}
-														} else if (fr.getFacet().toString() == "maxInclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ "=<" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															} else {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ "=<" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															}
-														} else if (fr.getFacet().toString() == "minExclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ ">" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															} else {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ ">" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															}
-														} else if (fr.getFacet().toString() == "minInclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ ">=" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															} else {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase()
-																		+ ">=" + fr.getFacetValue().getLiteral() + "}"
-																		+ ",";
-															}
-														}
-													}
-												} else {
-													if (!error) {
-														error = true;
-														System.out.println("OWL Restriction not allowed:");
-														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-														System.out.println(rendering.render(arg0));
-													}
 												}
-											}
-											if (!cons.isEmpty()) {
-												cons = cons.substring(0, cons.length() - 1);
-											}
-											newhead = "";
-											for (int i = 1; i < rules.get(0).size(); i++) {
-												newhead = newhead + rules.get(0).get(i) + ',';
-											}
-											if (!newhead.isEmpty()) {
-												newhead = newhead.substring(0, newhead.length() - 1);
+											} else if (r.getDatatype().isDouble() // CHANGED , by ;
+													|| r.getDatatype().isFloat()) {
+												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 
-												head = newhead + "," + cons + "," + domain;
-												org.jpl7.Query qcons = new org.jpl7.Query(head);
-												if (!qcons.hasSolution()) {
-													// INCONSISTENCY
-													error = true;
-													System.out.println(
-															"Unsuccessful type validity checking. Case 7.1.\n Caused by the following inconsistency:");
-													System.out.println(head);
-												} else {
-													// ENTAILMENT
-													head = newhead + "->" + cons;
-													qcons = new org.jpl7.Query(head);
-													if (qcons.hasSolution()) {
-													} else {
-														error = true;
-														System.out.println(
-																"Unsuccessful type validity checking. Case 16.\n The following class membership cannot be proved:");
-														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-														printClass(rendering.render(arg0), rendering.render(in));
+													if (fr.getFacet().toString() == "maxExclusive") {
+
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">="
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " >= " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "{" + var.getLiteralValue().toString() + ">="
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add(
+																	"( " + var.getLiteralValue().toString() + " >= "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+
+													} else if (fr.getFacet().toString() == "maxInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " > " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "{" + var.getLiteralValue().toString() + ">"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements
+																	.add("( " + var.getLiteralValue().toString() + " > "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+													} else if (fr.getFacet().toString() == "minExclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "=<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " =< " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "{" + var.getLiteralValue().toString() + "=<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add(
+																	"( " + var.getLiteralValue().toString() + " =< "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
+													} else if (fr.getFacet().toString() == "minInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements.add("( " + var.toString().toUpperCase()
+																	+ " < " + fr.getFacetValue().getLiteral() + " )");
+														} else {
+															cons = cons + "{" + var.getLiteralValue().toString() + "<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ";";
+															constraints_elements
+																	.add("( " + var.getLiteralValue().toString() + " < "
+																			+ fr.getFacetValue().getLiteral() + " )");
+														}
 													}
 												}
 											} else {
-												// INCOMPLETENESS
-												error = true;
-												System.out.println(
-														"Unsuccessful type validity checking. Case 7.2.\n The following expression cannot be proved:");
-												System.out.println(head);
+												if (!error) {
+													error = true;
+													System.out.println("OWL Restriction not allowed:");
+													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+													System.out.println(rendering.render(arg0));
+												}
 											}
 										}
-									} else {
-										// INCOMPLETENESS
-										error = true;
-										System.out.println(
-												"Unsuccessful type validity checking. Case 7.3.\n The following expression cannot be proved:");
-										for (String c : constraints_elements) {
-											System.out.print(c.replace("?", ""));
+										String domain = "";
+
+										for (Node v : vars_) {
+											if (v.isVariable()) {
+												if (types_literals
+														.containsKey(v.toString().substring(1).toUpperCase())) {
+													if (types_literals.get(v.toString().substring(1).toUpperCase())
+															.equals("http://www.types.org#xsd:integer")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:string")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:dateTime")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:positiveInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:negativeInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:nonPositiveInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:nonNegativeInteger")) {
+														Integer act = nvar;
+														nvar++;
+														domain = domain + "fd_dom("
+																+ v.toString().substring(1).toUpperCase() + ",R" + act
+																+ ")" + ",";
+														rename.put("R" + act, v.toString().substring(1).toUpperCase());
+
+													} else {
+														if (types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:float")
+																|| types_literals
+																		.get(v.toString().substring(1).toUpperCase())
+																		.equals("http://www.types.org#xsd:double")
+																|| types_literals
+																		.get(v.toString().substring(1).toUpperCase())
+																		.equals("http://www.types.org#xsd:decimal")) {
+															Integer act = nvar;
+															nvar++;
+															domain = domain + "(sup("
+																	+ v.toString().substring(1).toUpperCase() + ",S),"
+																	+ "inf(" + v.toString().substring(1).toUpperCase()
+																	+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
+																	+ v.toString().substring(1).toUpperCase() + ",S)->R"
+																	+ act + "=..['..',inf,S];" + "inf("
+																	+ v.toString().substring(1).toUpperCase() + ",I)->R"
+																	+ act + "=..['..',I,sup];" + "R" + act
+																	+ "=..['..',inf,sup]))" + ",";
+															rename.put("R" + act,
+																	v.toString().substring(1).toUpperCase());
+														}
+													}
+												}
+											}
 										}
-										System.out.println("");
-									}
-									
-									}
-									else { 
-										// NON OWL DATATYPE RESTRICTION 	
+										if (!domain.isEmpty()) {
+											domain = domain.substring(0, domain.length() - 1);
+										}
+
+										if (!cons.isEmpty()) {
+											cons = cons.substring(0, cons.length() - 1);
+										}
+
+										String newhead = "";
+										for (int i = 1; i < rules.get(0).size(); i++) {
+											newhead = newhead + rules.get(0).get(i) + ',';
+										}
+
+										if (!newhead.isEmpty()) {
+											newhead = newhead.substring(0, newhead.length() - 1);
+											String head;
+											head = newhead + "," + cons + "," + domain;
+											org.jpl7.Query qimpl = new org.jpl7.Query(head);
+											if (qimpl.hasSolution())
+											// COUNTEREXAMPLE
+											{
+												error = true;
+												System.out.println(
+														"Unsuccessful type validity checking. Case 7. Counterexample:");
+												Map<String, Term>[] sols = qimpl.allSolutions();
+												for (Map<String, Term> s : sols) {
+													for (String key : s.keySet())
+														if (s.get(key).isCompound()) {
+															System.out.println(rename.get(key) + "=" + s.get(key));
+														}
+												}
+											} else {
+												cons = "";
+												for (Node var : vars_) {
+
+													if (r.getDatatype().isInteger()) { // CHANGED ; by ,
+														for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+															if (fr.getFacet().toString() == "maxExclusive") {
+
+																if (var.isVariable()) {
+																	cons = cons
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "#<" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																} else {
+																	cons = cons + var.getLiteralValue().toString()
+																			+ "#<" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																}
+
+															} else if (fr.getFacet().toString() == "maxInclusive") {
+																if (var.isVariable()) {
+																	cons = cons
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "#=<" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																} else {
+																	cons = cons + var.getLiteralValue().toString()
+																			+ "#=<" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																}
+
+															} else if (fr.getFacet().toString() == "minExclusive") {
+																if (var.isVariable()) {
+																	cons = cons
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "#>" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																} else {
+																	cons = cons + var.getLiteralValue().toString()
+																			+ "#>" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																}
+
+															} else if (fr.getFacet().toString() == "minInclusive") {
+																if (var.isVariable()) {
+																	cons = cons
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "#>=" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																} else {
+																	cons = cons + var.getLiteralValue().toString()
+																			+ "#>=" + fr.getFacetValue().getLiteral()
+																			+ ",";
+																}
+															}
+														}
+													} else if (r.getDatatype().isFloat() || // CHANGED ; by ,
+													r.getDatatype().isDouble()) {
+														for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+															if (fr.getFacet().toString() == "maxExclusive") {
+																if (var.isVariable()) {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "<" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																} else {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "<" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																}
+															} else if (fr.getFacet().toString() == "maxInclusive") {
+																if (var.isVariable()) {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "=<" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																} else {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ "=<" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																}
+															} else if (fr.getFacet().toString() == "minExclusive") {
+																if (var.isVariable()) {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ ">" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																} else {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ ">" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																}
+															} else if (fr.getFacet().toString() == "minInclusive") {
+																if (var.isVariable()) {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ ">=" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																} else {
+																	cons = cons + "{"
+																			+ var.toString().substring(1).toUpperCase()
+																			+ ">=" + fr.getFacetValue().getLiteral()
+																			+ "}" + ",";
+																}
+															}
+														}
+													} else {
+														if (!error) {
+															error = true;
+															System.out.println("OWL Restriction not allowed:");
+															ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+															System.out.println(rendering.render(arg0));
+														}
+													}
+												}
+												if (!cons.isEmpty()) {
+													cons = cons.substring(0, cons.length() - 1);
+												}
+												newhead = "";
+												for (int i = 1; i < rules.get(0).size(); i++) {
+													newhead = newhead + rules.get(0).get(i) + ',';
+												}
+												if (!newhead.isEmpty()) {
+													newhead = newhead.substring(0, newhead.length() - 1);
+
+													head = newhead + "," + cons + "," + domain;
+													org.jpl7.Query qcons = new org.jpl7.Query(head);
+													if (!qcons.hasSolution()) {
+														// INCONSISTENCY
+														error = true;
+														System.out.println(
+																"Unsuccessful type validity checking. Case 7.1.\n Caused by the following inconsistency:");
+														System.out.println(head);
+													} else {
+														// ENTAILMENT
+														head = newhead + "->" + cons;
+														qcons = new org.jpl7.Query(head);
+														if (qcons.hasSolution()) {
+														} else {
+															error = true;
+															System.out.println(
+																	"Unsuccessful type validity checking. Case 16.\n The following class membership cannot be proved:");
+															ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+															printClass(rendering.render(arg0), rendering.render(in));
+														}
+													}
+												} else {
+													// INCOMPLETENESS
+													error = true;
+													System.out.println(
+															"Unsuccessful type validity checking. Case 7.2.\n The following expression cannot be proved:");
+													System.out.println(head);
+												}
+											}
+										} else {
+											// INCOMPLETENESS
+											error = true;
+											System.out.println(
+													"Unsuccessful type validity checking. Case 7.3.\n The following expression cannot be proved:");
+											for (String c : constraints_elements) {
+												System.out.print(c.replace("?", ""));
+											}
+											System.out.println("");
+										}
+
+									} else {
+										// NON OWL DATATYPE RESTRICTION
 									}
 								} else {
 									// INCOMPLETENESS
@@ -3939,28 +3963,21 @@ public class TSPARQL {
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
 				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
-		
-		
-		
-		String c = "# ?E: passed\r\n"+
-				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
-				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
-				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
-				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
-				"PREFIX co: <http://www.semanticweb.org/course#>\r\n" + 
-				"SELECT ?S ?E\r\n" + 
-				"WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
-		
-		String con10=
-				"# ?A : attendant\r\n" + 
-				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
-				"PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
-				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
-				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
-				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
-				"SELECT ?A  ?P \r\n" + 
-				"WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
-		
+
+		String c = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
+
+		String con10 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A  ?P \r\n"
+				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
+
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;
 		OWLOntologyManager manager_owl;
@@ -4016,19 +4033,18 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/conference.owl");
 
-		 try {
+		try {
 			t.SPARQL_CORRECTNESS(con10);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		/*try {
-			t.SPARQL_TYPE_VALIDITY(con10, "A", "http://www.semanticweb.org/conference#attendant");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		/*
+		 * try { t.SPARQL_TYPE_VALIDITY(con10, "A",
+		 * "http://www.semanticweb.org/conference#attendant"); } catch (Exception e) {
+		 * // TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");

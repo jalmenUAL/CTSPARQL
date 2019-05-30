@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 
 import org.apache.log4j.varia.NullAppender;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.jpl7.Term;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -1247,9 +1248,19 @@ public class MyUI extends UI {
 				String ontology = "";
 				editor.setValue("");
 				 
-				try {
+				try {					
 					ontology = readStringFromURL(current_ontology);
+					try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
+						out.println(ontology);
+					} catch (FileNotFoundException e2) {
+						// TODO Auto-generated catch block
+						System.out.println(e2.getMessage());
+					}		
+					 
+					
 					editorOntology.setValue(ontology);
+					
+					
 					if (current_ontology=="file:///C:/sn-2019.owl") {
 					examplesall.removeAllComponents();	
 					examplesall.addComponent(examplestsocial);
@@ -1284,12 +1295,7 @@ public class MyUI extends UI {
 					System.out.println(e.getMessage());
 					error("Error Loading Ontology. Causes:", e.getMessage());
 				}
-				try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
-					out.println(ontology);
-				} catch (FileNotFoundException e2) {
-					// TODO Auto-generated catch block
-					System.out.println(e2.getMessage());
-				}
+				
 			}
 			
 			

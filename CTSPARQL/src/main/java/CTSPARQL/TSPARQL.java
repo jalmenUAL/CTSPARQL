@@ -3958,7 +3958,7 @@ public class TSPARQL {
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
 				"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" + 
 				"PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + 
-				"SELECT ?A ?P\r\n" + 
+				"SELECT ?A  ?P \r\n" + 
 				"WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
 		
 		OWLOntologyManager manager;
@@ -4016,14 +4016,19 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/conference.owl");
 
-		// t.SPARQL_CORRECTNESS(ex31);
-
-		try {
-			t.SPARQL_TYPE_VALIDITY(con10, "A", "http://www.semanticweb.org/conference#attendant");
+		 try {
+			t.SPARQL_CORRECTNESS(con10);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		/*try {
+			t.SPARQL_TYPE_VALIDITY(con10, "A", "http://www.semanticweb.org/conference#attendant");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");

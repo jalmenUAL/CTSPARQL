@@ -67,12 +67,6 @@
     
 
 
-    <!-- http://www.w3.org/1999/02/22-rdf-syntax-ns#type -->
-
-    <owl:ObjectProperty rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
-    
-
-
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -144,20 +138,6 @@
                         </owl:withRestrictions>
                     </rdfs:Datatype>
                 </owl:allValuesFrom>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#attendant -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#attendant">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#author"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#submits"/>
-                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#acceptance"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -369,55 +349,9 @@
     
 
 
-    <!-- http://www.semanticweb.org/conference#A1 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#A1">
-        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#B1 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#B1">
-        <rdf:type rdf:resource="http://www.types.org#xsd:float"/>
-        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/conference#EDBT -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#EDBT"/>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#P -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#P">
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-        <has_review rdf:resource="http://www.semanticweb.org/conference#R"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#R -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#R">
-        <rdf:type rdf:resource="http://www.semanticweb.org/conference#review"/>
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#V -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#V">
-        <rdf:type rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
-        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:NamedIndividual>
     
 
 
@@ -456,12 +390,6 @@
     <!-- http://www.semanticweb.org/conference#paper2 -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#paper2"/>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#review -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review"/>
     
 
 

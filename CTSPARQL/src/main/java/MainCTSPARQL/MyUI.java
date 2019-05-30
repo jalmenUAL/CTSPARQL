@@ -170,6 +170,7 @@ public class MyUI extends UI {
 		Panel edS = new Panel();
 		Panel resP = new Panel();
 		Button run_button = new Button("Execute Query");
+		run_button.setVisible(false);
 		run_button.setWidth("100%");
 		run_button.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		run_button.setIcon(VaadinIcons.PLAY);
@@ -177,6 +178,7 @@ public class MyUI extends UI {
 		debug_button.setWidth("100%");
 		debug_button.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		debug_button.setIcon(VaadinIcons.TOOLS);
+		debug_button.setVisible(false);
 		edS.setSizeFull();
 		resP.setSizeFull();
 		AceEditor editor = new AceEditor();
@@ -512,10 +514,13 @@ public class MyUI extends UI {
 		examplestvsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6", "Example 7",
 				"Example 8", "Example 9");
 		examplestvsocial.setWidth("100%");
-		examplestvsocial.addValueChangeListener(event -> {
+		
+		examplestsocial.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				debug.setVisible(false);
 				debug_button.setCaption("Debug Query");
 				answers.setVisible(true);
@@ -587,6 +592,7 @@ public class MyUI extends UI {
 
 			}
 		});
+		
 		examplestvsocial.addValueChangeListener(event -> {
 			debug.setVisible(false);
 			debug_button.setCaption("Debug Query");
@@ -594,6 +600,8 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(socex33);
 				} else if (event.getValue() == "Example 2") {
@@ -753,6 +761,8 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				debug.setVisible(false);
 				debug_button.setCaption("Debug Query");
 				answers.setVisible(true);
@@ -775,6 +785,9 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
+				debug.setVisible(false);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(peoplex5);
 				} else if (event.getValue() == "Example 2") {
@@ -868,6 +881,8 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				debug.setVisible(false);
 				debug_button.setCaption("Debug Query");
 				answers.setVisible(true);
@@ -886,6 +901,9 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
+				debug.setVisible(false);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(pizz3);
 				} else if (event.getValue() == "Example 2") {
@@ -996,6 +1014,8 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Selected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug_button.setVisible(true);
 				debug.setVisible(false);
 				debug_button.setCaption("Debug Query");
 				answers.setVisible(true);
@@ -1020,6 +1040,9 @@ public class MyUI extends UI {
 			if (event.getSource().isEmpty()) {
 				error("", "No Example Eelected. Please select an example.");
 			} else {
+				run_button.setVisible(true);
+				debug.setVisible(false);
+				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(c5);
 				} else if (event.getValue() == "Example 2") {
@@ -1209,11 +1232,13 @@ public class MyUI extends UI {
 		examplesall.setWidth("100%");
 		
 		ontologies.addValueChangeListener(event -> {
+			 
 			if (event.getSource().isEmpty()) {
 				error("", "Empty Selection. Please select an ontology.");
 			} else {
 				current_ontology = event.getValue();
 				String ontology = "";
+				editor.setValue("");
 				try {
 					ontology = readStringFromURL(current_ontology);
 					editorOntology.setValue(ontology);
@@ -1264,7 +1289,7 @@ public class MyUI extends UI {
 
 		});
 		
-		//editor.setValue(socex1);
+		 
 		editor.setDescription("SPARQL Query");
 		TextArea result = new TextArea();
 		result.setHeight("300px");
@@ -1276,6 +1301,7 @@ public class MyUI extends UI {
 		run_button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+				answers.setVisible(true);
 				OntModel model = ModelFactory.createOntologyModel();
 				model.read("file:C://working_ontology.owl");
 				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
@@ -1304,6 +1330,7 @@ public class MyUI extends UI {
 		debug_button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+				result.setValue("");
 				if (!debug.isVisible()) {
 					debug.setVisible(true);
 					debug_button.setCaption("Close Debug");
@@ -1319,7 +1346,7 @@ public class MyUI extends UI {
 		correctness.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				result.setValue("");
+				 
 				manager = OWLManager.createOWLOntologyManager();
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
@@ -1378,7 +1405,7 @@ public class MyUI extends UI {
 		type_validity.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				result.setValue("");
+				 
 				manager = OWLManager.createOWLOntologyManager();
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
@@ -1419,6 +1446,7 @@ public class MyUI extends UI {
 		run_type_validity.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+				 
 				if (cb_type_validity.isEmpty() || cb_vars.isEmpty()) {
 					error("", "Please select a class and an individual.");
 				} else {

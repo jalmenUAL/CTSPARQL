@@ -1907,8 +1907,13 @@ public class TSPARQL {
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
 							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 							String cons = "";
+							
+							if (filler instanceof OWLDatatypeRestriction)
+							{
+							OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+							
 							for (Node var : vars_) {
-								OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+								
 								if (r.getDatatype().isInteger()) {
 									for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 										if (fr.getFacet().toString() == "maxExclusive") {
@@ -2030,6 +2035,10 @@ public class TSPARQL {
 
 							rules.get(current).add(cons);
 
+						} else {
+						//NON OWL DATATYPE RESTRICTION	
+						
+						}
 						}
 					}
 				}
@@ -2565,9 +2574,7 @@ public class TSPARQL {
 			@Override
 			public void visit(OWLClass arg0) {
 				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				System.out.println(axiom);
 				String entailment = entailment(axiom);
-				System.out.println(entailment);
 				if (entailment == "true") {
 				} else {
 					 
@@ -2576,6 +2583,28 @@ public class TSPARQL {
 					addTypeAssertion(res, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+						
+						removeTypeAssertion(arg0, in);
+						Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
+						for (OWLClassExpression e : ec) {
+							if (!error) {
+								e.accept(this);
+							}
+						}
+						Set<OWLClassExpression> sc = arg0.getSuperClasses(ontology);
+						for (OWLClassExpression e : sc) {
+							if (!error) {
+								e.accept(this);
+							}
+						}
+						if (!error) {
+						error = true;
+						System.out.println(
+								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));}
+						
+						
 					} else {
 						error = true;
 						System.out.println(
@@ -2583,27 +2612,7 @@ public class TSPARQL {
 						System.out.print(explanations());
 
 					}
-					removeTypeAssertion(arg0, in);
-					Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
-					for (OWLClassExpression e : ec) {
-						if (!error) {
-							e.accept(this);
-						}
-					}
-					Set<OWLClassExpression> sc = arg0.getSuperClasses(ontology);
-					for (OWLClassExpression e : sc) {
-						if (!error) {
-							e.accept(this);
-						}
-					}
-					if (consistency == "true" && !error) {
-
-						error = true;
-						System.out.println(
-								"Unsuccessful type validity checking. Case 10.\n The following class membership cannot be proved:");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
+					
 				}
 			}
 
@@ -2643,7 +2652,7 @@ public class TSPARQL {
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
 					OWLClassExpression filler = someValuesFrom.getFiller();
-
+                    Boolean prop = false;
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
 						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
@@ -2654,21 +2663,26 @@ public class TSPARQL {
 								 
 								owl_type_validity(filler.asOWLClass(), in,var);
 							}
-						}
+						} else {prop = true;}
 					}
+					if (prop) {
+						 
+						System.out.println(
+								"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+								}
+					
+				} else { 
+				error = true;		
+				System.out.print(
+						"Unsuccessful type validity checking. Case 2.1 . The property cannot be proved. "
+								+ "Not enough information for: ");
+				System.out.println(var_name);
 				}
 
 				if (!error) {
-					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-					String entailment = entailment(axiom);
 					
-					if (entailment == "true") {
-						//error = true;
-						//System.out.println(
-						//		"Unsuccessful type validity checking. Case 2.\n The following class membership cannot be proved:");
-						//ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						//printClass(rendering.render(arg0), rendering.render(in));
-					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
@@ -2684,7 +2698,6 @@ public class TSPARQL {
 							System.out.print(explanations());
 						}
 						removeTypeAssertion(arg0, in);
-					}
 				}
 			}
 
@@ -2888,13 +2901,19 @@ public class TSPARQL {
 							
 							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
 								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) 
+								
+								{
 									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
 									String cons = "";
+									if (filler instanceof OWLDatatypeRestriction) {
+									
+									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+									
 									for (Node var : vars_) {
 										 
 										
-										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+										
 										if (r.getDatatype().isInteger()) { // CHANGED , by ;
 											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 												if (fr.getFacet().toString() == "maxExclusive") {
@@ -3098,7 +3117,7 @@ public class TSPARQL {
 										} else {
 											cons = "";
 											for (Node var : vars_) {
-												OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+												 
 												if (r.getDatatype().isInteger()) { // CHANGED ; by ,
 													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
 														if (fr.getFacet().toString() == "maxExclusive") {
@@ -3249,6 +3268,11 @@ public class TSPARQL {
 											System.out.print(c.replace("?", ""));
 										}
 										System.out.println("");
+									}
+									
+									}
+									else { 
+										// NON OWL DATATYPE RESTRICTION 	
 									}
 								} else {
 									// INCOMPLETENESS

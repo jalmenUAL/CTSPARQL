@@ -201,10 +201,10 @@ public class TSPARQL {
 			SingleExplanationGenerator eg = new GlassBoxExplanation(ontology, f);
 			try {
 				for (OWLAxiom ax : eg.getExplanation(dataFactory.getOWLThing())) {
-					result = result + "<p style=\"color:blue\">"+ rendering.render(ax) + "</p>";
+					result = result + "<p style=\"color:black\">"+ rendering.render(ax) + "</p>";
 				}
 			} catch (OWLRuntimeException ex) {
-				System.out.println("<p style=\"color:blue\"> cannot explain: " + ex.getMessage() + "</p>");
+				System.out.println("<p style=\"color:black\"> cannot explain: " + ex.getMessage() + "</p>");
 			}
 			reasoner.dispose();
 		}
@@ -228,10 +228,10 @@ public class TSPARQL {
 		SingleExplanationGenerator eg = new GlassBoxExplanation(ontology, f);
 		try {
 			for (OWLAxiom ax : eg.getExplanation(dataFactory.getOWLThing())) {
-				result = result + "<p style=\"color:blue\">" + rendering.render(ax) + "</p>";
+				result = result + "<p style=\"color:black\">" + rendering.render(ax) + "</p>";
 			}
 		} catch (OWLRuntimeException ex) {
-			System.out.println("<p style=\"color:blue\">"+"cannot explain: " + ex.getMessage()+"</p>");
+			System.out.println("<p style=\"color:black\">"+"cannot explain: " + ex.getMessage()+"</p>");
 		}
 		reasoner.dispose();
 		return result;
@@ -277,14 +277,14 @@ public class TSPARQL {
 			}
 			reasoner.dispose();
 		} else {
-			System.out.println("<p style=\"background-color:Tomato;\">Inconsistent query, please check consistency</p>");
+			System.out.println("<p style=\"color:Tomato;\">Inconsistent query, please check consistency</p>");
 			wrong_analysis = true;
 		}
 		return result;
 	}
 
 	private void printClass(Object class_name, Object individual_name) {
-		System.out.println("<p style=\"color:blue\">"+individual_name + " Type " + class_name+"</p>");
+		System.out.println("<p style=\"color:black\">"+individual_name + " Type " + class_name+"</p>");
 	}
 
 	private String readFile(String pathname) throws IOException {
@@ -691,6 +691,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getSubject().getLocalName()+"</p>");
+			System.out.println("<p> Triple: "+tp+"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -698,6 +699,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getPredicate().getLocalName()+"</p>");
+			System.out.println("<p> Triple: "+tp+"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -705,6 +707,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getObject().getLocalName()+"</p>");
+			System.out.println("<p> Triple: "+tp+"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -722,7 +725,7 @@ public class TSPARQL {
 				if (tp.getPredicate().isURI()) {
 					if (tp.getSubject().isLiteral()) /* LUL */ {
 						System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-						System.out.println("<p>"+tp+"</p>");
+						System.out.println("<p> Triple: "+tp+"</p>");
 						wrong_analysis = true;
 					} else if (tp.getSubject().isURI()) /* UUL */ {
 
@@ -762,7 +765,7 @@ public class TSPARQL {
 							}
 						} else {
 							System.out.println("<p style=\"color:green\">"+"Literal used with an object property:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 							wrong_analysis = true;
 						}
 					} else /* VUL */
@@ -816,7 +819,7 @@ public class TSPARQL {
 							}
 						} else {
 							System.out.println("<p style=\"color:green\">"+"Literal used with an object property:"+"<p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 							wrong_analysis = true;
 						}
 					}
@@ -869,26 +872,26 @@ public class TSPARQL {
 					} else /* LVL */ {
 						{
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 							wrong_analysis = true;
 						}
 					}
 				} else /*-LL*/
 				{
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be used as property:"+"</p>");
-					System.out.println("<p>"+tp+"</p>");
+					System.out.println("<p> Triple: "+tp+"</p>");
 					wrong_analysis = true;
 				}
 			} else if (tp.getObject().isURI()) {
 				if (tp.getSubject().isLiteral()) /* L-U */ {
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-					System.out.println("<p>"+tp+"</p>");
+					System.out.println("<p> Triple: "+tp+"</p>");
 					wrong_analysis = true;
 				} else {
 					if (tp.getSubject().isVariable()) {
 						if (tp.getPredicate().isLiteral()) /* VLU */ {
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be used as property:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* VUU */ {
 
@@ -949,7 +952,7 @@ public class TSPARQL {
 							} else {
 								if (!wrong_analysis) {
 									System.out.println("<p style=\"color:green\">"+"Class or Individual used as data property:"+"</p>");
-									System.out.println("<p>"+tp+"</p>");
+									System.out.println("<p> Triple: "+tp+"</p>");
 									wrong_analysis = true;
 								}
 							}
@@ -995,7 +998,7 @@ public class TSPARQL {
 								}
 							} else /* LVU */ {
 								System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-								System.out.println("<p>"+tp+"</p>");
+								System.out.println("<p> Triple: "+tp+"</p>");
 								wrong_analysis = true;
 							}
 						}
@@ -1003,7 +1006,7 @@ public class TSPARQL {
 						if (tp.getPredicate().isLiteral()) /* ULU */
 						{
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be a property:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* UUU */ {
 
@@ -1046,7 +1049,7 @@ public class TSPARQL {
 								}
 							} else {
 								System.out.println("<p style=\"color:green\">"+"Individual used with a data property:"+"</p>");
-								System.out.println("<p>"+tp+"</p>");
+								System.out.println("<p> Triple: "+tp+"</p>");
 								wrong_analysis = true;
 							}
 						}
@@ -1056,13 +1059,13 @@ public class TSPARQL {
 
 			else if (tp.getSubject().isLiteral()) /* L-V */ {
 				System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-				System.out.println("<p>"+tp+"</p>");
+				System.out.println("<p> Triple: "+tp+"</p>");
 				wrong_analysis = true;
 			} else if (tp.getSubject().isVariable()) {
 				if (tp.getPredicate().isLiteral()) /* VLV */
 				{
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be a predicate:"+"</p>");
-					System.out.println("<p>"+tp+"</p>");
+					System.out.println("<p> Triple: "+tp+"</p>");
 					wrong_analysis = true;
 				} else if (tp.getPredicate().isURI()) /* VUV */
 				{
@@ -1201,7 +1204,7 @@ public class TSPARQL {
 						if (!wrong_analysis) {
 							wrong_analysis = true;
 							System.out.println("<p style=\"color:green\">"+"Class or Individual used as property:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 						}
 					}
 
@@ -1229,7 +1232,7 @@ public class TSPARQL {
 			} else {
 				if (tp.getPredicate().isLiteral()) /* ULV */ {
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be a predicate:"+"</p>");
-					System.out.println("<p>"+tp+"</p>");
+					System.out.println("<p> Triple: "+tp+"</p>");
 					wrong_analysis = true;
 				} else if (tp.getPredicate().isURI()) /* UUV */
 				{
@@ -1342,7 +1345,7 @@ public class TSPARQL {
 						if (!wrong_analysis) {
 							wrong_analysis = true;
 							System.out.println("<p style=\"color:green\">"+"Class or Individual used as property:"+"</p>");
-							System.out.println("<p>"+tp+"</p>");
+							System.out.println("<p> Triple: "+tp+"</p>");
 						}
 					}
 				} else /* UVV */
@@ -1632,6 +1635,7 @@ public class TSPARQL {
 			wrong_analysis = true;
 			System.out.println("<p style=\"color:green\">"+"Expression " + el.getExpr().getFunction().getFunctionName(null)
 					+ " not allowed in FILTER expression."+"</p>");
+			 
 		}
 	}
 
@@ -2521,13 +2525,13 @@ public class TSPARQL {
 			if (r == "true") {
 				r = sparql_constraint_checking();
 				if (r == "true") {
-					System.out.println("<p style=\"background-color:DodgerBlue;\">Successful correctness checking</p>");
+					System.out.println("<p style=\"color:DodgerBlue;\">Successful correctness checking</p>");
 				} else {
-					System.out.println("<p style=\"background-color:Tomato;\">Unsuccessful correctness checking due to:</p>");
+					System.out.println("<p style=\"color:Tomato;\">Unsuccessful correctness checking due to:</p>");
 					System.out.print("<p>"+r+"</p>");
 				}
 			} else {
-				System.out.println("<p style=\"background-color:Tomato;\">Unsuccessful correctness checking due to:</p>");
+				System.out.println("<p style=\"color:Tomato;\">Unsuccessful correctness checking due to:</p>");
 				System.out.print("<p>"+r+"</p>");
 				for (List<String> rule : rules) {
 					for (int i = 1; i < rule.size(); i++) {
@@ -2553,7 +2557,7 @@ public class TSPARQL {
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
 		owl_type_validity(ce, in, Node.createVariable(var_name));
 		if (!error && !wrong_analysis) {
-			System.out.println("<p style=\"background-color:DodgerBlue;\">"
+			System.out.println("<p style=\"color:DodgerBlue;\">"
 					+ "Successful type validity checking. The property has been proved</p>");
 		}
 		restore(file);

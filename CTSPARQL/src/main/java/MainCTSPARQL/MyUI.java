@@ -144,7 +144,6 @@ public class MyUI extends UI {
 		VerticalLayout debug = new VerticalLayout();
 
 		debug.setWidth("100%");
-		debug.setHeight("100%");
 		debug.setMargin(false);
 		debug.setVisible(false);
 
@@ -1147,6 +1146,7 @@ public class MyUI extends UI {
 			public void handleAction(Object sender, Object target) {
 				
 				 
+				
 				current_ontology = new_ontology.getValue();
 				String ontology = "";
 				editor.setValue("");
@@ -1174,34 +1174,7 @@ public class MyUI extends UI {
 		new_ontology.addShortcutListener(shortcut);
 		new_ontology.setDescription("Type an ontology");
  		
-		/*new_ontology.addValueChangeListener(event -> {
-
-			if (event.getSource().isEmpty()) {
-				error("", "Please enter a valid URL.");
-			} else {
-				 
-				current_ontology = event.getValue();
-				String ontology = "";
-				editor.setValue("");
-				examplesall.removeAllComponents();
-
-				try {
-					ontology = readStringFromURL(current_ontology);
-					try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
-						out.println(ontology);
-					} catch (FileNotFoundException e2) {
-						// TODO Auto-generated catch block
-						System.out.println(e2.getMessage());
-					}
-
-					ExternalResource tr = new ExternalResource("http://minerva.ual.es:8090/webvowl_1.1.4/#iri="+current_ontology);
-					embedded.setSource(tr);
-				} catch (IOException e) {
-					System.out.println(e.getMessage());
-					error("Error Loading Ontology. Causes:", e.getMessage());
-				}
-			}
-		});*/
+		 
 			
 		ontologies.addValueChangeListener(event -> {
 

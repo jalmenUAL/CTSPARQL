@@ -42,6 +42,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ErrorHandler;
 import com.vaadin.server.ExternalResource;
@@ -54,12 +56,15 @@ import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -94,6 +99,8 @@ public class MyUI extends UI {
 	ComboBox<String> ontologies = new ComboBox<String>("Examples of Ontologies");
 	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>();
+	TextField new_ontology = new TextField("Type URL of an ontology");
+	
 
 	public static String readStringFromURL(String requestURL) throws IOException {
 		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString())) {
@@ -107,6 +114,7 @@ public class MyUI extends UI {
 		//AceEditor embedded = new AceEditor();
 		
 		BrowserFrame embedded = new BrowserFrame("html");
+		 
 		
 		final VerticalLayout main = new VerticalLayout();
 		main.setMargin(false);
@@ -120,8 +128,10 @@ public class MyUI extends UI {
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
 		ontologies.setEmptySelectionAllowed(false);
+		new_ontology.setWidth("100%");
+		
 
-		/*setErrorHandler(new ErrorHandler() {
+	   setErrorHandler(new ErrorHandler() {
 
 			@Override
 			public void error(com.vaadin.server.ErrorEvent event) {
@@ -129,7 +139,7 @@ public class MyUI extends UI {
 				restore("C:/working_ontology.owl");
 			}
 
-		});*/
+		});
 
 		VerticalLayout debug = new VerticalLayout();
 
@@ -1125,18 +1135,80 @@ public class MyUI extends UI {
 		HorizontalLayout examplesall = new HorizontalLayout();
 		examplesall.setWidth("100%");
 
-		TextArea result = new TextArea();
+		RichTextArea result = new RichTextArea();
+		result.setReadOnly(true);
 		result.setHeight("300px");
 		result.setWidth("100%");
 		result.setStyleName("multi-line-caption");
 		result.setVisible(true);
+		
+		ShortcutListener shortcut = new ShortcutListener("", ShortcutAction.KeyCode.ENTER, null) {
+			@Override
+			public void handleAction(Object sender, Object target) {
+				
+				 
+				current_ontology = new_ontology.getValue();
+				String ontology = "";
+				editor.setValue("");
+				examplesall.removeAllComponents();
 
+				try {
+					ontology = readStringFromURL(current_ontology);
+					try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
+						out.println(ontology);
+					} catch (FileNotFoundException e2) {
+						// TODO Auto-generated catch block
+						System.out.println(e2.getMessage());
+					}
+
+					ExternalResource tr = new ExternalResource("http://minerva.ual.es:8090/webvowl_1.1.4/#iri="+current_ontology);
+					embedded.setSource(tr);
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+					error("Error Loading Ontology. Causes:", e.getMessage());
+				}
+
+			}
+		};
+		
+		new_ontology.addShortcutListener(shortcut);
+		new_ontology.setDescription("Type an ontology");
+ 		
+		/*new_ontology.addValueChangeListener(event -> {
+
+			if (event.getSource().isEmpty()) {
+				error("", "Please enter a valid URL.");
+			} else {
+				 
+				current_ontology = event.getValue();
+				String ontology = "";
+				editor.setValue("");
+				examplesall.removeAllComponents();
+
+				try {
+					ontology = readStringFromURL(current_ontology);
+					try (PrintWriter out = new PrintWriter("C:/working_ontology.owl")) {
+						out.println(ontology);
+					} catch (FileNotFoundException e2) {
+						// TODO Auto-generated catch block
+						System.out.println(e2.getMessage());
+					}
+
+					ExternalResource tr = new ExternalResource("http://minerva.ual.es:8090/webvowl_1.1.4/#iri="+current_ontology);
+					embedded.setSource(tr);
+				} catch (IOException e) {
+					System.out.println(e.getMessage());
+					error("Error Loading Ontology. Causes:", e.getMessage());
+				}
+			}
+		});*/
+			
 		ontologies.addValueChangeListener(event -> {
 
 			if (event.getSource().isEmpty()) {
 				error("", "Empty Selection. Please select an ontology.");
 			} else {
-
+				new_ontology.setValue("");
 				current_ontology = event.getValue();
 				String ontology = "";
 				editor.setValue("");
@@ -1234,6 +1306,7 @@ public class MyUI extends UI {
 					run_button.setVisible(false);
 					ontologies.setEnabled(false);
 					examplesall.setEnabled(false);
+					new_ontology.setEnabled(false);
 				} else {
 					debug.setVisible(false);
 					debug_button.setCaption("Debug Query");
@@ -1243,6 +1316,7 @@ public class MyUI extends UI {
 					answers.setVisible(false);
 					ontologies.setEnabled(true);
 					examplesall.setEnabled(true);
+					new_ontology.setEnabled(true);
 				}
 			}
 		});
@@ -1298,7 +1372,7 @@ public class MyUI extends UI {
 				}
 				long estimatedTime = System.currentTimeMillis() - startTime;
 				System.out.println("");
-				System.out.println("Analysis done in " + estimatedTime + " ms");
+				System.out.println("<p>Analysis done in <b>" + estimatedTime + "</b> ms</p>");
 				System.out.flush();
 				System.setOut(old);
 				result.setValue(baos.toString());
@@ -1399,7 +1473,7 @@ public class MyUI extends UI {
 					correctness.setEnabled(true);
 					long estimatedTime = System.currentTimeMillis() - startTime;
 					System.out.println("");
-					System.out.println("Analysis done in " + estimatedTime + " ms");
+					System.out.println("<p>Analysis done in <b>" + estimatedTime + "</b> ms</p>");
 					System.out.flush();
 					System.setOut(old);
 					result.setValue(baos.toString());
@@ -1414,6 +1488,7 @@ public class MyUI extends UI {
 		main.setWidth("100%");
 
 		main.addComponent(ontologies);
+		main.addComponent(new_ontology);
 		main.addComponent(examplesall);
 		main.addComponent(edS);
 		main.addComponent(run_button);

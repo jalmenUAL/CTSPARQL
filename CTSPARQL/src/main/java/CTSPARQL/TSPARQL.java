@@ -707,7 +707,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getObject().getLocalName()+"</p>");
-			System.out.println("<p> Triple: "+tp+"</p>");
+			System.out.println("<p> Triple: "+tp +"</p>");
 			result = false;
 			wrong_analysis = true;
 		}

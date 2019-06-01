@@ -201,10 +201,10 @@ public class TSPARQL {
 			SingleExplanationGenerator eg = new GlassBoxExplanation(ontology, f);
 			try {
 				for (OWLAxiom ax : eg.getExplanation(dataFactory.getOWLThing())) {
-					result = result + "<p style=\"color:black\">"+ rendering.render(ax) + "</p>";
+					result = result + "<p style=\"color:blue\">"+ rendering.render(ax) + "</p>";
 				}
 			} catch (OWLRuntimeException ex) {
-				System.out.println("<p style=\"color:black\"> cannot explain: " + ex.getMessage() + "</p>");
+				System.out.println("<p style=\"color:blue\"> cannot explain: " + ex.getMessage() + "</p>");
 			}
 			reasoner.dispose();
 		}
@@ -228,10 +228,10 @@ public class TSPARQL {
 		SingleExplanationGenerator eg = new GlassBoxExplanation(ontology, f);
 		try {
 			for (OWLAxiom ax : eg.getExplanation(dataFactory.getOWLThing())) {
-				result = result + "<p style=\"color:black\">" + rendering.render(ax) + "</p>";
+				result = result + "<p style=\"color:blue\">" + rendering.render(ax) + "</p>";
 			}
 		} catch (OWLRuntimeException ex) {
-			System.out.println("<p style=\"color:black\">"+"cannot explain: " + ex.getMessage()+"</p>");
+			System.out.println("<p style=\"color:blue\">"+"cannot explain: " + ex.getMessage()+"</p>");
 		}
 		reasoner.dispose();
 		return result;
@@ -284,7 +284,7 @@ public class TSPARQL {
 	}
 
 	private void printClass(Object class_name, Object individual_name) {
-		System.out.println("<p style=\"color:black\">"+individual_name + " Type " + class_name+"</p>");
+		System.out.println("<p style=\"color:blue\">"+individual_name + " Type " + class_name+"</p>");
 	}
 
 	private String readFile(String pathname) throws IOException {
@@ -2602,7 +2602,7 @@ public class TSPARQL {
 					} else {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 1.Caused by the following inconsistency:"+"</p>");
+								"Unsuccessful type validity checking. Case 1. Caused by the following inconsistency:"+"</p>");
 						System.out.print(explanations());
 
 					}

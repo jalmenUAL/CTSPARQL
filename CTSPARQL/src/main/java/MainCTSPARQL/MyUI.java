@@ -127,7 +127,6 @@ public class MyUI extends UI {
 				"https://protege.stanford.edu/ontologies/pizza/pizza.owl");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
-		ontologies.setEmptySelectionAllowed(false);
 		new_ontology.setWidth("100%");
 		
 
@@ -202,7 +201,9 @@ public class MyUI extends UI {
 		debug_button.setVisible(false);
 
 		edS.setSizeFull();
-		resP.setSizeFull();
+		resP.setWidth("100%");
+		resP.setHeight("100%");
+		resP.setVisible(false);
 
 		AceEditor editor = new AceEditor();
 		editor.setHeight("300px");
@@ -219,6 +220,7 @@ public class MyUI extends UI {
 
 		Grid<HashMap<String, RDFNode>> answers = new Grid<>("Execution Result");
 		answers.setWidth("100%");
+		answers.setHeight("100%");
 		answers.setVisible(false);
 
 		// SOCIAL NETWORK
@@ -1136,8 +1138,8 @@ public class MyUI extends UI {
 
 		RichTextArea result = new RichTextArea();
 		result.setReadOnly(true);
-		result.setHeight("300px");
 		result.setWidth("100%");
+		result.setHeight("100%");
 		result.setStyleName("multi-line-caption");
 		result.setVisible(true);
 		
@@ -1146,7 +1148,7 @@ public class MyUI extends UI {
 			public void handleAction(Object sender, Object target) {
 				
 				 
-				
+				ontologies.setValue(null);
 				current_ontology = new_ontology.getValue();
 				String ontology = "";
 				editor.setValue("");
@@ -1179,7 +1181,7 @@ public class MyUI extends UI {
 		ontologies.addValueChangeListener(event -> {
 
 			if (event.getSource().isEmpty()) {
-				error("", "Empty Selection. Please select an ontology.");
+				//error("", "Empty Selection. Please select an ontology.");
 			} else {
 				new_ontology.setValue("");
 				current_ontology = event.getValue();
@@ -1283,6 +1285,7 @@ public class MyUI extends UI {
 				} else {
 					debug.setVisible(false);
 					debug_button.setCaption("Debug Query");
+					resP.setVisible(false);
 					answers.setVisible(true);
 					result.setVisible(false);
 					run_button.setVisible(true);
@@ -1343,6 +1346,7 @@ public class MyUI extends UI {
 					// TODO Auto-generated catch block
 					error("Error Loading Query. Causes:", e.getMessage());
 				}
+				resP.setVisible(true);
 				long estimatedTime = System.currentTimeMillis() - startTime;
 				System.out.println("");
 				System.out.println("<p>Analysis done in <b>" + estimatedTime + "</b> ms</p>");
@@ -1357,6 +1361,7 @@ public class MyUI extends UI {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
+				resP.setVisible(false);
 				manager = OWLManager.createOWLOntologyManager();
 				dataFactory = manager.getOWLDataFactory();
 				ontology = null;
@@ -1439,6 +1444,7 @@ public class MyUI extends UI {
 						// TODO Auto-generated catch block
 						error("Error Loading Query", e.getMessage());
 					}
+					resP.setVisible(true);
 					cb_type_validity.setVisible(false);
 					cb_vars.setVisible(false);
 					run_type_validity.setVisible(false);
@@ -1478,15 +1484,7 @@ public class MyUI extends UI {
 
 		embedded.setHeight("800px");
 		embedded.setWidth("100%");
-		//embedded.setFontSize("12pt");
-		//embedded.setMode(AceMode.sql);
-		//embedded.setTheme(AceTheme.eclipse);
-		//embedded.setUseWorker(true);
-		//embedded.setReadOnly(false);
-		//embedded.setShowInvisibles(false);
-		//embedded.setShowGutter(false);
-		//embedded.setShowPrintMargin(false);
-		//embedded.setUseSoftTabs(false);
+	 
 
 		main.addComponent(edO);
 		setContent(main);

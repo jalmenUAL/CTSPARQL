@@ -71,6 +71,22 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import CTSPARQL.TSPARQL;
 
+//TBOX
+//BLANK NODES
+//NON EXISTENTIAL AND DATA LINEAR
+//NESTED QUERIES EN EL PAPER
+//ACTUALIZAR ARQ
+//CABEZAS NO VARIABLE. TB EN EL PAPER.
+//MEZCLA DE ENTEROS Y REALES
+//ENTEROS POSITIVOS, NEGATIVOS, ETC
+//PINTADO DE TRIPLES
+//BIND EN EL PAPER
+//CONSISTENCIA DE RES PAPER
+//DOMAIN PERTENENCIA PAPER
+//TALL AND YOUNG 
+//SUBPROPERTY
+//PONER EJEMPLO DE LOS CASOS NUEVOS
+
 /**
  * This UI is the application entry point. A UI may either represent a browser
  * window (or tab) or some part of an HTML page where a Vaadin application is
@@ -129,7 +145,7 @@ public class MyUI extends UI {
 		ontologies.setWidth("100%");
 		new_ontology.setWidth("100%");
 		
-
+/*
 	   setErrorHandler(new ErrorHandler() {
 
 			@Override
@@ -139,6 +155,7 @@ public class MyUI extends UI {
 			}
 
 		});
+*/
 
 		VerticalLayout debug = new VerticalLayout();
 

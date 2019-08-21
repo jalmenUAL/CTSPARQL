@@ -39,6 +39,7 @@ import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLFacetRestriction;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
@@ -51,6 +52,7 @@ import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
 import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -59,6 +61,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLRuntimeException;
 import org.semanticweb.owlapi.model.RemoveAxiom;
+import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import com.clarkparsia.owlapi.explanation.GlassBoxExplanation;
@@ -96,6 +99,7 @@ public class TSPARQL {
 	Integer current = 0;
 	Integer nvar = 0;
 	Boolean error = false;
+	Boolean union = false;
 	List<String> vars = new ArrayList<String>();
 	List<List<String>> rules = new ArrayList<List<String>>();
 	Set<TriplePath> ctriples = new HashSet<TriplePath>();
@@ -425,6 +429,9 @@ public class TSPARQL {
 		}
 		return result;
 	}
+	
+	
+	 
 
 	public Set<String> DomainsObjectProperty(OWLOntology ont, OWLDataFactory df, IRI iri) {
 		OWLObjectProperty owlclass = df.getOWLObjectProperty(iri);
@@ -433,9 +440,11 @@ public class TSPARQL {
 		for (OWLClassExpression range : ranges) {
 			result.add(range.toString());
 		}
+		result.add(df.getOWLThing().toString());
 		return result;
 	}
-
+	
+	
 	public Set<OWLClassExpression> ClassOfVariable(IRI iri) {
 		File fileName = new File(file);
 		manager.removeOntology(ontology);
@@ -729,6 +738,7 @@ public class TSPARQL {
 						wrong_analysis = true;
 					} else if (tp.getSubject().isURI()) /* UUL */ {
 
+						 
 						// STORE TRIPLE PATTERN
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
@@ -770,7 +780,6 @@ public class TSPARQL {
 						}
 					} else /* VUL */
 					{
-
 						// ADD TYPE
 						OWLNamedIndividual ni = null;
 						ni = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -826,7 +835,8 @@ public class TSPARQL {
 				} else if (tp.getPredicate().isVariable()) {
 					/* second V should be a data property */
 					if (tp.getSubject().isVariable()) /* VVL */ {
-
+						
+						
 						// ADD TYPE
 						OWLNamedIndividual ni1 = null;
 						ni1 = dft
@@ -1513,10 +1523,28 @@ public class TSPARQL {
 			elementGroup((ElementGroup) e, step, file);
 			String urio = ontology.getOntologyID().getOntologyIRI().toString();
 			for (TriplePath tp : ctriples) {
+				datatriples.add(tp);
 				if (tp.getSubject().isVariable()) {
+					
+					/*datatriples.add(tp);
+					String r = sparql_consistency();
+					if (r == "true") {
+					
+					NodeSet<OWLClass> typ = ClassAssertion(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+					Set<OWLClass> tf = typ.getFlattened();
+					System.out.println(typ);
+					for (OWLClass t : tf)
+					{
+						OWLRestriction(t,tp.getSubject());
+					}
+					}*/
+					
+					
+					//DONE
+					datatriples.add(tp);
 					Set<OWLClassExpression> typ = ClassOfVariable(
 							IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-					datatriples.add(tp);
+					
 					if (!(typ == null)) {
 						for (OWLClassExpression c : typ) {
 							OWLRestriction(c.asOWLClass(), tp.getSubject());
@@ -1529,9 +1557,16 @@ public class TSPARQL {
 		return rules;
 	}
 
+	//DONE
 	public void elementFilter(ElementFilter el, Integer step, String fileo) {
 		if (el.getExpr().getFunction().getFunctionName(null) == "exists") {
-			List<String> varstemp = new ArrayList<String>();
+			
+			System.out.println("<p style=\"color:green\">"+"SPARQL expression not supported:"+"</p>");
+			System.out.println("<p>"+el+"</p>");
+			wrong_analysis = true;
+			rules.clear();
+			
+			/*List<String> varstemp = new ArrayList<String>();
 			for (String v : vars) {
 				varstemp.add(v);
 			}
@@ -1604,6 +1639,7 @@ public class TSPARQL {
 				vars.add(v);
 			}
 			current = tmp;
+			*/
 		} else if (el.getExpr().getFunction().getFunctionName(null) == "notexists") {
 			System.out.println("<p style=\"color:green\">"+"SPARQL expression not supported:"+"</p>");
 			System.out.println("<p>"+el+"</p>");
@@ -1639,7 +1675,10 @@ public class TSPARQL {
 		}
 	}
 
+	//DONE
 	public void elementBind(ElementBind el, Integer step, String fileo) {
+		
+		 
 		nvar++;
 		List<String> ss = new ArrayList<>(SExprtoPTerm(el.getExpr(), el.getVar().asNode()));
 		for (int i = 0; i < ss.size(); i++) {
@@ -1759,14 +1798,29 @@ public class TSPARQL {
 		}
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		for (TriplePath tp : ctriples) {
+			
+			/*
+			String r = sparql_consistency();
+			if (r == "true") {
+			datatriples.add(tp);
+			NodeSet<OWLClass> typ = ClassAssertion(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+			Set<OWLClass> tf = typ.getFlattened();
+			for (OWLClass t : tf)
+			{
+				OWLRestriction(t,tp.getSubject());
+			}
+			}*/
+			
+            
+			datatriples.add(tp);			
 			Set<OWLClassExpression> typ = ClassOfVariable(
 					IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-			datatriples.add(tp);
 			if (!(typ == null)) {
 				for (OWLClassExpression c : typ) {
 					OWLRestriction(c.asOWLClass(), tp.getSubject());
 				}
 			}
+			
 		}
 		ctriples.clear();
 		String head;
@@ -1801,11 +1855,50 @@ public class TSPARQL {
 		}
 		current = tmp;
 	}
+	
+	//DONE
+	public NodeSet<OWLClass> ClassAssertion(IRI iri)
+	{
+		String result = "";
+		File fileName = new File(file);
+		manager.removeOntology(ontology);
+		try {
+			ontology = manager.loadOntologyFromOntologyDocument(fileName);
+		} catch (OWLOntologyCreationException e2) {
+
+			System.out.println(e2.getMessage());
+		}
+		PelletReasonerFactory f = new PelletReasonerFactory();
+		OWLReasoner reasoner = f.createReasoner(ontology);
+		OWLNamedIndividual indi = dataFactory.getOWLNamedIndividual(iri);
+		NodeSet<OWLClass> res = reasoner.getTypes(indi, false);
+		return res;
+	};
+	
+	public NodeSet<OWLClass> DataPropertyDomains(OWLDataProperty p)
+	{
+		String result = "";
+		File fileName = new File(file);
+		manager.removeOntology(ontology);
+		try {
+			ontology = manager.loadOntologyFromOntologyDocument(fileName);
+		} catch (OWLOntologyCreationException e2) {
+
+			System.out.println(e2.getMessage());
+		}
+		PelletReasonerFactory f = new PelletReasonerFactory();
+		OWLReasoner reasoner = f.createReasoner(ontology);
+		NodeSet<OWLClass> res = reasoner.getDataPropertyDomains(p,true);
+		return res;
+	};
 
 	public void OWLRestriction(OWLClass ce, Node var_name) {
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
+			
+			//DONE
 			@Override
 			public void visit(OWLClass arg0) {
+				
 				Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
 				for (OWLClassExpression e : ec) {
 					e.accept(this);
@@ -1816,42 +1909,64 @@ public class TSPARQL {
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectIntersectionOf arg0) {
+				
 				Set<OWLClassExpression> ec = arg0.getOperands();
 				for (OWLClassExpression e : ec) {
 					e.accept(this);
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				if (!wrong_analysis) {
-					System.out.println("<p style=\"color:magenta\">"+"This type is not supported by consistency analysis:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					wrong_analysis = true;
+				
+				Set<OWLClassExpression> ec = arg0.getOperands();
+				Boolean one = false;
+				for (OWLClassExpression e : ec) {
+					if (!one) {e.accept(this);}
+					if (!wrong_analysis) {one = true;}
 				}
+				
 
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				if (!wrong_analysis) {
-					System.out.println("<p style=\"color:magenta\">"+"This type is not supported by consistency analysis:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					wrong_analysis = true;
-				}
+				 
+			  OWLClassExpression cl = arg0.getOperand();
+			  cl.accept(this);
+			  wrong_analysis = !wrong_analysis;
+			  
 
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectSomeValuesFrom arg0) {
+				
+				if (ctriplesn.containsKey(var_name)) {
+					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
+					OWLClassExpression filler = someValuesFrom.getFiller();
+					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							Boolean one = false;
+							for (Node var : vars_) {
+								if (!one) {OWLRestriction(filler.asOWLClass(), var);}
+								if (!wrong_analysis) {one = true;}
+							}
+						}
+					}
+				}
 			}
 
 			@Override
-			public void visit(OWLObjectAllValuesFrom arg0) {
+			public void visit(OWLObjectAllValuesFrom arg0) {			
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
 					OWLClassExpression filler = allValuesFrom.getFiller();
@@ -1867,30 +1982,56 @@ public class TSPARQL {
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
+				
+				/*
+				if (ctriplesn.containsKey(var_name)) {
+					OWLObjectHasValue hasValue = (OWLObjectHasValue) arg0;
+					OWLObjectProperty dp = hasValue.getProperty().asOWLObjectProperty();
+					OWLIndividual ind = hasValue.getValue();
+						
+					Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							Boolean one = false;
+							for (Node var : vars_) {
+								if (!one) {if (var.equals(ind)) {one = true;}}							
+							}
+								wrong_analysis = one;
+
+					}
+				}*/
+				
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectHasSelf arg0) {
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectOneOf arg0) {
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
 				if (ctriplesn.containsKey(var_name)) {
@@ -2037,10 +2178,19 @@ public class TSPARQL {
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataSomeValuesFrom arg0) {
+				
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataHasValue arg0) {
 				if (ctriplesn.containsKey(var_name)) {
@@ -2094,16 +2244,37 @@ public class TSPARQL {
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 		};
 		ce.accept(cv);
@@ -2563,6 +2734,7 @@ public class TSPARQL {
 		restore(file);
 	};
 
+	
 	public void owl_type_validity(OWLClass ce, OWLNamedIndividual in, Node var_name) {
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
 			@Override
@@ -2620,25 +2792,57 @@ public class TSPARQL {
 				}
 			}
 
+			//DONE
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
 
-				if (!error) {
+				/*if (!error) {
 					System.out.println("<p style=\"color:magenta\">"+"This type is not supported by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
 					error = true;
+				}*/
+				
+				union = false;
+				Set<OWLClassExpression> ec = arg0.getOperands();
+				for (OWLClassExpression e : ec) {
+					if (!union) {
+						e.accept(this);
+						union = !error;
+					}
 				}
+				if (!union) {
+					if (!error) {
+					error = true;
+					System.out.println("<p style=\"color:red\">"+
+							"Unsuccessful type validity checking. Case 10. The following class membership cannot be proved:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					printClass(rendering.render(arg0), rendering.render(in));
+					}
+				}
+				
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				if (!error) {
+				/*if (!error) {
 					System.out.println("<p style=\"color:magenta\">"+"This type is not supported by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
 					error = true;
+				}*/
+				
+				OWLClassExpression cl = arg0.getOperand();
+				cl.accept(this);
+				if (!error) {
+					error = true;
+					System.out.println("<p style=\"color:red\">"+
+							"Unsuccessful type validity checking. Case 10. The following class membership cannot be proved:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					printClass(rendering.render(arg0), rendering.render(in));
 				}
+					
 			}
 
 			@Override
@@ -2697,13 +2901,67 @@ public class TSPARQL {
 				}
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLObjectAllValuesFrom arg0) {
-				if (!error) {
+				/*if (!error) {
 					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
 					error = true;
+				}*/
+				
+				if (ctriplesn.containsKey(var_name)) {
+					OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
+					OWLClassExpression filler = allValuesFrom.getFiller();
+					Boolean prop = false;
+					for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
+						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+							for (Node var : vars_) {
+								String urio = ontology.getOntologyID().getOntologyIRI().toString();
+								OWLNamedIndividual in = dataFactory
+										.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
+
+								owl_type_validity(filler.asOWLClass(), in, var);
+							}
+						} else {
+							prop = true;
+						}
+					}
+					if (prop) {
+
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 2. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					}
+
+				} else {
+					error = true;
+					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. Case 2.1. The property cannot be proved. "
+							+ "Not enough information for: ");
+					System.out.println(var_name+"</p>");
+				}
+
+				if (!error) {
+
+					addTypeAssertion(arg0, in);
+					String consistency = consistency();
+					if (consistency == "true") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 11. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 2.2. Caused by the following inconsistency:"+"</p>");
+						System.out.print(explanations());
+					}
+					removeTypeAssertion(arg0, in);
 				}
 			}
 
@@ -2738,10 +2996,12 @@ public class TSPARQL {
 				}
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
 				if (!error) {
@@ -2753,6 +3013,7 @@ public class TSPARQL {
 				}
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
 				if (!error) {
@@ -3581,6 +3842,7 @@ public class TSPARQL {
 				}
 			}
 
+			//CHANGE
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
 			}
@@ -3992,7 +4254,7 @@ public class TSPARQL {
 		OWLDataFactory dataFactory;
 		OWLDataFactory df_rdf;
 		OWLDataFactory df_owl;
-		String file = "C:/conference.owl";
+		String file = "C:/sn-2019.owl";
 		String rdf = "C:/rdf-vocabulary.owl";
 		String owl = "C:/owl-vocabulary.owl";
 
@@ -4036,15 +4298,15 @@ public class TSPARQL {
 		long startTime = System.currentTimeMillis();
 
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
-				df_owl, "C:/conference.owl");
-
+				df_owl, "C:/sn-2019.owl");
+        
 		try {
-			t.SPARQL_CORRECTNESS(con10);
+			t.SPARQL_CORRECTNESS(ex30);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		/*
 		 * try { t.SPARQL_TYPE_VALIDITY(con10, "A",
 		 * "http://www.semanticweb.org/conference#attendant"); } catch (Exception e) {

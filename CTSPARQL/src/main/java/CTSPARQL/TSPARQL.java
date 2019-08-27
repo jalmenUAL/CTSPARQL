@@ -1891,22 +1891,22 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				Set<OWLClassExpression> ec = arg0.getOperands();
-				union = true;
-				for (OWLClassExpression e : ec) {
-					if (!wrong_analysis) {e.accept(this);}
-					
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not implemented:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
 				}
-				union =  false;
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				negation = true;
-				OWLClassExpression neg = arg0.getOperand();
-				neg.accept(this);
-				negation = false;
-				wrong_analysis = !wrong_analysis;
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not implemented:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 
 			@Override
@@ -1995,7 +1995,7 @@ public class TSPARQL {
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
 				
-				if (!negation && !union) {
+				 
 				if (ctriplesn.containsKey(var_name)) {
 					OWLDataAllValuesFrom allValuesFrom = (OWLDataAllValuesFrom) arg0;
 					OWLDataRange filler = allValuesFrom.getFiller();
@@ -2139,183 +2139,25 @@ public class TSPARQL {
 					}
 				}
 				
-			} 
-				else //negation or union
-				{
-					if (!wrong_analysis) {
-						wrong_analysis = true;
-						System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					}
-				}
+			
 			}
 
 			 
 			@Override
-			public void visit(OWLDataSomeValuesFrom arg0) {
-				
-				if (negation && ! union) {
-					if (ctriplesn.containsKey(var_name)) {
-						OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
-						OWLDataRange filler = someValuesFrom.getFiller();
-						for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
-							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-							if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-								Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-								String cons = "";
-
-								if (filler instanceof OWLDatatypeRestriction) {
-									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-
-									for (Node var : vars_) {
-
-										if (r.getDatatype().isInteger()) {
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												if (fr.getFacet().toString() == "maxExclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#>="
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
-																+ fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#>="
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " >= " + fr.getFacetValue().getLiteral() + " )");
-													}
-
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#>"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#>"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase() + " =< "
-																+ fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#=<"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " =< " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#<"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#<"
-																+ fr.getFacetValue().getLiteral() + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													}
-												}
-											}
-										} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												if (fr.getFacet().toString() == "maxExclusive") {
-
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
-																+ fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + ">="
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " >= " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " > " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + ">"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("(" + var.getLiteralValue().toString()
-																+ " > " + fr.getFacetValue().getLiteral() + ")");
-													}
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase() + " =< "
-																+ fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + "=<"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " =< " + fr.getFacetValue().getLiteral() + " )");
-													}
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.toString().toUpperCase()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													} else {
-														cons = cons + "{" + var.getLiteralValue().toString() + "<"
-																+ fr.getFacetValue().getLiteral() + "}" + ",";
-														constraints_elements.add("( " + var.getLiteralValue().toString()
-																+ " < " + fr.getFacetValue().getLiteral() + " )");
-													}
-												}
-											}
-										} else {
-											if (!wrong_analysis) {
-												wrong_analysis = true;
-												System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-												System.out.println("<p>"+rendering.render(arg0)+"</p>");
-											}
-										}
-									}
-									if (!cons.isEmpty()) {
-										cons = cons.substring(0, cons.length() - 1);
-									}
-
-									rules.get(current).add(cons);
-
-								} else {
-									// NON OWL DATATYPE RESTRICTION
-
-								}
-							}
-						}
-					}
-					
-				} 
-					else //not negation or union
-					{
-						if (!wrong_analysis) {
-							wrong_analysis = true;
-							System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							System.out.println("<p>"+rendering.render(arg0)+"</p>");
-						}
-					}
+			public void visit(OWLDataSomeValuesFrom arg0) {		
+				if (!wrong_analysis) {
+					wrong_analysis = true;
+					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				}
 			}
 
 			 
 			@Override
 			public void visit(OWLDataHasValue arg0) {
 				
-				if (!negation && !union) {
+				 
 				if (ctriplesn.containsKey(var_name)) {
 					OWLDataHasValue HasValue = (OWLDataHasValue) arg0;
 					OWLLiteral value = HasValue.getValue();
@@ -2365,16 +2207,8 @@ public class TSPARQL {
 						}
 					}
 				}
-				}
-				else //negation or union
-				{
-					if (!wrong_analysis) {
-						wrong_analysis = true;
-						System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					}
-				}
+				
+				 
 				
 			}
 
@@ -2922,24 +2756,23 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-
-				Set<OWLClassExpression> ec = arg0.getOperands();
-				union = true;
-				for (OWLClassExpression e : ec) {
-					if (error) {
-						e.accept(this);
-					}
-				}
-				union = false;				
+				if (!error) {
+					System.out.println("<p style=\"color:magenta\">"+"OWL Type not implemented:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+					error = true;
+				}			
 			}
 
 			 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {		 
-				OWLClassExpression cl = arg0.getOperand();
-				negation = true;
-				cl.accept(this);
-				negation = false;					
+				if (!error) {
+					System.out.println("<p style=\"color:magenta\">"+"OWL Type not implemented:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+					error = true;
+				}					
 			}
 
 			@Override
@@ -3001,8 +2834,7 @@ public class TSPARQL {
 
 			
 			@Override
-			public void visit(OWLObjectAllValuesFrom arg0) {
-				
+			public void visit(OWLObjectAllValuesFrom arg0) {			
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
 					OWLClassExpression filler = allValuesFrom.getFiller();
@@ -3037,7 +2869,6 @@ public class TSPARQL {
 				}
 
 				if (!error) {
-
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
@@ -3086,532 +2917,182 @@ public class TSPARQL {
 					}
 				}
 			}
-
-			 
+	 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
+				
+				if (!error) {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						} else {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+							System.out.print(explanations());
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
 			}
 		 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
+				
+				if (!error) {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						} else {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+							System.out.print(explanations());
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
 			}
 			
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
+				
+				if (!error) {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						} else {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+							System.out.print(explanations());
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
 			}
 
 			@Override
 			public void visit(OWLObjectHasSelf arg0) {
+				
+				if (!error) {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						} else {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+							System.out.print(explanations());
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
 			}
 
 			@Override
 			public void visit(OWLObjectOneOf arg0) {
+				if (!error) {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						} else {
+							error = true;
+							System.out.println("<p style=\"color:red\">"+
+									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+							System.out.print(explanations());
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
 			}
 
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {	
 				
-				if (negation && !union) {
-					if (!error) {
-						if (arg0.isObjectRestriction()) {
-							OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-							String entailment = entailment(axiom);
-							if (entailment == "false") {
-								error = true;
-								System.out.println("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 6. The following class membership cannot be proved:"+"</p>");
-								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-								printClass(rendering.render(arg0), rendering.render(in));
-							} else {
-								addTypeAssertion(arg0, in);
-								String consistency = consistency();
-								if (consistency == "true") {
-									error = true;
-									System.out.println("<p style=\"color:red\">"+
-											"Unsuccessful type validity checking. Case 15. The following class membership cannot be proved:"+"</p>");
-									ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-									printClass(rendering.render(arg0), rendering.render(in));
-								} else {
-									error = true;
-									System.out.println("<p style=\"color:red\">"+
-											"Unsuccessful type validity checking. Case 6.1. Caused by the following inconsistency:"+"</p>");
-									System.out.print(explanations());
-
-								}
-								removeTypeAssertion(arg0, in);
-							}
-						} else { // arg0.isDataRestriction()
-							if (ctriplesn.containsKey(var_name)) {
-								String t1n = "use_module(library('clpfd'))";
-								org.jpl7.Query q1n = new org.jpl7.Query(t1n);
-								System.out.print((q1n.hasSolution() ? "" : ""));
-								String t2n = "use_module(library('clpr'))";
-								org.jpl7.Query q2n = new org.jpl7.Query(t2n);
-								System.out.print((q2n.hasSolution() ? "" : ""));
-								for (List<String> rule : rules) {
-									String c = "";
-									if (rule.size() >= 2) {
-										c = rule.get(0) + ":-";
-										for (int i = 1; i < rule.size(); i++) {
-											c = c + rule.get(i) + ',';
-										}
-										c = c.substring(0, c.length() - 1);
-									} else {
-										c = rule.get(0);
-									}
-									String drn = rule.get(0);
-									org.jpl7.Query drqn = new org.jpl7.Query("retractall(" + drn + ")");
-									System.out.print((drqn.hasSolution() ? "" : ""));
-									String aprulen = "asserta((" + c + "))";
-									org.jpl7.Query q4n = new org.jpl7.Query(aprulen);
-									System.out.print((q4n.hasSolution() ? "" : ""));
-								}
-								OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
-								OWLDataRange filler = someValuesFrom.getFiller();
-
-								for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
-									Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-									if (uses.containsKey(Node.createURI(dp.getIRI().toString())))
-
-									{
-										Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
-										String cons = "";
-										if (filler instanceof OWLDatatypeRestriction) {
-
-											OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
-
-											for (Node var : vars_) {
-
-												if (r.getDatatype().isInteger()) { // CHANGED , by ;
-													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-														if (fr.getFacet().toString() == "maxExclusive") {
-															if (var.isVariable()) {
-																cons = cons 
-																		+ var.toString().substring(1).toUpperCase() + "#<"
-																		+ fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " < " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + var.getLiteralValue().toString()
-																		+ "#<" + fr.getFacetValue().getLiteral() + ",";
-																constraints_elements
-																		.add("( " + var.getLiteralValue().toString() + " < "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														} else if (fr.getFacet().toString() == "maxInclusive") {
-															if (var.isVariable()) {
-																cons = cons 
-																		+ var.toString().substring(1).toUpperCase() + "#=<"
-																		+ fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " <= " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + var.getLiteralValue().toString()
-																		+ "#=<" + fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add(
-																		"( " + var.getLiteralValue().toString() + " <= "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														} else if (fr.getFacet().toString() == "minExclusive") {
-															if (var.isVariable()) {
-																cons = cons 
-																		+ var.toString().substring(1).toUpperCase() + "#>"
-																		+ fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " > " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons  + var.getLiteralValue().toString()
-																		+ "#>" + fr.getFacetValue().getLiteral() + ",";
-																constraints_elements
-																		.add("( " + var.getLiteralValue().toString() + " > "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														} else if (fr.getFacet().toString() == "minInclusive") {
-															if (var.isVariable()) {
-																cons = cons 
-																		+ var.toString().substring(1).toUpperCase() + "#>="
-																		+ fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " >= " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons  + var.getLiteralValue().toString()
-																		+ "#>=" + fr.getFacetValue().getLiteral() + ",";
-																constraints_elements.add(
-																		"( " + var.getLiteralValue().toString() + " >= "
-																				+ fr.getFacetValue().getLiteral() + ")");
-															}
-														}
-													}
-												} else if (r.getDatatype().isDouble() // CHANGED , by ;
-														|| r.getDatatype().isFloat()) {
-													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-
-														if (fr.getFacet().toString() == "maxExclusive") {
-
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase() + "<"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " < " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + "{" + var.getLiteralValue().toString() + "<"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add(
-																		"( " + var.getLiteralValue().toString() + " < "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-
-														} else if (fr.getFacet().toString() == "maxInclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase() + "=<"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " =< " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + "{" + var.getLiteralValue().toString() + "=<"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements
-																		.add("( " + var.getLiteralValue().toString() + " =< "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														} else if (fr.getFacet().toString() == "minExclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase() + ">"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " > " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + "{" + var.getLiteralValue().toString() + ">"
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add(
-																		"( " + var.getLiteralValue().toString() + " > "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														} else if (fr.getFacet().toString() == "minInclusive") {
-															if (var.isVariable()) {
-																cons = cons + "{"
-																		+ var.toString().substring(1).toUpperCase() + ">="
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements.add("( " + var.toString().toUpperCase()
-																		+ " >= " + fr.getFacetValue().getLiteral() + " )");
-															} else {
-																cons = cons + "{" + var.getLiteralValue().toString() + ">="
-																		+ fr.getFacetValue().getLiteral() + "}" + ",";
-																constraints_elements
-																		.add("( " + var.getLiteralValue().toString() + " >= "
-																				+ fr.getFacetValue().getLiteral() + " )");
-															}
-														}
-													}
-												} else {
-													if (!error) {
-														error = true;
-														System.out.println("<p style=\"color:green\">"+"OWL Restriction not allowed:"+"</p>");
-														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-														System.out.println("<p>"+rendering.render(arg0)+"</p>");
-													}
-												}
-											}
-											String domain = "";
-
-											for (Node v : vars_) {
-												if (v.isVariable()) {
-													if (types_literals
-															.containsKey(v.toString().substring(1).toUpperCase())) {
-														if (types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:integer")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:string")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:dateTime")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:positiveInteger")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:negativeInteger")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:nonPositiveInteger")
-																|| types_literals
-																		.get(v.toString().substring(1).toUpperCase())
-																		.equals("http://www.types.org#xsd:nonNegativeInteger")) {
-															Integer act = nvar;
-															nvar++;
-															domain = domain + "fd_dom("
-																	+ v.toString().substring(1).toUpperCase() + ",R" + act
-																	+ ")" + ",";
-															rename.put("R" + act, v.toString().substring(1).toUpperCase());
-
-														} else {
-															if (types_literals.get(v.toString().substring(1).toUpperCase())
-																	.equals("http://www.types.org#xsd:float")
-																	|| types_literals
-																			.get(v.toString().substring(1).toUpperCase())
-																			.equals("http://www.types.org#xsd:double")
-																	|| types_literals
-																			.get(v.toString().substring(1).toUpperCase())
-																			.equals("http://www.types.org#xsd:decimal")) {
-																Integer act = nvar;
-																nvar++;
-																domain = domain + "(sup("
-																		+ v.toString().substring(1).toUpperCase() + ",S),"
-																		+ "inf(" + v.toString().substring(1).toUpperCase()
-																		+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
-																		+ v.toString().substring(1).toUpperCase() + ",S)->R"
-																		+ act + "=..['..',inf,S];" + "inf("
-																		+ v.toString().substring(1).toUpperCase() + ",I)->R"
-																		+ act + "=..['..',I,sup];" + "R" + act
-																		+ "=..['..',inf,sup]))" + ",";
-																rename.put("R" + act,
-																		v.toString().substring(1).toUpperCase());
-															}
-														}
-													}
-												}
-											}
-											if (!domain.isEmpty()) {
-												domain = domain.substring(0, domain.length() - 1);
-											}
-
-											if (!cons.isEmpty()) {
-												cons = cons.substring(0, cons.length() - 1);
-											}
-
-											String newhead = "";
-											for (int i = 1; i < rules.get(0).size(); i++) {
-												newhead = newhead + rules.get(0).get(i) + ',';
-											}
-
-											if (!newhead.isEmpty()) {
-												newhead = newhead.substring(0, newhead.length() - 1);
-												String head;
-												head = newhead + "," + cons + "," + domain;
-												org.jpl7.Query qimpl = new org.jpl7.Query(head);
-												if (qimpl.hasSolution())
-												// COUNTEREXAMPLE
-												{
-													error = true;
-													System.out.println("<p style=\"color:red\">"+
-															"Unsuccessful type validity checking. Case 7. Counterexample:"+"</p>");
-													Map<String, Term>[] sols = qimpl.allSolutions();
-													for (Map<String, Term> s : sols) {
-														for (String key : s.keySet())
-															if (s.get(key).isCompound()) {
-																System.out.println("<p>"+rename.get(key) + "=" + s.get(key)+"</p>");
-															}
-													}
-												} else {
-													cons = "";
-													for (Node var : vars_) {
-
-														if (r.getDatatype().isInteger()) {  
-															for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-																if (fr.getFacet().toString() == "maxExclusive") {
-
-																	if (var.isVariable()) {
-																		cons = cons
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "#>=" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	} else {
-																		cons = cons + var.getLiteralValue().toString()
-																				+ "#>=" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	}
-
-																} else if (fr.getFacet().toString() == "maxInclusive") {
-																	if (var.isVariable()) {
-																		cons = cons
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "#>" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	} else {
-																		cons = cons + var.getLiteralValue().toString()
-																				+ "#>" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	}
-
-																} else if (fr.getFacet().toString() == "minExclusive") {
-																	if (var.isVariable()) {
-																		cons = cons
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "#=<" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	} else {
-																		cons = cons + var.getLiteralValue().toString()
-																				+ "#=<" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	}
-
-																} else if (fr.getFacet().toString() == "minInclusive") {
-																	if (var.isVariable()) {
-																		cons = cons
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "#<" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	} else {
-																		cons = cons + var.getLiteralValue().toString()
-																				+ "#<" + fr.getFacetValue().getLiteral()
-																				+ ";";
-																	}
-																}
-															}
-														} else if (r.getDatatype().isFloat() || // CHANGED ; by ,
-														r.getDatatype().isDouble()) {
-															for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-																if (fr.getFacet().toString() == "maxExclusive") {
-																	if (var.isVariable()) {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ ">=" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	} else {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ ">=" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	}
-																} else if (fr.getFacet().toString() == "maxInclusive") {
-																	if (var.isVariable()) {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ ">" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	} else {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ ">" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	}
-																} else if (fr.getFacet().toString() == "minExclusive") {
-																	if (var.isVariable()) {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "=<" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	} else {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "=<" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	}
-																} else if (fr.getFacet().toString() == "minInclusive") {
-																	if (var.isVariable()) {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "<" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	} else {
-																		cons = cons + "{"
-																				+ var.toString().substring(1).toUpperCase()
-																				+ "<" + fr.getFacetValue().getLiteral()
-																				+ "}" + ";";
-																	}
-																}
-															}
-														} else {
-															if (!error) {
-																error = true;
-																System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-																ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-																System.out.println("<p>"+rendering.render(arg0)+"</p>");
-															}
-														}
-													}
-													if (!cons.isEmpty()) {
-														cons = cons.substring(0, cons.length() - 1);
-													}
-													newhead = "";
-													for (int i = 1; i < rules.get(0).size(); i++) {
-														newhead = newhead + rules.get(0).get(i) + ',';
-													}
-													if (!newhead.isEmpty()) {
-														newhead = newhead.substring(0, newhead.length() - 1);
-
-														head = newhead + "," + cons + "," + domain;
-														org.jpl7.Query qcons = new org.jpl7.Query(head);
-														if (!qcons.hasSolution()) {
-															// INCONSISTENCY
-															error = true;
-															System.out.println("<p style=\"color:red\">"+
-																	"Unsuccessful type validity checking. Case 7.1. Caused by the following inconsistency:"+"</p>");
-															System.out.println("<p>"+head+"</p>");
-														} else {
-															// ENTAILMENT
-															head = newhead + "->" + cons;
-															qcons = new org.jpl7.Query(head);
-															if (qcons.hasSolution()) {
-															} else {
-																error = true;
-																System.out.println("<p style=\"color:red\">"+
-																		"Unsuccessful type validity checking. Case 16. The following class membership cannot be proved:"+"</p>");
-																ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-																printClass(rendering.render(arg0), rendering.render(in));
-															}
-														}
-													} else {
-														// INCOMPLETENESS
-														error = true;
-														System.out.println("<p style=\"color:red\">"+
-																"Unsuccessful type validity checking. Case 7.2. The following expression cannot be proved:"+"</p>");
-														System.out.println("<p>"+head+"</p>");
-													}
-												}
-											} else {
-												// INCOMPLETENESS
-												error = true;
-												System.out.println("<p style=\"color:red\">"+
-														"Unsuccessful type validity checking. Case 7.3. The following expression cannot be proved:"+"</p>");
-												for (String c : constraints_elements) {
-													System.out.print("<p>"+c.replace("?", "")+"</p>");
-												}
-												 
-											}
-
-										} else {
-											// NON OWL DATATYPE RESTRICTION
-										}
-									} else {
-										// INCOMPLETENESS
-										error = true;
-										System.out.print("<p style=\"color:red\">"+
-												"Unsuccessful type validity checking. Case 7.4. The property cannot be proved."
-														+ "Not enough information for: "+"</p>");
-										System.out.println("<p>"+dp.getIRI().toString().split("#")[1]+"</p>");
-									}
-								}
-							} else {
-								// INCOMPLETENESS
-								error = true;
-								System.out.print("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 7.5.The property cannot be proved."
-												+ "Not enough information for: "+"</p>");
-								System.out.println("<p>"+var_name+"</p>");
-							}
-						}
-					}
-					}
-					else { //negation or union
-						if (!error) {
-							System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							System.out.println("<p>"+rendering.render(arg0)+"</p>");
-							error = true;
-						}
-					}
-				
+				if (!error) {
+					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+					error = true;
+				}
+					 
 			}
 
 			@Override
 			public void visit(OWLDataSomeValuesFrom arg0) {
 				
-				if (!negation && !union) {
+				 
 				if (!error) {
 					if (arg0.isObjectRestriction()) {
 						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
@@ -4096,22 +3577,14 @@ public class TSPARQL {
 						}
 					}
 				}
-				}
-				else { //negation or union
-					if (!error) {
-						System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						System.out.println("<p>"+rendering.render(arg0)+"</p>");
-						error = true;
-					}
-				}
+				
+				 
 			}
 
 			@Override
 			public void visit(OWLDataHasValue arg0) {
 				
-				if (!negation && !union)
-				{
+				 
 				if (!error) {
 					if (arg0.isObjectRestriction()) {
 						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
@@ -4364,17 +3837,7 @@ public class TSPARQL {
 							System.out.println("<p>"+var_name+"</p>");
 						}
 					}
-				}
-				}
-				else { //negation or union
-					if (!error) {
-						System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						System.out.println("<p>"+rendering.render(arg0)+"</p>");
-						error = true;
-					}
-				}
-				
+				}				
 			}
 
 			 

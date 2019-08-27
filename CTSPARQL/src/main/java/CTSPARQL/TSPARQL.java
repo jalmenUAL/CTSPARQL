@@ -95,11 +95,12 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 
 public class TSPARQL {
 
+	Boolean negation = false;
+	Boolean union = false;
 	Integer next = 1;
 	Integer current = 0;
 	Integer nvar = 0;
 	Boolean error = false;
-	Boolean union = false;
 	List<String> vars = new ArrayList<String>();
 	List<List<String>> rules = new ArrayList<List<String>>();
 	Set<TriplePath> ctriples = new HashSet<TriplePath>();
@@ -1525,22 +1526,7 @@ public class TSPARQL {
 			for (TriplePath tp : ctriples) {
 				datatriples.add(tp);
 				if (tp.getSubject().isVariable()) {
-					
-					/*datatriples.add(tp);
-					String r = sparql_consistency();
-					if (r == "true") {
-					
-					NodeSet<OWLClass> typ = ClassAssertion(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-					Set<OWLClass> tf = typ.getFlattened();
-					System.out.println(typ);
-					for (OWLClass t : tf)
-					{
-						OWLRestriction(t,tp.getSubject());
-					}
-					}*/
-					
-					
-					//DONE
+							
 					datatriples.add(tp);
 					Set<OWLClassExpression> typ = ClassOfVariable(
 							IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -1557,7 +1543,6 @@ public class TSPARQL {
 		return rules;
 	}
 
-	//DONE
 	public void elementFilter(ElementFilter el, Integer step, String fileo) {
 		if (el.getExpr().getFunction().getFunctionName(null) == "exists") {
 			
@@ -1675,9 +1660,7 @@ public class TSPARQL {
 		}
 	}
 
-	//DONE
 	public void elementBind(ElementBind el, Integer step, String fileo) {
-		
 		 
 		nvar++;
 		List<String> ss = new ArrayList<>(SExprtoPTerm(el.getExpr(), el.getVar().asNode()));
@@ -1799,19 +1782,6 @@ public class TSPARQL {
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		for (TriplePath tp : ctriples) {
 			
-			/*
-			String r = sparql_consistency();
-			if (r == "true") {
-			datatriples.add(tp);
-			NodeSet<OWLClass> typ = ClassAssertion(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-			Set<OWLClass> tf = typ.getFlattened();
-			for (OWLClass t : tf)
-			{
-				OWLRestriction(t,tp.getSubject());
-			}
-			}*/
-			
-            
 			datatriples.add(tp);			
 			Set<OWLClassExpression> typ = ClassOfVariable(
 					IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
@@ -1856,7 +1826,7 @@ public class TSPARQL {
 		current = tmp;
 	}
 	
-	//DONE
+	//REMOVE
 	public NodeSet<OWLClass> ClassAssertion(IRI iri)
 	{
 		String result = "";
@@ -1875,6 +1845,7 @@ public class TSPARQL {
 		return res;
 	};
 	
+	//REMOVE
 	public NodeSet<OWLClass> DataPropertyDomains(OWLDataProperty p)
 	{
 		String result = "";
@@ -1893,9 +1864,10 @@ public class TSPARQL {
 	};
 
 	public void OWLRestriction(OWLClass ce, Node var_name) {
+		
+		
 		OWLClassExpressionVisitor cv = new OWLClassExpressionVisitor() {
 			
-			//DONE
 			@Override
 			public void visit(OWLClass arg0) {
 				
@@ -1909,45 +1881,36 @@ public class TSPARQL {
 				}
 			}
 
-			//DONE
 			@Override
-			public void visit(OWLObjectIntersectionOf arg0) {
-				
+			public void visit(OWLObjectIntersectionOf arg0) {			
 				Set<OWLClassExpression> ec = arg0.getOperands();
 				for (OWLClassExpression e : ec) {
 					e.accept(this);
 				}
 			}
 
-			//DONE
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				
 				Set<OWLClassExpression> ec = arg0.getOperands();
-				Boolean one = false;
+				union = true;
 				for (OWLClassExpression e : ec) {
-					if (!one) {e.accept(this);}
-					if (!wrong_analysis) {one = true;}
+					if (!wrong_analysis) {e.accept(this);}
+					
 				}
-				
-
+				union =  false;
 			}
 
-			//DONE
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				 
-			  OWLClassExpression cl = arg0.getOperand();
-			  cl.accept(this);
-			  wrong_analysis = !wrong_analysis;
-			  
-
+				negation = true;
+				OWLClassExpression neg = arg0.getOperand();
+				neg.accept(this);
+				negation = false;
+				wrong_analysis = !wrong_analysis;
 			}
 
-			//DONE
 			@Override
-			public void visit(OWLObjectSomeValuesFrom arg0) {
-				
+			public void visit(OWLObjectSomeValuesFrom arg0) {		
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
 					OWLClassExpression filler = someValuesFrom.getFiller();
@@ -1982,11 +1945,8 @@ public class TSPARQL {
 				}
 			}
 
-			//DONE
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
-				
-				/*
 				if (ctriplesn.containsKey(var_name)) {
 					OWLObjectHasValue hasValue = (OWLObjectHasValue) arg0;
 					OWLObjectProperty dp = hasValue.getProperty().asOWLObjectProperty();
@@ -2002,38 +1962,40 @@ public class TSPARQL {
 								wrong_analysis = one;
 
 					}
-				}*/
+				}
 				
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLObjectHasSelf arg0) {
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLObjectOneOf arg0) {
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {
+				
+				if (!negation && !union) {
 				if (ctriplesn.containsKey(var_name)) {
 					OWLDataAllValuesFrom allValuesFrom = (OWLDataAllValuesFrom) arg0;
 					OWLDataRange filler = allValuesFrom.getFiller();
@@ -2176,23 +2138,184 @@ public class TSPARQL {
 						}
 					}
 				}
-			}
-
-			//DONE
-			@Override
-			public void visit(OWLDataSomeValuesFrom arg0) {
 				
-				if (!wrong_analysis) {
-					wrong_analysis = true;
-					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+			} 
+				else //negation or union
+				{
+					if (!wrong_analysis) {
+						wrong_analysis = true;
+						System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>"+rendering.render(arg0)+"</p>");
+					}
 				}
 			}
 
-			//DONE
+			 
+			@Override
+			public void visit(OWLDataSomeValuesFrom arg0) {
+				
+				if (negation && ! union) {
+					if (ctriplesn.containsKey(var_name)) {
+						OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
+						OWLDataRange filler = someValuesFrom.getFiller();
+						for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
+							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+							if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+								Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+								String cons = "";
+
+								if (filler instanceof OWLDatatypeRestriction) {
+									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+
+									for (Node var : vars_) {
+
+										if (r.getDatatype().isInteger()) {
+											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+												if (fr.getFacet().toString() == "maxExclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#>="
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
+																+ fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#>="
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													}
+
+												} else if (fr.getFacet().toString() == "maxInclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#>"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#>"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minExclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase() + " =< "
+																+ fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#=<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " =< " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minInclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													}
+												}
+											}
+										} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
+											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+												if (fr.getFacet().toString() == "maxExclusive") {
+
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase() + " >= "
+																+ fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "maxInclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ " > " + fr.getFacetValue().getLiteral() + ")");
+													}
+												} else if (fr.getFacet().toString() == "minExclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase() + " =< "
+																+ fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "=<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " =< " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minInclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													}
+												}
+											}
+										} else {
+											if (!wrong_analysis) {
+												wrong_analysis = true;
+												System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+												System.out.println("<p>"+rendering.render(arg0)+"</p>");
+											}
+										}
+									}
+									if (!cons.isEmpty()) {
+										cons = cons.substring(0, cons.length() - 1);
+									}
+
+									rules.get(current).add(cons);
+
+								} else {
+									// NON OWL DATATYPE RESTRICTION
+
+								}
+							}
+						}
+					}
+					
+				} 
+					else //not negation or union
+					{
+						if (!wrong_analysis) {
+							wrong_analysis = true;
+							System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							System.out.println("<p>"+rendering.render(arg0)+"</p>");
+						}
+					}
+			}
+
+			 
 			@Override
 			public void visit(OWLDataHasValue arg0) {
+				
+				if (!negation && !union) {
 				if (ctriplesn.containsKey(var_name)) {
 					OWLDataHasValue HasValue = (OWLDataHasValue) arg0;
 					OWLLiteral value = HasValue.getValue();
@@ -2242,9 +2365,20 @@ public class TSPARQL {
 						}
 					}
 				}
+				}
+				else //negation or union
+				{
+					if (!wrong_analysis) {
+						wrong_analysis = true;
+						System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>"+rendering.render(arg0)+"</p>");
+					}
+				}
+				
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
 				if (!wrong_analysis) {
@@ -2255,7 +2389,7 @@ public class TSPARQL {
 				}
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
 				if (!wrong_analysis) {
@@ -2266,7 +2400,7 @@ public class TSPARQL {
 				}
 			}
 
-			//DONE
+			 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
 				if (!wrong_analysis) {

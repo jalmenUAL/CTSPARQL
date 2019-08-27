@@ -18,6 +18,29 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.checker.NodeChecker;
+import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.syntax.Element;
+import org.apache.jena.sparql.syntax.ElementBind;
+import org.apache.jena.sparql.syntax.ElementFilter;
+import org.apache.jena.sparql.syntax.ElementGroup;
+import org.apache.jena.sparql.syntax.ElementMinus;
+import org.apache.jena.sparql.syntax.ElementOptional;
+import org.apache.jena.sparql.syntax.ElementPathBlock;
+import org.apache.jena.sparql.syntax.ElementSubQuery;
+import org.apache.jena.sparql.syntax.ElementUnion;
+import org.apache.jena.util.FileUtils;
 import org.jpl7.Term;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -67,29 +90,29 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import com.clarkparsia.owlapi.explanation.GlassBoxExplanation;
 import com.clarkparsia.owlapi.explanation.SingleExplanationGenerator;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sparql.core.TriplePath;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
-import com.hp.hpl.jena.sparql.syntax.Element;
-import com.hp.hpl.jena.sparql.syntax.ElementBind;
-import com.hp.hpl.jena.sparql.syntax.ElementFilter;
-import com.hp.hpl.jena.sparql.syntax.ElementGroup;
-import com.hp.hpl.jena.sparql.syntax.ElementMinus;
-import com.hp.hpl.jena.sparql.syntax.ElementOptional;
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
-import com.hp.hpl.jena.sparql.syntax.ElementSubQuery;
-import com.hp.hpl.jena.sparql.syntax.ElementUnion;
-import com.hp.hpl.jena.util.FileUtils;
+//import com.hp.hpl.jena.graph.Node;
+//import com.hp.hpl.jena.graph.NodeFactory;
+//import com.hp.hpl.jena.ontology.OntModel;
+//import com.hp.hpl.jena.query.Query;
+//import com.hp.hpl.jena.query.QueryExecutionFactory;
+//import com.hp.hpl.jena.query.QueryFactory;
+//import com.hp.hpl.jena.query.ResultSet;
+//import com.hp.hpl.jena.query.ResultSetFormatter;
+//import com.hp.hpl.jena.rdf.model.Model;
+//import com.hp.hpl.jena.rdf.model.ModelFactory;
+//import com.hp.hpl.jena.sparql.core.TriplePath;
+//import com.hp.hpl.jena.sparql.expr.Expr;
+//import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
+//import com.hp.hpl.jena.sparql.syntax.Element;
+//import com.hp.hpl.jena.sparql.syntax.ElementBind;
+//import com.hp.hpl.jena.sparql.syntax.ElementFilter;
+//import com.hp.hpl.jena.sparql.syntax.ElementGroup;
+//import com.hp.hpl.jena.sparql.syntax.ElementMinus;
+//import com.hp.hpl.jena.sparql.syntax.ElementOptional;
+//import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
+//import com.hp.hpl.jena.sparql.syntax.ElementSubQuery;
+//import com.hp.hpl.jena.sparql.syntax.ElementUnion;
+//import com.hp.hpl.jena.util.FileUtils;
 
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
@@ -508,7 +531,7 @@ public class TSPARQL {
 	public String SPARQL(String filei, String queryStr) {
 		OntModel model = ModelFactory.createOntologyModel();
 		model.read(filei);
-		com.hp.hpl.jena.query.Query query = QueryFactory.create(queryStr);
+		Query query = QueryFactory.create(queryStr);
 		if (query.isSelectType()) {
 			ResultSet result = (ResultSet) QueryExecutionFactory.create(query, model).execSelect();
 			File theDir = new File("tmp-sparql");
@@ -520,7 +543,7 @@ public class TSPARQL {
 			FileOutputStream file;
 			try {
 				file = new FileOutputStream(f);
-				ResultSetFormatter.outputAsXML(file, (com.hp.hpl.jena.query.ResultSet) result);
+				ResultSetFormatter.outputAsXML(file, (ResultSet) result);
 				try {
 					file.close();
 				} catch (IOException e) {
@@ -1916,8 +1939,8 @@ public class TSPARQL {
 					OWLClassExpression filler = someValuesFrom.getFiller();
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							Boolean one = false;
 							for (Node var : vars_) {
 								if (!one) {OWLRestriction(filler.asOWLClass(), var);}
@@ -1935,8 +1958,8 @@ public class TSPARQL {
 					OWLClassExpression filler = allValuesFrom.getFiller();
 					for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							for (Node var : vars_) {
 								OWLRestriction(filler.asOWLClass(), var);
 							}
@@ -1953,8 +1976,8 @@ public class TSPARQL {
 					OWLIndividual ind = hasValue.getValue();
 						
 					Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							Boolean one = false;
 							for (Node var : vars_) {
 								if (!one) {if (var.equals(ind)) {one = true;}}							
@@ -2001,8 +2024,8 @@ public class TSPARQL {
 					OWLDataRange filler = allValuesFrom.getFiller();
 					for (OWLDataProperty dp : allValuesFrom.getDataPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							String cons = "";
 
 							if (filler instanceof OWLDatatypeRestriction) {
@@ -2163,8 +2186,8 @@ public class TSPARQL {
 					OWLLiteral value = HasValue.getValue();
 					for (OWLDataProperty dp : HasValue.getDataPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							String cons = "";
 							for (Node var : vars_) {
 								if (value.isInteger()) {
@@ -2694,7 +2717,7 @@ public class TSPARQL {
 		String urio = ontology.getOntologyID().getOntologyIRI().toString();
 		OWLClass ce = dataFactory.getOWLClass(IRI.create(type_name));
 		OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(IRI.create(urio + '#' + var_name));
-		owl_type_validity(ce, in, Node.createVariable(var_name));
+		owl_type_validity(ce, in, NodeFactory.createVariable(var_name));
 		if (!error && !wrong_analysis) {
 			System.out.println("<p style=\"color:DodgerBlue;\">"
 					+ "Successful type validity checking. The property has been proved</p>");
@@ -2783,8 +2806,9 @@ public class TSPARQL {
 					Boolean prop = false;
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						 
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							Boolean one = false;
 							for (Node var : vars_) {
 								String urio = ontology.getOntologyID().getOntologyIRI().toString();
@@ -2841,8 +2865,8 @@ public class TSPARQL {
 					Boolean prop = false;
 					for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							for (Node var : vars_) {
 								String urio = ontology.getOntologyID().getOntologyIRI().toString();
 								OWLNamedIndividual in = dataFactory
@@ -3152,10 +3176,10 @@ public class TSPARQL {
 
 							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
 								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-								if (uses.containsKey(Node.createURI(dp.getIRI().toString())))
+								if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString())))
 
 								{
-									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+									Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 									String cons = "";
 									if (filler instanceof OWLDatatypeRestriction) {
 
@@ -3642,9 +3666,9 @@ public class TSPARQL {
 							OWLLiteral val = hasValue.getValue();
 							for (OWLDataProperty dp : hasValue.getDataPropertiesInSignature()) {
 								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-								if (uses.containsKey(Node.createURI(dp.getIRI().toString()))) {
+								if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
 									String cons = "";
-									Set<Node> vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+									Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 									for (Node var : vars_) {
 										if (val.isInteger()) {
 											if (var.isVariable()) {
@@ -3746,7 +3770,7 @@ public class TSPARQL {
 													}
 											}
 										} else {
-											vars_ = uses.get(Node.createURI(dp.getIRI().toString()));
+											vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 											cons = "";
 											for (Node var : vars_) {
 
@@ -4051,7 +4075,7 @@ public class TSPARQL {
 
 		// First Method. Inconsistent Query.
 
-		// MIRAR
+		 //MIRAR
 		String ex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -4112,6 +4136,7 @@ public class TSPARQL {
 				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?AGE = 50) .\r\n"
 				+ "FILTER (?AGE = 100)\r\n" + "}";
 
+		//MIRAR
 		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -4305,7 +4330,7 @@ public class TSPARQL {
 				df_owl, "C:/sn-2019.owl");
         
 		try {
-			t.SPARQL_CORRECTNESS(ex30);
+			t.SPARQL_CORRECTNESS(ex23);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

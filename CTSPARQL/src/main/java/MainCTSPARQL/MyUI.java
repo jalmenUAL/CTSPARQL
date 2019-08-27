@@ -20,7 +20,16 @@ import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
 
-import org.apache.log4j.varia.NullAppender;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.sparql.core.Var;
+//import org.apache.log4j.varia.NullAppender;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -32,14 +41,14 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.sparql.core.Var;
+//import com.hp.hpl.jena.ontology.OntModel;
+//import com.hp.hpl.jena.query.QueryExecutionFactory;
+//import com.hp.hpl.jena.query.QueryFactory;
+//import com.hp.hpl.jena.query.QuerySolution;
+//import com.hp.hpl.jena.query.ResultSet;
+//import com.hp.hpl.jena.rdf.model.ModelFactory;
+//import com.hp.hpl.jena.rdf.model.RDFNode;
+//import com.hp.hpl.jena.sparql.core.Var;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.event.ShortcutAction;
@@ -71,21 +80,18 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import CTSPARQL.TSPARQL;
 
+//BIND
 //TBOX
 //BLANK NODES
-//NON EXISTENTIAL AND DATA LINEAR
-//NESTED QUERIES EN EL PAPER
-//ACTUALIZAR ARQ
-//CABEZAS NO VARIABLE. TB EN EL PAPER.
+//NON EXISTENTIAL AND LINEAR
+//CABEZAS NO VARIABLE
 //MEZCLA DE ENTEROS Y REALES
 //ENTEROS POSITIVOS, NEGATIVOS, ETC
 //PINTADO DE TRIPLES
-//BIND EN EL PAPER
-//CONSISTENCIA DE RES PAPER
-//DOMAIN PERTENENCIA PAPER
 //TALL AND YOUNG 
 //SUBPROPERTY
-//PONER EJEMPLO DE LOS CASOS NUEVOS
+//RESTRICCIONES NO PERMITIDAS. FUNCIONAL PROPERTY, NEGATIVE PROPERTY
+//EJEMPLOS NUEVOS
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -1260,7 +1266,7 @@ public class MyUI extends UI {
 
 				OntModel model = ModelFactory.createOntologyModel();
 				model.read("file:C://working_ontology.owl");
-				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
+				Query query = QueryFactory.create(editor.getValue());
 				ResultSet result = (ResultSet) QueryExecutionFactory.create(query, model).execSelect();
 				answers.removeAllColumns();
 				List<String> variables = result.getResultVars();
@@ -1349,7 +1355,7 @@ public class MyUI extends UI {
 					System.out.println(e2.getMessage());
 					error("Error Loading Ontologgy. Causes:", e2.getMessage());
 				}
-				org.apache.log4j.BasicConfigurator.configure(new NullAppender());
+				//BasicConfigurator.configure(new NullAppender());
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				PrintStream ps = new PrintStream(baos);
 				PrintStream old = System.out;
@@ -1406,7 +1412,7 @@ public class MyUI extends UI {
 				}
 				cb_type_validity.setItems(names);
 				cb_type_validity.setPageLength(counter);
-				com.hp.hpl.jena.query.Query query = QueryFactory.create(editor.getValue());
+				Query query = QueryFactory.create(editor.getValue());
 				List<Var> vars = query.getProjectVars();
 				cb_vars.setItems(vars);
 				cb_vars.setPageLength(vars.size());
@@ -1443,7 +1449,7 @@ public class MyUI extends UI {
 						System.out.println(e2.getMessage());
 						error("Error Loading Ontology. Causes:", e2.getMessage());
 					}
-					org.apache.log4j.BasicConfigurator.configure(new NullAppender());
+					//org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					PrintStream ps = new PrintStream(baos);
 					PrintStream old = System.out;

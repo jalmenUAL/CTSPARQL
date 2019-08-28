@@ -90,36 +90,13 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import com.clarkparsia.owlapi.explanation.GlassBoxExplanation;
 import com.clarkparsia.owlapi.explanation.SingleExplanationGenerator;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
-//import com.hp.hpl.jena.graph.Node;
-//import com.hp.hpl.jena.graph.NodeFactory;
-//import com.hp.hpl.jena.ontology.OntModel;
-//import com.hp.hpl.jena.query.Query;
-//import com.hp.hpl.jena.query.QueryExecutionFactory;
-//import com.hp.hpl.jena.query.QueryFactory;
-//import com.hp.hpl.jena.query.ResultSet;
-//import com.hp.hpl.jena.query.ResultSetFormatter;
-//import com.hp.hpl.jena.rdf.model.Model;
-//import com.hp.hpl.jena.rdf.model.ModelFactory;
-//import com.hp.hpl.jena.sparql.core.TriplePath;
-//import com.hp.hpl.jena.sparql.expr.Expr;
-//import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
-//import com.hp.hpl.jena.sparql.syntax.Element;
-//import com.hp.hpl.jena.sparql.syntax.ElementBind;
-//import com.hp.hpl.jena.sparql.syntax.ElementFilter;
-//import com.hp.hpl.jena.sparql.syntax.ElementGroup;
-//import com.hp.hpl.jena.sparql.syntax.ElementMinus;
-//import com.hp.hpl.jena.sparql.syntax.ElementOptional;
-//import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
-//import com.hp.hpl.jena.sparql.syntax.ElementSubQuery;
-//import com.hp.hpl.jena.sparql.syntax.ElementUnion;
-//import com.hp.hpl.jena.util.FileUtils;
+ 
 
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 public class TSPARQL {
 
-	Boolean negation = false;
-	Boolean union = false;
+	Boolean show = true;
 	Integer next = 1;
 	Integer current = 0;
 	Integer nvar = 0;
@@ -197,6 +174,7 @@ public class TSPARQL {
 			org.jpl7.Query q3 = new org.jpl7.Query(aprule);
 			System.out.print((q3.hasSolution() ? "" : ""));
 		}
+		
 		org.jpl7.Query q4 = new org.jpl7.Query(rules.get(0).get(0));
 		if (!q4.hasSolution()) {
 			for (String c : constraints_elements) {
@@ -205,6 +183,7 @@ public class TSPARQL {
 		} else {
 			result = "true";
 		}
+		
 		return result;
 	}
 
@@ -218,6 +197,9 @@ public class TSPARQL {
 
 			System.out.println(e2.getMessage());
 		}
+		
+		
+		
 		PelletReasonerFactory f = new PelletReasonerFactory();
 		OWLReasoner reasoner = f.createReasoner(ontology);
 		ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -718,13 +700,19 @@ public class TSPARQL {
 		return "wrong";
 	}
 
+	
+	public String print(TriplePath tp)
+	{
+		return tp.getSubject().getName()+" "+tp.getPredicate().getName()+" "+tp.getObject().getName();
+	}
+	
 	public Boolean Existence(TriplePath tp) {
 		Boolean result = true;
 		if (tp.getSubject().isURI() && !isDeclared(tp.getSubject().getNameSpace(), tp.getSubject().getLocalName())
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getSubject().getLocalName()+"</p>");
-			System.out.println("<p> Triple: "+tp+"</p>");
+			System.out.println("<p> Triple: "+print(tp)+"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -732,7 +720,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getPredicate().getLocalName()+"</p>");
-			System.out.println("<p> Triple: "+tp+"</p>");
+			System.out.println("<p> Triple: "+print(tp)+"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -740,7 +728,7 @@ public class TSPARQL {
 				&& !wrong_analysis) {
 			System.out.print("<p style=\"color:green\">"+"This item is not declared by the ontology: "+"</p>");
 			System.out.println("<p>"+tp.getObject().getLocalName()+"</p>");
-			System.out.println("<p> Triple: "+tp +"</p>");
+			System.out.println("<p> Triple: "+print(tp) +"</p>");
 			result = false;
 			wrong_analysis = true;
 		}
@@ -758,7 +746,7 @@ public class TSPARQL {
 				if (tp.getPredicate().isURI()) {
 					if (tp.getSubject().isLiteral()) /* LUL */ {
 						System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-						System.out.println("<p> Triple: "+tp+"</p>");
+						System.out.println("<p> Triple: "+print(tp)+"</p>");
 						wrong_analysis = true;
 					} else if (tp.getSubject().isURI()) /* UUL */ {
 
@@ -799,7 +787,7 @@ public class TSPARQL {
 							}
 						} else {
 							System.out.println("<p style=\"color:green\">"+"Literal used with an object property:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 							wrong_analysis = true;
 						}
 					} else /* VUL */
@@ -820,7 +808,12 @@ public class TSPARQL {
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+								
+								System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
+								System.out.println("<p> Triple: "+print(tp)+"</p>");
+								wrong_analysis = true;
+								//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+							
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -852,7 +845,7 @@ public class TSPARQL {
 							}
 						} else {
 							System.out.println("<p style=\"color:green\">"+"Literal used with an object property:"+"<p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 							wrong_analysis = true;
 						}
 					}
@@ -906,26 +899,26 @@ public class TSPARQL {
 					} else /* LVL */ {
 						{
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 							wrong_analysis = true;
 						}
 					}
 				} else /*-LL*/
 				{
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be used as property:"+"</p>");
-					System.out.println("<p> Triple: "+tp+"</p>");
+					System.out.println("<p> Triple: "+print(tp)+"</p>");
 					wrong_analysis = true;
 				}
 			} else if (tp.getObject().isURI()) {
 				if (tp.getSubject().isLiteral()) /* L-U */ {
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-					System.out.println("<p> Triple: "+tp+"</p>");
+					System.out.println("<p> Triple: "+print(tp)+"</p>");
 					wrong_analysis = true;
 				} else {
 					if (tp.getSubject().isVariable()) {
 						if (tp.getPredicate().isLiteral()) /* VLU */ {
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be used as property:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* VUU */ {
 
@@ -951,7 +944,12 @@ public class TSPARQL {
 								ctriples.add(tp);
 								if (ctriplesn.containsKey(tp.getSubject())) {
 									if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-										ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+										
+										System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
+										System.out.println("<p> Triple: "+print(tp)+"</p>");
+										wrong_analysis = true;
+										
+										//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 									} else {
 										Set<Node> content = new HashSet<Node>();
 										content.add(tp.getObject());
@@ -986,7 +984,7 @@ public class TSPARQL {
 							} else {
 								if (!wrong_analysis) {
 									System.out.println("<p style=\"color:green\">"+"Class or Individual used as data property:"+"</p>");
-									System.out.println("<p> Triple: "+tp+"</p>");
+									System.out.println("<p> Triple: "+print(tp)+"</p>");
 									wrong_analysis = true;
 								}
 							}
@@ -1032,7 +1030,7 @@ public class TSPARQL {
 								}
 							} else /* LVU */ {
 								System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-								System.out.println("<p> Triple: "+tp+"</p>");
+								System.out.println("<p> Triple: "+print(tp)+"</p>");
 								wrong_analysis = true;
 							}
 						}
@@ -1040,7 +1038,7 @@ public class TSPARQL {
 						if (tp.getPredicate().isLiteral()) /* ULU */
 						{
 							System.out.println("<p style=\"color:green\">"+"Literal cannot be a property:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* UUU */ {
 
@@ -1083,7 +1081,7 @@ public class TSPARQL {
 								}
 							} else {
 								System.out.println("<p style=\"color:green\">"+"Individual used with a data property:"+"</p>");
-								System.out.println("<p> Triple: "+tp+"</p>");
+								System.out.println("<p> Triple: "+print(tp)+"</p>");
 								wrong_analysis = true;
 							}
 						}
@@ -1093,13 +1091,13 @@ public class TSPARQL {
 
 			else if (tp.getSubject().isLiteral()) /* L-V */ {
 				System.out.println("<p style=\"color:green\">"+"Literal cannot be used as subject:"+"</p>");
-				System.out.println("<p> Triple: "+tp+"</p>");
+				System.out.println("<p> Triple: "+print(tp)+"</p>");
 				wrong_analysis = true;
 			} else if (tp.getSubject().isVariable()) {
 				if (tp.getPredicate().isLiteral()) /* VLV */
 				{
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be a predicate:"+"</p>");
-					System.out.println("<p> Triple: "+tp+"</p>");
+					System.out.println("<p> Triple: "+print(tp)+"</p>");
 					wrong_analysis = true;
 				} else if (tp.getPredicate().isURI()) /* VUV */
 				{
@@ -1112,7 +1110,12 @@ public class TSPARQL {
 						ctriples.add(tp);
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
-								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+								
+								System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
+								System.out.println("<p> Triple: "+print(tp)+"</p>");
+								wrong_analysis = true;
+								
+								//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1130,6 +1133,7 @@ public class TSPARQL {
 						OWLNamedIndividual ni1 = null;
 						ni1 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+								
 						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
@@ -1178,6 +1182,7 @@ public class TSPARQL {
 						OWLNamedIndividual ni1 = null;
 						ni1 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						
 						OWLClass cls1 = dft.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						OWLAxiom axiom1 = dft.getOWLClassAssertionAxiom(cls1, ni1);
 						AddAxiom addAxiom1 = new AddAxiom(ont, axiom1);
@@ -1221,6 +1226,7 @@ public class TSPARQL {
 						OWLNamedIndividual ni3 = null;
 						ni3 = dft
 								.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
+						
 						OWLNamedIndividual ni4 = null;
 						ni4 = dft.getOWLNamedIndividual(IRI.create(urio + '#' + tp.getObject().getName().substring(0)));
 						OWLObjectProperty o = dft.getOWLObjectProperty(
@@ -1238,7 +1244,7 @@ public class TSPARQL {
 						if (!wrong_analysis) {
 							wrong_analysis = true;
 							System.out.println("<p style=\"color:green\">"+"Class or Individual used as property:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 						}
 					}
 
@@ -1266,7 +1272,7 @@ public class TSPARQL {
 			} else {
 				if (tp.getPredicate().isLiteral()) /* ULV */ {
 					System.out.println("<p style=\"color:green\">"+"Literal cannot be a predicate:"+"</p>");
-					System.out.println("<p> Triple: "+tp+"</p>");
+					System.out.println("<p> Triple: "+print(tp)+"</p>");
 					wrong_analysis = true;
 				} else if (tp.getPredicate().isURI()) /* UUV */
 				{
@@ -1379,7 +1385,7 @@ public class TSPARQL {
 						if (!wrong_analysis) {
 							wrong_analysis = true;
 							System.out.println("<p style=\"color:green\">"+"Class or Individual used as property:"+"</p>");
-							System.out.println("<p> Triple: "+tp+"</p>");
+							System.out.println("<p> Triple: "+print(tp)+"</p>");
 						}
 					}
 				} else /* UVV */
@@ -1406,9 +1412,9 @@ public class TSPARQL {
 
 		Set<OWLAxiom> axs = ontology.getABoxAxioms(true);
 		for (OWLAxiom ax : axs) {
-			if (!ax.isOfType(AxiomType.CLASS_ASSERTION)) {
+			 
 				manager.removeAxiom(ontology, ax);
-			}
+			
 		}
 		try {
 			manager.saveOntology(ontology);
@@ -1418,18 +1424,6 @@ public class TSPARQL {
 		}
 		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-
-		/*
-		 * Set<OWLNamedIndividual> individuals = ontology.getIndividualsInSignature();
-		 * for (OWLNamedIndividual i: individuals) { for (OWLNamedIndividual i2:
-		 * individuals) { if (! i.equals(i2)) { OWLDifferentIndividualsAxiom ax =
-		 * dataFactory.getOWLDifferentIndividualsAxiom(i2); AddAxiom addAxiom = new
-		 * AddAxiom(ontology, ax); manager.applyChange(addAxiom); } } }
-		 * 
-		 * try { manager.saveOntology(ontology); } catch (OWLOntologyStorageException e)
-		 * { // TODO Auto-generated catch block System.out.println(e.getMessage()); }
-		 */
-
 		OWLClass dt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:dateTime"));
 		OWLClass st = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:string"));
 		OWLClass intt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:integer"));
@@ -1764,8 +1758,11 @@ public class TSPARQL {
 	public void elementSubQuery(ElementSubQuery el, Integer step, String fileo) {
 
 		Element e = el.getQuery().getQueryPattern();
+		
 		Query query = el.getQuery();
-		if (query.isConstructType() || query.isAskType() || query.isDescribeType() || query.isDistinct()
+		
+		if (   
+				query.isConstructType() || query.isAskType() || query.isDescribeType() || query.isDistinct()
 				|| query.hasAggregators() || query.hasOrderBy() || query.hasGroupBy() || query.hasHaving()
 				|| query.hasOffset() || !query.getGraphURIs().isEmpty() || !query.getNamedGraphURIs().isEmpty()
 				|| query.hasLimit()) {
@@ -1849,42 +1846,6 @@ public class TSPARQL {
 		current = tmp;
 	}
 	
-	//REMOVE
-	public NodeSet<OWLClass> ClassAssertion(IRI iri)
-	{
-		String result = "";
-		File fileName = new File(file);
-		manager.removeOntology(ontology);
-		try {
-			ontology = manager.loadOntologyFromOntologyDocument(fileName);
-		} catch (OWLOntologyCreationException e2) {
-
-			System.out.println(e2.getMessage());
-		}
-		PelletReasonerFactory f = new PelletReasonerFactory();
-		OWLReasoner reasoner = f.createReasoner(ontology);
-		OWLNamedIndividual indi = dataFactory.getOWLNamedIndividual(iri);
-		NodeSet<OWLClass> res = reasoner.getTypes(indi, false);
-		return res;
-	};
-	
-	//REMOVE
-	public NodeSet<OWLClass> DataPropertyDomains(OWLDataProperty p)
-	{
-		String result = "";
-		File fileName = new File(file);
-		manager.removeOntology(ontology);
-		try {
-			ontology = manager.loadOntologyFromOntologyDocument(fileName);
-		} catch (OWLOntologyCreationException e2) {
-
-			System.out.println(e2.getMessage());
-		}
-		PelletReasonerFactory f = new PelletReasonerFactory();
-		OWLReasoner reasoner = f.createReasoner(ontology);
-		NodeSet<OWLClass> res = reasoner.getDataPropertyDomains(p,true);
-		return res;
-	};
 
 	public void OWLRestriction(OWLClass ce, Node var_name) {
 		
@@ -1914,22 +1875,27 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				if (!wrong_analysis) {
-					wrong_analysis = true;
-					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not implemented:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
+				
+				show = false;
+				Boolean one = false;
+				Set<OWLClassExpression> ec = arg0.getOperands();
+				for (OWLClassExpression e : ec) {
+					if (!one) {e.accept(this);}
+					one = ! wrong_analysis;
 				}
+				show = true;
+				 
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				if (!wrong_analysis) {
-					wrong_analysis = true;
-					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not implemented:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
-				}
+				
+				show = false;
+				OWLClassExpression neg = arg0.getOperand(); 
+				neg.accept(this);
+				wrong_analysis = !wrong_analysis;
+				show = true;
+				
 			}
 
 			@Override
@@ -1944,7 +1910,7 @@ public class TSPARQL {
 							Boolean one = false;
 							for (Node var : vars_) {
 								if (!one) {OWLRestriction(filler.asOWLClass(), var);}
-								if (!wrong_analysis) {one = true;}
+								one = !wrong_analysis;
 							}
 						}
 					}
@@ -1982,7 +1948,7 @@ public class TSPARQL {
 							for (Node var : vars_) {
 								if (!one) {if (var.equals(ind)) {one = true;}}							
 							}
-								wrong_analysis = one;
+								wrong_analysis = !one;
 
 					}
 				}
@@ -2140,7 +2106,7 @@ public class TSPARQL {
 											}
 										}
 									} else {
-										if (!wrong_analysis) {
+										if (!wrong_analysis && show) {
 											wrong_analysis = true;
 											System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 											ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2168,7 +2134,7 @@ public class TSPARQL {
 			 
 			@Override
 			public void visit(OWLDataSomeValuesFrom arg0) {		
-				if (!wrong_analysis) {
+				if (!wrong_analysis && show) {
 					wrong_analysis = true;
 					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2214,7 +2180,7 @@ public class TSPARQL {
 												+ value.getLiteral() + " )");
 									}
 								} else {
-									if (!wrong_analysis) {
+									if (!wrong_analysis && show) {
 										wrong_analysis = true;
 										System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 										ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2238,7 +2204,7 @@ public class TSPARQL {
 			 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
-				if (!wrong_analysis) {
+				if (!wrong_analysis && show) {
 					wrong_analysis = true;
 					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2249,7 +2215,7 @@ public class TSPARQL {
 			 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				if (!wrong_analysis) {
+				if (!wrong_analysis && show) {
 					wrong_analysis = true;
 					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2260,7 +2226,7 @@ public class TSPARQL {
 			 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				if (!wrong_analysis) {
+				if (!wrong_analysis && show) {
 					wrong_analysis = true;
 					System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2461,19 +2427,26 @@ public class TSPARQL {
 				DateTimeFormatter fomatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
 				LocalDateTime ldt = LocalDateTime.parse(date, fomatter);
 				Integer result = ldt.hashCode();
-				pt.add(result + "=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
-			} else if ((isInteger(st.toString()) || (isReal(st.toString())))) {
+				pt.add(result + "#=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
+			} else if (isInteger(st.toString())) {
+				addTypeVariable(var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase(),
+						"http://www.types.org#xsd:integer");
+				pt.add(st.toString() + "#=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
+			} 
+			else if ((isReal(st.toString()))) {
 				addTypeVariable(var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase(),
 						"http://www.types.org#xsd:float");
 				pt.add(st.toString() + "=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
-			} else {
+			}
+			
+			else {
 				addTypeVariable(var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase(),
 						"http://www.types.org#xsd:string");
 				int MAX_LENGTH = 13;
 				long result = 0;
 				for (int i = 0; i < st.toString().length(); i++)
 					result += pow(27, MAX_LENGTH - i - 1) * (1 + st.toString().charAt(i));
-				pt.add(result + "=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
+				pt.add(result + "#=" + var.toString().replace('?', ' ').replaceAll("\\s", "").toUpperCase());
 			}
 		} else if (st.isFunction()) {
 			if (st.getFunction().getFunctionIRI() == null) {
@@ -2494,23 +2467,23 @@ public class TSPARQL {
 					if (types_literals.get("A" + act).equals("http://www.types.org#xsd:integer")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:string")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:dateTime")) {
-						pt.add("A" + act + " #= " + "U" + act);
+						pt.add("A" + act + "#=" + "U" + act);
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:positiveInteger")) {
-						pt.add("A" + act + " #= " + "U" + act);
-						pt.add("A" + act + " #> 0");
+						pt.add("A" + act + "#=" + "U" + act);
+						pt.add("A" + act + "#>0");
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:negativeInteger")) {
-						pt.add("A" + act + " #= " + "U" + act);
-						pt.add("A" + act + " #< 0");
+						pt.add("A" + act + "#=" + "U" + act);
+						pt.add("A" + act + "#<0");
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:nonNegativeInteger")) {
-						pt.add("A" + act + " #= " + "U" + act);
-						pt.add("A" + act + " #>= 0");
+						pt.add("A" + act + "#=" + "U" + act);
+						pt.add("A" + act + "#>=0");
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:nonPositiveInteger")) {
-						pt.add("A" + act + " #= " + "U" + act);
-						pt.add("A" + act + " #=< 0");
+						pt.add("A" + act + "#=" + "U" + act);
+						pt.add("A" + act + "#=<0");
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:float")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:double")
 							|| types_literals.get("A" + act).equals("http://www.types.org#xsd:decimal")) {
-						pt.add("{" + "A" + act + " =:= " + "U" + act + " }");
+						pt.add("{" + "A" + act + "=:=" + "U" + act + " }");
 					} else {
 					}
 				} else {
@@ -2520,19 +2493,19 @@ public class TSPARQL {
 					if (types_literals.get("B" + act).equals("http://www.types.org#xsd:integer")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:string")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:dateTime")) {
-						pt.add("B" + act + " #= " + "V" + act);
+						pt.add("B" + act + "#=" + "V" + act);
 					} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:positiveInteger")) {
-						pt.add("B" + act + " #= " + "V" + act);
-						pt.add("B" + act + " #> 0");
+						pt.add("B" + act + "#=" + "V" + act);
+						pt.add("B" + act + "#>0");
 					} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:negativeInteger")) {
-						pt.add("B" + act + " #= " + "V" + act);
-						pt.add("B" + act + " #< 0");
+						pt.add("B" + act + "#=" + "V" + act);
+						pt.add("B" + act + "#<0");
 					} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:nonNegativeInteger")) {
-						pt.add("B" + act + " #= " + "V" + act);
-						pt.add("B" + act + " #>= 0");
+						pt.add("B" + act + "#=" + "V" + act);
+						pt.add("B" + act + "#>=0");
 					} else if (types_literals.get("A" + act).equals("http://www.types.org#xsd:nonPositiveInteger")) {
-						pt.add("B" + act + " #= " + "V" + act);
-						pt.add("B" + act + " #=< 0");
+						pt.add("B" + act + "#=" + "V" + act);
+						pt.add("B" + act + "#=<0");
 					} else if (types_literals.get("B" + act).equals("http://www.types.org#xsd:double")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:float")
 							|| types_literals.get("B" + act).equals("http://www.types.org#xsd:decimal")) {
@@ -2546,25 +2519,25 @@ public class TSPARQL {
 					if (types_literals.get("W" + act).equals("http://www.types.org#xsd:integer")
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:string")
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:dateTime")) {
-						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
+						pt.add("W" + act + "#=" + "U" + act + st.getFunction().getOpName() + "V" + act);
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:positiveInteger")) {
-						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
-						pt.add("W" + act + " #> 0");
+						pt.add("W" + act + "#=" + "U" + act + st.getFunction().getOpName() + "V" + act);
+						pt.add("W" + act + "#>0");
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:negativeInteger")) {
-						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
-						pt.add("W" + act + " #< 0");
+						pt.add("W" + act + "#=" + "U" + act + st.getFunction().getOpName() + "V" + act);
+						pt.add("W" + act + "#<0");
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:nonNegativeInteger")) {
-						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
-						pt.add("W" + act + " #>= 0");
+						pt.add("W" + act + "#=" + "U" + act + st.getFunction().getOpName() + "V" + act);
+						pt.add("W" + act + "#>=0");
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:nonPositiveInteger")) {
-						pt.add("W" + act + " #= " + "U" + act + st.getFunction().getOpName() + "V" + act);
-						pt.add("W" + act + " #=< 0");
+						pt.add("W" + act + "#=" + "U" + act + st.getFunction().getOpName() + "V" + act);
+						pt.add("W" + act + "#=<0");
 					} else if (types_literals.get("W" + act).equals("http://www.types.org#xsd:float")
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:double")
 							|| types_literals.get("W" + act).equals("http://www.types.org#xsd:decimal"))
 
 					{
-						pt.add("{" + "W" + act + " =:= " + "U" + act + st.getFunction().getOpName() + "V" + act + "}");
+						pt.add("{" + "W" + act + "=:=" + "U" + act + st.getFunction().getOpName() + "V" + act + "}");
 					} else {
 					}
 				} else {
@@ -2575,23 +2548,23 @@ public class TSPARQL {
 					if (types_literals.get(res).equals("http://www.types.org#xsd:integer")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:string")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:dateTime")) {
-						pt.add(res + " #=" + "W" + act);
+						pt.add(res + "#=" + "W" + act);
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:positiveInteger")) {
-						pt.add(res + " #=" + "W" + act);
-						pt.add(res + " #> 0");
+						pt.add(res + "#=" + "W" + act);
+						pt.add(res + "#>0");
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:negativeInteger")) {
-						pt.add(res + " #=" + "W" + act);
-						pt.add(res + " #< 0");
+						pt.add(res + "#=" + "W" + act);
+						pt.add(res + "#<0");
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:nonNegativeInteger")) {
-						pt.add(res + " #=" + "W" + act);
-						pt.add(res + " #>= 0");
+						pt.add(res + "#=" + "W" + act);
+						pt.add(res + "#>=0");
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:nonPositiveInteger")) {
-						pt.add(res + " #=" + "W" + act);
-						pt.add(res + " #=< 0");
+						pt.add(res + "#=" + "W" + act);
+						pt.add(res + "#=<0");
 					} else if (types_literals.get(res).equals("http://www.types.org#xsd:float")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:double")
 							|| types_literals.get(res).equals("http://www.types.org#xsd:decimal")) {
-						pt.add("{" + res + " =:=" + "W" + act + " }");
+						pt.add("{" + res + "=:=" + "W" + act + " }");
 					} else {
 						if (!wrong_analysis) {
 							System.out.print("<p style=\"color:green\">"+"The following variable is not typed: "+"</p>");
@@ -2674,6 +2647,25 @@ public class TSPARQL {
 	}
 
 	public void SPARQL_CORRECTNESS(String query) throws Exception {
+		
+		Set<OWLAxiom> axioms = ontology.getTBoxAxioms(true);
+		for (OWLAxiom ax : axioms)
+		{
+			if (ax.isOfType(AxiomType.FUNCTIONAL_DATA_PROPERTY)) 
+			{
+				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a functional data property assertion</p>");
+				System.out.println("<p>"+ax+"</p>");
+				System.out.println("<p style=\"color:grey;\">Functional data properties are not checked</p>");
+			}
+			if (ax.isOfType(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION)) 
+			{
+				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a negative data property assertion</p>");
+				System.out.println("<p>"+ax+"</p>");
+				System.out.println("<p style=\"color:grey;\">Negative data property are not checked</p>");
+			}
+		}
+		
+		
 		copy(file);
 		next = 1;
 		current = 0;
@@ -2681,6 +2673,7 @@ public class TSPARQL {
 		vars.clear();
 		rules.clear();
 		SPARQL_ANALYSIS(file, query, 0);
+		 
 		String r = "";
 		if (!wrong_analysis) {
 			r = sparql_consistency();
@@ -2748,19 +2741,21 @@ public class TSPARQL {
 								e.accept(this);
 							}
 						}
-						if (!error) {
+						if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 10. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						}
 
 					} else {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 1. Caused by the following inconsistency:"+"</p>");
+								"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 						System.out.print(explanations());
+						}
 
 					}
 
@@ -2779,23 +2774,40 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
-				if (!error) {
-					System.out.println("<p style=\"color:magenta\">"+"OWL Type not implemented:"+"</p>");
+				
+				show = false;
+				Boolean one = false;
+				Set<OWLClassExpression> ec = arg0.getOperands();
+				for (OWLClassExpression e : ec) {
+					if (!one) {
+						e.accept(this);
+						one = ! error;
+					}
+				}
+				show = true;
+				if (!one)
+				{
+					System.out.println("<p style=\"color:red\">"+
+							"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					error = true;
-				}			
+					printClass(rendering.render(arg0), rendering.render(in));
+				}
 			}
 
 			 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {		 
-				if (!error) {
-					System.out.println("<p style=\"color:magenta\">"+"OWL Type not implemented:"+"</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>"+rendering.render(arg0)+"</p>");
-					error = true;
-				}					
+				 show = false;
+				 OWLClassExpression neg = arg0.getOperand();
+				 neg.accept(this);
+				 show = true;
+				 if (!error && show)
+				 {
+					 System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+				 }
 			}
 
 			@Override
@@ -2822,38 +2834,45 @@ public class TSPARQL {
 						}
 					}
 					if (prop) {
-
+						if (!error && show) {
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 2. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					}
 
 				} else {
+					if (!error && show) {
 					error = true;
-					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. Case 2.1. The property cannot be proved. "
+					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. The property cannot be proved. "
 							+ "Not enough information for: ");
 					System.out.println(var_name+"</p>");
+					}
 				}
 
-				if (!error) {
+				 
 
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 11. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 2.2. Caused by the following inconsistency:"+"</p>");
+								"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 						System.out.print(explanations());
+						}
 					}
 					removeTypeAssertion(arg0, in);
-				}
+				
 			}
 
 			
@@ -2878,233 +2897,278 @@ public class TSPARQL {
 						}
 					}
 					if (prop) {
-
+						if (!error && show) {
+					    error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 2. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					}
 
 				} else {
+					if (!error && show) {
 					error = true;
-					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. Case 2.1. The property cannot be proved. "
+					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. The property cannot be proved. "
 							+ "Not enough information for: ");
 					System.out.println(var_name+"</p>");
+					}
 				}
 
-				if (!error) {
+				 
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 11. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 2.2. Caused by the following inconsistency:"+"</p>");
+								"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 						System.out.print(explanations());
+						}
 					}
 					removeTypeAssertion(arg0, in);
-				}
+				
 			}
 
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
-				if (!error) {
+				
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
-						error = true;
+						
+						if (!error && show) {
+						error = true;		
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 	 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 				
-				if (!error) {
+				 
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 		 
 			@Override
 			public void visit(OWLObjectExactCardinality arg0) {
 				
-				if (!error) {
+				 
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 			
 			@Override
 			public void visit(OWLObjectMaxCardinality arg0) {
 				
-				if (!error) {
+				 
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 
 			@Override
 			public void visit(OWLObjectHasSelf arg0) {
 				
-				if (!error) {
+				 
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 
 			@Override
 			public void visit(OWLObjectOneOf arg0) {
-				if (!error) {
+				
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
+						if (!error && show) {
 						error = true;
 						System.out.println("<p style=\"color:red\">"+
-								"Unsuccessful type validity checking. Case 3. The following class membership cannot be proved:"+"</p>");
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						printClass(rendering.render(arg0), rendering.render(in));
+						}
 					} else {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 12. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 3.1. Caused by the following inconsistency:"+"</p>");
+									"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 							System.out.print(explanations());
+							}
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				}
+				
 			}
 
 			@Override
 			public void visit(OWLDataAllValuesFrom arg0) {	
 				
-				if (!error) {
+				if (!error && show) {
 					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
@@ -3117,30 +3181,36 @@ public class TSPARQL {
 			public void visit(OWLDataSomeValuesFrom arg0) {
 				
 				 
-				if (!error) {
+				 
 					if (arg0.isObjectRestriction()) {
 						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 6. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
 							if (consistency == "true") {
+								if (!error && show) {
 								error = true;
 								System.out.println("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 15. The following class membership cannot be proved:"+"</p>");
+										"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 								printClass(rendering.render(arg0), rendering.render(in));
+								}
 							} else {
+								if (!error && show) {
 								error = true;
 								System.out.println("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 6.1. Caused by the following inconsistency:"+"</p>");
+										"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 								System.out.print(explanations());
+								}
 
 							}
 							removeTypeAssertion(arg0, in);
@@ -3312,7 +3382,7 @@ public class TSPARQL {
 													}
 												}
 											} else {
-												if (!error) {
+												if (!error && show) {
 													error = true;
 													System.out.println("<p style=\"color:green\">"+"OWL Restriction not allowed:"+"</p>");
 													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -3401,15 +3471,17 @@ public class TSPARQL {
 											if (qimpl.hasSolution())
 											// COUNTEREXAMPLE
 											{
+												if (!error && show) {
 												error = true;
 												System.out.println("<p style=\"color:red\">"+
-														"Unsuccessful type validity checking. Case 7. Counterexample:"+"</p>");
+														"Unsuccessful type validity checking. Counterexample:"+"</p>");
 												Map<String, Term>[] sols = qimpl.allSolutions();
 												for (Map<String, Term> s : sols) {
 													for (String key : s.keySet())
 														if (s.get(key).isCompound()) {
 															System.out.println("<p>"+rename.get(key) + "=" + s.get(key)+"</p>");
 														}
+												}
 												}
 											} else {
 												cons = "";
@@ -3521,7 +3593,7 @@ public class TSPARQL {
 															}
 														}
 													} else {
-														if (!error) {
+														if (!error && show) {
 															error = true;
 															System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 															ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -3543,38 +3615,45 @@ public class TSPARQL {
 													org.jpl7.Query qcons = new org.jpl7.Query(head);
 													if (!qcons.hasSolution()) {
 														// INCONSISTENCY
+														if (!error && show) {
 														error = true;
 														System.out.println("<p style=\"color:red\">"+
-																"Unsuccessful type validity checking. Case 7.1. Caused by the following inconsistency:"+"</p>");
+																"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 														System.out.println("<p>"+head+"</p>");
+														}
 													} else {
 														// ENTAILMENT
 														head = newhead + "->" + cons;
 														qcons = new org.jpl7.Query(head);
 														if (qcons.hasSolution()) {
 														} else {
+															if (!error && show) {
 															error = true;
 															System.out.println("<p style=\"color:red\">"+
-																	"Unsuccessful type validity checking. Case 16. The following class membership cannot be proved:"+"</p>");
+																	"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 															ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 															printClass(rendering.render(arg0), rendering.render(in));
-														}
+														}}
 													}
 												} else {
 													// INCOMPLETENESS
+													if (!error && show) {
 													error = true;
 													System.out.println("<p style=\"color:red\">"+
-															"Unsuccessful type validity checking. Case 7.2. The following expression cannot be proved:"+"</p>");
+															"Unsuccessful type validity checking. The following expression cannot be proved:"+"</p>");
 													System.out.println("<p>"+head+"</p>");
+													}
 												}
 											}
 										} else {
 											// INCOMPLETENESS
+											if (!error && show) {
 											error = true;
 											System.out.println("<p style=\"color:red\">"+
-													"Unsuccessful type validity checking. Case 7.3. The following expression cannot be proved:"+"</p>");
+													"Unsuccessful type validity checking. The following expression cannot be proved:"+"</p>");
 											for (String c : constraints_elements) {
 												System.out.print("<p>"+c.replace("?", "")+"</p>");
+											}
 											}
 											 
 										}
@@ -3584,23 +3663,27 @@ public class TSPARQL {
 									}
 								} else {
 									// INCOMPLETENESS
+									if (!error && show) {
 									error = true;
 									System.out.print("<p style=\"color:red\">"+
-											"Unsuccessful type validity checking. Case 7.4. The property cannot be proved."
+											"Unsuccessful type validity checking. The property cannot be proved."
 													+ "Not enough information for: "+"</p>");
 									System.out.println("<p>"+dp.getIRI().toString().split("#")[1]+"</p>");
+									}
 								}
 							}
 						} else {
 							// INCOMPLETENESS
+							if (!error && show) {
 							error = true;
 							System.out.print("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 7.5.The property cannot be proved."
+									"Unsuccessful type validity checking. The property cannot be proved."
 											+ "Not enough information for: "+"</p>");
 							System.out.println("<p>"+var_name+"</p>");
+							}
 						}
 					}
-				}
+				
 				
 				 
 			}
@@ -3609,30 +3692,37 @@ public class TSPARQL {
 			public void visit(OWLDataHasValue arg0) {
 				
 				 
-				if (!error) {
+				 
 					if (arg0.isObjectRestriction()) {
 						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 						String entailment = entailment(axiom);
 						if (entailment == "false") {
+							if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 8. The following class membership cannot be proved:"+"</p>");
+									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
+							}
 						} else {
 							addTypeAssertion(arg0, in);
 							String consistency = consistency();
+					
 							if (consistency == "true") {
+								if (!error && show) {
 								error = true;
 								System.out.println("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 17. The following class membership cannot be proved:"+"</p>");
+										"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 								printClass(rendering.render(arg0), rendering.render(in));
+								}
 							} else {
+								if (!error && show) {
 								error = true;
 								System.out.println("<p style=\"color:red\">"+
-										"Unsuccessful type validity checking. Case 8.1. Caused by the following inconsistency:"+"</p>");
+										"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 								System.out.print(explanations());
+								}
 							}
 							removeTypeAssertion(arg0, in);
 						}
@@ -3674,12 +3764,12 @@ public class TSPARQL {
 											if (var.isVariable()) {
 												cons = cons + "#\\" + var.toString().substring(1).toUpperCase() + "#="
 														+ val.getLiteral();
-												constraints_elements.add("(" + var.toString().toUpperCase() + "="
+												constraints_elements.add("(" + var.toString().toUpperCase() + "!="
 														+ val.getLiteral() + ")");
 											} else {
 												cons = cons + "#\\" + var.getLiteralValue().toString() + "#="
 														+ val.getLiteral();
-												constraints_elements.add("(" + var.getLiteralValue().toString() + "="
+												constraints_elements.add("(" + var.getLiteralValue().toString() + "!="
 														+ val.getLiteral() + ")");
 											}
 										} else if (val.isFloat() || val.isDouble()) {
@@ -3759,15 +3849,17 @@ public class TSPARQL {
 										head = newhead + "," + cons + "," + domain;
 										org.jpl7.Query qimpl = new org.jpl7.Query(head);
 										if (qimpl.hasSolution()) { // COUNTEREXAMPLE
+											if (!error && show) {
 											error = true;
 											System.out.println("<p style=\"color:red\">"+
-													"Unsuccessful type validity checking. Case 9. Counterexample:"+"</p>");
+													"Unsuccessful type validity checking. Counterexample:"+"</p>");
 											Map<String, Term>[] sols = qimpl.allSolutions();
 											for (Map<String, Term> s : sols) {
 												for (String key : s.keySet())
 													if (s.get(key).isCompound()) {
 														System.out.println("<p>"+rename.get(key) + "=" + s.get(key)+"</p>");
 													}
+											}
 											}
 										} else {
 											vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
@@ -3790,7 +3882,7 @@ public class TSPARQL {
 																+ "}";
 													}
 												} else {
-													if (!error) {
+													if (!error && show) {
 														error = true;
 														System.out.println("<p style=\"color:magenta\">"+"OWL Restriction not allowed:"+"</p>");
 														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -3808,66 +3900,78 @@ public class TSPARQL {
 												org.jpl7.Query qcons = new org.jpl7.Query(head);
 												if (!qcons.hasSolution()) {
 													// INCONSISTENCY
+													if (!error && show) {
 													error = true;
 													System.out.println("<p style=\"color:red\">"+
-															"Unsuccessful type validity checking. Case 9.1. Caused by the following inconsistency:"+"</p>");
+															"Unsuccessful type validity checking. Caused by the following inconsistency:"+"</p>");
 													System.out.println("<p>"+head+"</p>");
+													}
 												} else {
 													// ENTAILMENT
 													head = newhead + "->" + cons;
 													qcons = new org.jpl7.Query(head);
 													if (qcons.hasSolution()) {
 													} else {
+														if (!error && show) {
 														error = true;
 														System.out.println("<p style=\"color:red\">"+
-																"Unsuccessful type validity checking. Case 18. The following class membership cannot be proved:"+"</p>");
+																"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 														printClass(rendering.render(arg0), rendering.render(in));
+														}
 													}
 												}
 											} else {
 												// INCOMPLETENESS
+												if (!error && show) {
 												error = true;
 												System.out.println("<p style=\"color:red\">"+
-														"Unsuccessful type validity checking. Case 9.2. The following expression cannot be proved:"+"</p>");
+														"Unsuccessful type validity checking. The following expression cannot be proved:"+"</p>");
 												System.out.println("<p>"+cons+"</p>");
+												}
 											}
 										}
 									} else {
 										// INCOMPLETENESS
+										if (!error && show) {
 										error = true;
 										System.out.println("<p style=\"color:red\">"+
-												"Unsuccessful type validity checking. Case 9.3. The following expression cannot be proved:"+"</p>");
+												"Unsuccessful type validity checking. The following expression cannot be proved:"+"</p>");
 										for (String c : constraints_elements) {
 											System.out.print("<p>"+c.replace("?", "")+"</p>");
+										}
 										}
 										 
 									}
 								} else {
 									// INCOMPLETENESS
+									if (!error && show) {
 									error = true;
 									System.out.print("<p style=\"color:red\">"+
-											"Unsuccessful type validity checking. Case 9.4. The property cannot be proved. "
+											"Unsuccessful type validity checking. The property cannot be proved. "
 													+ "Not enough information for: "+"</p>");
 									System.out.print("<p>"+dp.getIRI().toString().split("#")[1]+"</p>");
+								}
 								}
 							}
 						} else {
 							// INCOMPLETENESS
+							if (!error && show) {
 							error = true;
 							System.out.print("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. Case 9.5. The property cannot be proved. "
+									"Unsuccessful type validity checking. The property cannot be proved. "
 											+ "Not enough information for: "+"</p>");
 							System.out.println("<p>"+var_name+"</p>");
+							}
 						}
 					}
-				}				
+								
 			}
 
 			 
 			@Override
 			public void visit(OWLDataMinCardinality arg0) {
-				if (!error) {
+				if (!error & show) {
 					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
@@ -3877,7 +3981,7 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLDataExactCardinality arg0) {
-				if (!error) {
+				if (!error & show) {
 					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
@@ -3887,7 +3991,7 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLDataMaxCardinality arg0) {
-				if (!error) {
+				if (!error & show) {
 					System.out.println("<p style=\"color:magenta\">"+"This type cannot be proved by type validity analysis:"+"</p>");
 					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 					System.out.println("<p>"+rendering.render(arg0)+"</p>");
@@ -3968,7 +4072,7 @@ public class TSPARQL {
 		String ex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER   "
 				+ "WHERE { sn:foo sn:unknown sn:bad }\n";
 
 		String ex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -4075,7 +4179,6 @@ public class TSPARQL {
 
 		// First Method. Inconsistent Query.
 
-		 //MIRAR
 		String ex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -4115,6 +4218,14 @@ public class TSPARQL {
 				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n" + "FILTER EXISTS "
 				+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
 				+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
+		
+		String ex22b = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT * WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n" 
+				+ "{SELECT (?H2+10 AS ?TEST) WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
+				+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
 
 		String ex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -4136,13 +4247,12 @@ public class TSPARQL {
 				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?AGE = 50) .\r\n"
 				+ "FILTER (?AGE = 100)\r\n" + "}";
 
-		//MIRAR
 		String ex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
 				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER2 sn:age ?AGE2 . \r\n"
-				+ "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
+				+ "FILTER (?AGE2 >= 0) . FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
 				+ "FILTER (?SUM < 10)\r\n" + "}";
 
 		String ex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -4330,7 +4440,7 @@ public class TSPARQL {
 				df_owl, "C:/sn-2019.owl");
         
 		try {
-			t.SPARQL_CORRECTNESS(ex23);
+			t.SPARQL_CORRECTNESS(ex22b);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

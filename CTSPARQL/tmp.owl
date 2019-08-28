@@ -149,8 +149,7 @@
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#age -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#age">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
+                <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
     
@@ -177,7 +176,7 @@
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#date -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#date">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Activity"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
     </owl:DatatypeProperty>
@@ -187,7 +186,7 @@
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#height -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#height">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
     </owl:DatatypeProperty>
@@ -197,7 +196,7 @@
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#name -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#name">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        
         <rdfs:domain rdf:resource="http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#User"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
@@ -464,7 +463,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-     
+    
 
 
     <!-- http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#antonio -->

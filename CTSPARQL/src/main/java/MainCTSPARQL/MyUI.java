@@ -143,7 +143,7 @@ public class MyUI extends UI {
 		ontologies.setWidth("100%");
 		new_ontology.setWidth("100%");
 		
-/*
+
 	   setErrorHandler(new ErrorHandler() {
 
 			@Override
@@ -153,7 +153,7 @@ public class MyUI extends UI {
 			}
 
 		});
-*/
+
 
 		VerticalLayout debug = new VerticalLayout();
 

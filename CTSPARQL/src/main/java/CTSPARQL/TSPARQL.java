@@ -28,7 +28,6 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.checker.NodeChecker;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.syntax.Element;
@@ -62,6 +61,7 @@ import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLFacetRestriction;
+import org.semanticweb.owlapi.model.OWLFunctionalDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -75,7 +75,6 @@ import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
 import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -84,13 +83,11 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLRuntimeException;
 import org.semanticweb.owlapi.model.RemoveAxiom;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import com.clarkparsia.owlapi.explanation.GlassBoxExplanation;
 import com.clarkparsia.owlapi.explanation.SingleExplanationGenerator;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
- 
 
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
@@ -738,8 +735,12 @@ public class TSPARQL {
 	public void Item_Analysis(ListIterator<TriplePath> it, OWLOntology ont, OWLDataFactory dft,
 			OWLOntologyManager mng) {
 
+		
+		
+		
 		String urio = ont.getOntologyID().getOntologyIRI().toString();
 		TriplePath tp = it.next();
+		
 		Boolean Existence = Existence(tp);
 		if (Existence) {
 			if (tp.getObject().isLiteral()) {
@@ -809,10 +810,11 @@ public class TSPARQL {
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
 								
-								System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
-								System.out.println("<p> Triple: "+print(tp)+"</p>");
-								wrong_analysis = true;
-								//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+								//wrong_analysis = true;
+								//System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
+								//System.out.println("<p> Triple: "+print(tp)+"</p>");
+
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							
 							} else {
 								Set<Node> content = new HashSet<Node>();
@@ -922,6 +924,7 @@ public class TSPARQL {
 							wrong_analysis = true;
 						} else if (tp.getPredicate().isURI()) /* VUU */ {
 
+							
 							if (isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 									tp.getPredicate().getLocalName())) {
 
@@ -945,11 +948,9 @@ public class TSPARQL {
 								if (ctriplesn.containsKey(tp.getSubject())) {
 									if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
 										
-										System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
-										System.out.println("<p> Triple: "+print(tp)+"</p>");
-										wrong_analysis = true;
+										 
 										
-										//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+										ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 									} else {
 										Set<Node> content = new HashSet<Node>();
 										content.add(tp.getObject());
@@ -1111,11 +1112,10 @@ public class TSPARQL {
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
 								
-								System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
-								System.out.println("<p> Triple: "+print(tp)+"</p>");
-								wrong_analysis = true;
+								 
 								
-								//ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
+								
+								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							} else {
 								Set<Node> content = new HashSet<Node>();
 								content.add(tp.getObject());
@@ -1406,6 +1406,7 @@ public class TSPARQL {
 			}
 		} else {
 		}
+		
 	};
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
@@ -2649,19 +2650,20 @@ public class TSPARQL {
 	public void SPARQL_CORRECTNESS(String query) throws Exception {
 		
 		Set<OWLAxiom> axioms = ontology.getTBoxAxioms(true);
+		Boolean warning1 = false;
+		Boolean warning2 = false;
+
 		for (OWLAxiom ax : axioms)
 		{
-			if (ax.isOfType(AxiomType.FUNCTIONAL_DATA_PROPERTY)) 
+			if (ax.isOfType(AxiomType.FUNCTIONAL_DATA_PROPERTY)&& ! warning1) 
 			{
-				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a functional data property assertion</p>");
-				System.out.println("<p>"+ax+"</p>");
-				System.out.println("<p style=\"color:grey;\">Functional data properties are not checked</p>");
+				warning1 = true;
+				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a functional data property assertion.</p>");	 
 			}
-			if (ax.isOfType(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION)) 
+			if (ax.isOfType(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION) & ! warning2) 
 			{
-				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a negative data property assertion</p>");
-				System.out.println("<p>"+ax+"</p>");
-				System.out.println("<p style=\"color:grey;\">Negative data property are not checked</p>");
+				warning2 = true;
+				System.out.println("<p style=\"color:grey;\">Warning: The ontology contains a negative data property assertion.</p>");
 			}
 		}
 		

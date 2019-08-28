@@ -29,7 +29,6 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.core.Var;
-//import org.apache.log4j.varia.NullAppender;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -41,14 +40,6 @@ import org.vaadin.aceeditor.AceEditor;
 import org.vaadin.aceeditor.AceMode;
 import org.vaadin.aceeditor.AceTheme;
 
-//import com.hp.hpl.jena.ontology.OntModel;
-//import com.hp.hpl.jena.query.QueryExecutionFactory;
-//import com.hp.hpl.jena.query.QueryFactory;
-//import com.hp.hpl.jena.query.QuerySolution;
-//import com.hp.hpl.jena.query.ResultSet;
-//import com.hp.hpl.jena.rdf.model.ModelFactory;
-//import com.hp.hpl.jena.rdf.model.RDFNode;
-//import com.hp.hpl.jena.sparql.core.Var;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.event.ShortcutAction;
@@ -83,7 +74,9 @@ import CTSPARQL.TSPARQL;
 //SELECT NO VARIABLE IN NESTED EXPRESSIONS IS NOT HANDLED
 //SUBPROPERTY IS NOT HANDLED
 //MIXED INTEGERS AND REALS ARE NOT HANDLED 
-//EJEMPLOS NUEVOS
+
+//LINEARITY CHECKING
+//CHANGE SUBCLASS BY EQUIVALENCE IN EXAMPLES
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -143,7 +136,7 @@ public class MyUI extends UI {
 		ontologies.setWidth("100%");
 		new_ontology.setWidth("100%");
 		
-
+       
 	   setErrorHandler(new ErrorHandler() {
 
 			@Override
@@ -153,6 +146,7 @@ public class MyUI extends UI {
 			}
 
 		});
+		
 
 
 		VerticalLayout debug = new VerticalLayout();
@@ -1359,7 +1353,7 @@ public class MyUI extends UI {
 					t.SPARQL_CORRECTNESS(editor.getValue());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					error("Error Loading Query. Causes:", e.getMessage());
+					error("Error Loading Query: ", "Bad formed syntax or resource used unknown.");
 				}
 				resP.setVisible(true);
 				long estimatedTime = System.currentTimeMillis() - startTime;

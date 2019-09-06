@@ -76,7 +76,6 @@ import CTSPARQL.TSPARQL;
 //MIXED INTEGERS AND REALS ARE NOT HANDLED 
 
 //LINEARITY CHECKING
-//CHANGE SUBCLASS BY EQUIVALENCE IN EXAMPLES
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -413,7 +412,7 @@ public class MyUI extends UI {
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
 				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER2 sn:age ?AGE2 . \r\n"
-				+ "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
+				+ "FILTER (?AGE2 > 0) .\r\n" + "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
 				+ "FILTER (?SUM < 10)\r\n" + "}";
 
 		String socex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"

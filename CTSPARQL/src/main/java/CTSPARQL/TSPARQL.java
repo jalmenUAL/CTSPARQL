@@ -61,7 +61,6 @@ import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeRestriction;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLFacetRestriction;
-import org.semanticweb.owlapi.model.OWLFunctionalDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -1665,7 +1664,10 @@ public class TSPARQL {
 				|| (el.getExpr().getFunction().getOpName().toString() == ">=")
 				|| (el.getExpr().getFunction().getOpName().toString() == "!=")) {
 			nvar++;
-			constraints_elements.add(el.getExpr().toString());
+			constraints_elements.add("( "+
+					el.getExpr().getFunction().getArgs().get(0)
+					+" "+el.getExpr().getFunction().getOpName()+" "+el.getExpr().getFunction().getArgs().get(1)+" )");
+			 
 			List<String> ss = new ArrayList<>(SExprtoPTerm(el.getExpr(), null));
 			for (int i = 0; i < ss.size(); i++) {
 				rules.get(current).add(ss.get(i));

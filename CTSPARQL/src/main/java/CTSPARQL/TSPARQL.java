@@ -699,7 +699,8 @@ public class TSPARQL {
 	
 	public String print(TriplePath tp)
 	{
-		return tp.getSubject().getName()+" "+tp.getPredicate().getName()+" "+tp.getObject().getName();
+		return tp.getSubject().getName()+" "+tp.getPredicate().getLocalName()+" "+
+				tp.getObject().getName();
 	}
 	
 	public Boolean Existence(TriplePath tp) {
@@ -739,6 +740,19 @@ public class TSPARQL {
 		
 		String urio = ont.getOntologyID().getOntologyIRI().toString();
 		TriplePath tp = it.next();
+		
+		Boolean linear = true;
+		if (ctriplesn.containsKey(tp.getSubject())) {
+			if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) { 
+				if (!ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).contains(tp.getObject())) { linear = false;
+			}
+		}
+		}
+		
+		 
+		
+		if (linear) {
+			
 		
 		Boolean Existence = Existence(tp);
 		if (Existence) {
@@ -809,9 +823,7 @@ public class TSPARQL {
 						if (ctriplesn.containsKey(tp.getSubject())) {
 							if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
 								
-								//wrong_analysis = true;
-								//System.out.println("<p style=\"color:green\">"+"Query is not linear:"+"</p>");
-								//System.out.println("<p> Triple: "+print(tp)+"</p>");
+								 
 
 								ctriplesn.get(tp.getSubject()).get(tp.getPredicate()).add(tp.getObject());
 							
@@ -1405,11 +1417,23 @@ public class TSPARQL {
 			}
 		} else {
 		}
+		} // NON LINEAR
+		else {
+			
+			if (!wrong_analysis) {
+				wrong_analysis = true;
+				System.out.println("<p style=\"color:green\">"+"Query is not linear. Found same subject and property in:"+"</p>");
+				System.out.println("<p> Triple: "+print(tp)+"</p>");
+			}
+			
+		}
 		
 	};
 
 	public List<List<String>> SPARQL_ANALYSIS(String file, String queryString, Integer step) {
-
+		
+		 
+		
 		Set<OWLAxiom> axs = ontology.getABoxAxioms(true);
 		for (OWLAxiom ax : axs) {
 			 
@@ -1422,6 +1446,7 @@ public class TSPARQL {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
+		
 		OWLClass lit = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Literal"));
 		OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 		OWLClass dt = dataFactory.getOWLClass(IRI.create("http://www.types.org#xsd:dateTime"));
@@ -1455,6 +1480,26 @@ public class TSPARQL {
 		OWLDisjointClassesAxiom ax16 = dataFactory.getOWLDisjointClassesAxiom(st, flo);
 		OWLDisjointClassesAxiom ax17 = dataFactory.getOWLDisjointClassesAxiom(st, dec);
 		OWLDisjointClassesAxiom ax18 = dataFactory.getOWLDisjointClassesAxiom(nintt, pintt);
+		
+		
+		OWLDisjointClassesAxiom ax19 = dataFactory.getOWLDisjointClassesAxiom(dou, intt);
+		OWLDisjointClassesAxiom ax20 = dataFactory.getOWLDisjointClassesAxiom(dou, pintt);
+		OWLDisjointClassesAxiom ax21 = dataFactory.getOWLDisjointClassesAxiom(dou, nintt);
+		OWLDisjointClassesAxiom ax22 = dataFactory.getOWLDisjointClassesAxiom(dou, npintt);
+		OWLDisjointClassesAxiom ax23 = dataFactory.getOWLDisjointClassesAxiom(dou, nnintt);
+		
+		
+		OWLDisjointClassesAxiom ax24 = dataFactory.getOWLDisjointClassesAxiom(flo, intt);
+		OWLDisjointClassesAxiom ax25 = dataFactory.getOWLDisjointClassesAxiom(flo, pintt);
+		OWLDisjointClassesAxiom ax26 = dataFactory.getOWLDisjointClassesAxiom(flo, nintt);
+		OWLDisjointClassesAxiom ax27 = dataFactory.getOWLDisjointClassesAxiom(flo, npintt);
+		OWLDisjointClassesAxiom ax28 = dataFactory.getOWLDisjointClassesAxiom(flo, nnintt);
+		
+		OWLDisjointClassesAxiom ax29 = dataFactory.getOWLDisjointClassesAxiom(dec, intt);
+		OWLDisjointClassesAxiom ax30 = dataFactory.getOWLDisjointClassesAxiom(dec, pintt);
+		OWLDisjointClassesAxiom ax31 = dataFactory.getOWLDisjointClassesAxiom(dec, nintt);
+		OWLDisjointClassesAxiom ax32 = dataFactory.getOWLDisjointClassesAxiom(dec, npintt);
+		OWLDisjointClassesAxiom ax33 = dataFactory.getOWLDisjointClassesAxiom(dec, nnintt);
 
 		AddAxiom addAxiom0 = new AddAxiom(ontology, ax0);
 		manager.applyChange(addAxiom0);
@@ -1494,6 +1539,36 @@ public class TSPARQL {
 		manager.applyChange(addAxiom17);
 		AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
 		manager.applyChange(addAxiom18);
+		AddAxiom addAxiom19 = new AddAxiom(ontology, ax19);
+		manager.applyChange(addAxiom19);
+		AddAxiom addAxiom20 = new AddAxiom(ontology, ax20);
+		manager.applyChange(addAxiom20);
+		AddAxiom addAxiom21 = new AddAxiom(ontology, ax21);
+		manager.applyChange(addAxiom21);
+		AddAxiom addAxiom22 = new AddAxiom(ontology, ax22);
+		manager.applyChange(addAxiom22);
+		AddAxiom addAxiom23 = new AddAxiom(ontology, ax23);
+		manager.applyChange(addAxiom23);
+		AddAxiom addAxiom24 = new AddAxiom(ontology, ax24);
+		manager.applyChange(addAxiom24);
+		AddAxiom addAxiom25 = new AddAxiom(ontology, ax25);
+		manager.applyChange(addAxiom25);
+		AddAxiom addAxiom26 = new AddAxiom(ontology, ax26);
+		manager.applyChange(addAxiom26);
+		AddAxiom addAxiom27 = new AddAxiom(ontology, ax27);
+		manager.applyChange(addAxiom27);
+		AddAxiom addAxiom28 = new AddAxiom(ontology, ax28);
+		manager.applyChange(addAxiom28);
+		AddAxiom addAxiom29 = new AddAxiom(ontology, ax29);
+		manager.applyChange(addAxiom29);
+		AddAxiom addAxiom30 = new AddAxiom(ontology, ax30);
+		manager.applyChange(addAxiom30);
+		AddAxiom addAxiom31 = new AddAxiom(ontology, ax31);
+		manager.applyChange(addAxiom31);
+		AddAxiom addAxiom32 = new AddAxiom(ontology, ax32);
+		manager.applyChange(addAxiom32);
+		AddAxiom addAxiom33 = new AddAxiom(ontology, ax33);
+		manager.applyChange(addAxiom33);
 
 		try {
 			manager.saveOntology(ontology);
@@ -2717,7 +2792,7 @@ public class TSPARQL {
 		owl_type_validity(ce, in, NodeFactory.createVariable(var_name));
 		if (!error && !wrong_analysis) {
 			System.out.println("<p style=\"color:DodgerBlue;\">"
-					+ "Successful type validity checking. The property has been proved</p>");
+					+ "Successful type validity checking. The property has been proved.</p>");
 		}
 		restore(file);
 	};
@@ -2729,9 +2804,8 @@ public class TSPARQL {
 			public void visit(OWLClass arg0) {
 				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 				String entailment = entailment(axiom);
-				if (entailment == "true") {
+ 				if (entailment == "true") {
 				} else {
-
 					addTypeAssertion(arg0, in);
 					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 					addTypeAssertion(res, in);
@@ -2745,13 +2819,13 @@ public class TSPARQL {
 								e.accept(this);
 							}
 						}
-						if (!error && show) {
+						/*if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"+
 									"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
-						}
+						}*/
 
 					} else {
 						if (!error && show) {
@@ -2770,6 +2844,8 @@ public class TSPARQL {
 			public void visit(OWLObjectIntersectionOf arg0) {
 				Set<OWLClassExpression> ec = arg0.getOperands();
 				for (OWLClassExpression e : ec) {
+					
+					 
 					if (!error) {
 						e.accept(this);
 					}
@@ -2839,6 +2915,7 @@ public class TSPARQL {
 					}
 					if (prop) {
 						if (!error && show) {
+					    error = true;
 						System.out.println("<p style=\"color:red\">"+
 								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -2848,10 +2925,11 @@ public class TSPARQL {
 
 				} else {
 					if (!error && show) {
-					error = true;
-					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. The property cannot be proved. "
-							+ "Not enough information for: ");
-					System.out.println(var_name+"</p>");
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
 					}
 				}
 
@@ -2912,10 +2990,11 @@ public class TSPARQL {
 
 				} else {
 					if (!error && show) {
-					error = true;
-					System.out.print("<p style=\"color:red\">"+"Unsuccessful type validity checking. The property cannot be proved. "
-							+ "Not enough information for: ");
-					System.out.println(var_name+"</p>");
+						error = true;
+						System.out.println("<p style=\"color:red\">"+
+								"Unsuccessful type validity checking. The following class membership cannot be proved:"+"</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
 					}
 				}
 
@@ -3472,6 +3551,7 @@ public class TSPARQL {
 											String head;
 											head = newhead + "," + cons + "," + domain;
 											org.jpl7.Query qimpl = new org.jpl7.Query(head);
+											 
 											if (qimpl.hasSolution())
 											// COUNTEREXAMPLE
 											{
@@ -3670,7 +3750,7 @@ public class TSPARQL {
 									if (!error && show) {
 									error = true;
 									System.out.print("<p style=\"color:red\">"+
-											"Unsuccessful type validity checking. The property cannot be proved."
+											"Unsuccessful type validity checking. The property cannot be proved. "
 													+ "Not enough information for: "+"</p>");
 									System.out.println("<p>"+dp.getIRI().toString().split("#")[1]+"</p>");
 									}
@@ -3681,7 +3761,7 @@ public class TSPARQL {
 							if (!error && show) {
 							error = true;
 							System.out.print("<p style=\"color:red\">"+
-									"Unsuccessful type validity checking. The property cannot be proved."
+									"Unsuccessful type validity checking. The property cannot be proved. "
 											+ "Not enough information for: "+"</p>");
 							System.out.println("<p>"+var_name+"</p>");
 							}
@@ -4208,6 +4288,13 @@ public class TSPARQL {
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
 				+ "WHERE {\n" + "?USER sn:height ?HU  . " + "FILTER(?HU > 130 ).\n" + "FILTER (?HU < 131) }\n";
+		
+		String ex20b = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:height ?HU  . " + "?USER sn:age ?AGE  . " + "FILTER(?HU > 130 ).\n" + "FILTER (?AGE > ?HU) ."
+						+ "FILTER(?AGE < 10)  }\n";
 
 		String ex21 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -4356,7 +4443,7 @@ public class TSPARQL {
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
-				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL < 200) \r\n" + "}";
+				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL < 50) \r\n" + "}";
 
 		String ex40 = "# ?USER : sn:Active" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
@@ -4443,19 +4530,20 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, "C:/sn-2019.owl");
         
-		try {
-			t.SPARQL_CORRECTNESS(ex22b);
+		
+		/*try {
+			t.SPARQL_CORRECTNESS(ex32);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
-		/*
-		 * try { t.SPARQL_TYPE_VALIDITY(con10, "A",
-		 * "http://www.semanticweb.org/conference#attendant"); } catch (Exception e) {
-		 * // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-
+		
+		 try { t.SPARQL_TYPE_VALIDITY(ex39, "USER",
+		  "http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#Influencer"); } catch (Exception e) {
+		   // TODO Auto-generated catch block e.printStackTrace(); }
+		  }
+      
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("");
 		System.out.println("Analysis done in " + estimatedTime + " ms");

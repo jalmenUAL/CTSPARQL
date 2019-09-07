@@ -994,8 +994,6 @@ public class TSPARQL {
 							} else { /* second V should be an object property */
 								if (tp.getSubject().isVariable()) /* VVU */ {
 
-									
-									 
 									// ADD TYPE
 									OWLNamedIndividual ni1 = null;
 									ni1 = dft.getOWLNamedIndividual(
@@ -1019,7 +1017,6 @@ public class TSPARQL {
 								} else if (tp.getSubject().isURI()) /* UVU */ {
 									/* V should be an object property */
 
-									 
 									// ADD TYPE
 									OWLNamedIndividual ni1 = null;
 									ni1 = dft.getOWLNamedIndividual(
@@ -1110,7 +1107,7 @@ public class TSPARQL {
 						wrong_analysis = true;
 					} else if (tp.getPredicate().isURI()) /* VUV */
 					{
-						 
+
 						if (isDataPropertyAll(tp.getPredicate().getNameSpace(), tp.getPredicate().getLocalName())
 								&& !isObjectPropertyAll(tp.getPredicate().getNameSpace(),
 										tp.getPredicate().getLocalName())) {
@@ -1188,7 +1185,6 @@ public class TSPARQL {
 								&& !isDataPropertyAll(tp.getPredicate().getNameSpace(),
 										tp.getPredicate().getLocalName())) {
 
-							 
 							// ADD TYPE
 							OWLNamedIndividual ni1 = null;
 							ni1 = dft.getOWLNamedIndividual(
@@ -1219,9 +1215,7 @@ public class TSPARQL {
 							}
 
 							// STORE TRIPLE PATTERN
-							
-							 
-							
+
 							ctriples.add(tp);
 							if (ctriplesn.containsKey(tp.getSubject())) {
 								if (ctriplesn.get(tp.getSubject()).containsKey(tp.getPredicate())) {
@@ -1238,7 +1232,6 @@ public class TSPARQL {
 								map.put(tp.getPredicate(), content);
 								ctriplesn.put(tp.getSubject(), map);
 							}
-							 
 
 							// ADD TRIPLE PATTERN
 							OWLNamedIndividual ni3 = null;
@@ -1659,37 +1652,6 @@ public class TSPARQL {
 			wrong_analysis = true;
 			rules.clear();
 
-			/*
-			 * List<String> varstemp = new ArrayList<String>(); for (String v : vars) {
-			 * varstemp.add(v); } Integer tmp = current; current = next; next++;
-			 * rules.add(current, new ArrayList()); Element ex = ((ExprFunctionOp)
-			 * el.getExpr().getFunction()).getElement(); if (ex instanceof ElementPathBlock)
-			 * { elementPathBlock((ElementPathBlock) ex, step, fileo); } else if (ex
-			 * instanceof ElementOptional) { elementOptional((ElementOptional) ex, step,
-			 * fileo); } else if (ex instanceof ElementMinus) { elementMinus((ElementMinus)
-			 * ex, step, fileo); } else if (ex instanceof ElementSubQuery) {
-			 * elementSubQuery((ElementSubQuery) ex, step, fileo); } else if (ex instanceof
-			 * ElementGroup) { elementGroup((ElementGroup) ex, step, fileo); } else if (ex
-			 * instanceof ElementFilter) { elementFilter((ElementFilter) ex, step, fileo); }
-			 * else if (ex instanceof ElementBind) { elementBind((ElementBind) ex, step,
-			 * fileo); } else { System.out.println("<p style=\"color:green\">"
-			 * +"SPARQL expression not supported:"+"</p>");
-			 * System.out.println("<p>"+ex+"</p>"); wrong_analysis = true; rules.clear(); }
-			 * String urio = ontology.getOntologyID().getOntologyIRI().toString(); for
-			 * (TriplePath tp : ctriples) { Set<OWLClassExpression> typ = ClassOfVariable(
-			 * IRI.create(urio + '#' + tp.getSubject().getName().substring(0)));
-			 * datatriples.add(tp); if (!(typ == null)) { for (OWLClassExpression c : typ) {
-			 * OWLRestriction(c.asOWLClass(), tp.getSubject()); } } } ctriples.clear();
-			 * String head; if (vars.isEmpty()) { if (current == 0 && step == 0) { head =
-			 * "p"; } else { head = "p" + current + "_" + step; } } else { if (current == 0
-			 * && step == 0) { head = "p" + "("; } else { head = "p" + current + "_" + step
-			 * + "("; } for (String v : vars) { head = head + v.toUpperCase() + ","; } head
-			 * = head.substring(0, head.length() - 1); head = head + ")"; }
-			 * rules.get(current).add(0, head); rules.get(tmp).add(head);
-			 * rules.get(current).add("!"); for (String v : vars) { if
-			 * (!varstemp.contains(v.toUpperCase())) { varstemp.add(v.toUpperCase()); } }
-			 * vars.clear(); for (String v : varstemp) { vars.add(v); } current = tmp;
-			 */
 		} else if (el.getExpr().getFunction().getFunctionName(null) == "notexists") {
 			System.out.println("<p style=\"color:green\">" + "SPARQL expression not supported:" + "</p>");
 			System.out.println("<p>" + el + "</p>");
@@ -2852,12 +2814,12 @@ public class TSPARQL {
 					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
 					OWLClassExpression filler = someValuesFrom.getFiller();
 					Boolean prop = false;
-					 
+
 					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
 						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						
+
 						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-							 
+
 							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 							Boolean one = false;
 							for (Node var : vars_) {
@@ -2900,14 +2862,7 @@ public class TSPARQL {
 				addTypeAssertion(arg0, in);
 				String consistency = consistency();
 				if (consistency == "true") {
-					/*if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}*/
+
 				} else {
 					if (!error && show) {
 						error = true;
@@ -2966,14 +2921,7 @@ public class TSPARQL {
 				addTypeAssertion(arg0, in);
 				String consistency = consistency();
 				if (consistency == "true") {
-					/*if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}*/
+
 				} else {
 					if (!error && show) {
 						error = true;
@@ -3006,14 +2954,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3046,14 +2987,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3086,14 +3020,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3126,14 +3053,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3166,14 +3086,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3206,14 +3119,7 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
-						/*if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}*/
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3260,14 +3166,7 @@ public class TSPARQL {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
-							/*if (!error && show) {
-								error = true;
-								System.out.println("<p style=\"color:red\">"
-										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-										+ "</p>");
-								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-								printClass(rendering.render(arg0), rendering.render(in));
-							}*/
+
 						} else {
 							if (!error && show) {
 								error = true;
@@ -3741,14 +3640,7 @@ public class TSPARQL {
 						String consistency = consistency();
 
 						if (consistency == "true") {
-							/*if (!error && show) {
-								error = true;
-								System.out.println("<p style=\"color:red\">"
-										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-										+ "</p>");
-								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-								printClass(rendering.render(arg0), rendering.render(in));
-							}*/
+
 						} else {
 							if (!error && show) {
 								error = true;
@@ -4418,14 +4310,14 @@ public class TSPARQL {
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
 				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 50) \r\n" + "}";
-		
+
 		String ex42 = "# ?USER : sn:FriendOfInfluencer" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
 				+ "?USER2 sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 50) \r\n" + "}";
-		
+
 		String ex43 = "# ?USER : sn:FriendOfActive" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"

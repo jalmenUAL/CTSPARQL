@@ -479,7 +479,7 @@ public class MyUI extends UI {
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n" + "}";
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE \r\n" + "}";
 
 		// Second Method. Incomplete Query. Missing Filter Condition.
 
@@ -528,6 +528,20 @@ public class MyUI extends UI {
 				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
 				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
 				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
+		
+		String socex42 = "# ?USER : sn:FriendOfInfluencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
+				+ "?USER2 sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 50) \r\n" + "}";
+		
+		String socex43 = "# ?USER : sn:FriendOfActive\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
+				+ "?USER2 sn:dailyActivity ?DA .\r\n" + "FILTER (?DA > 50) \r\n" + "}";
 
 		ComboBox<String> examplestsocial = new ComboBox<>("Examples of Correctness");
 		examplestsocial.setWidth("100%");
@@ -542,9 +556,9 @@ public class MyUI extends UI {
 		ComboBox<String> examplestvsocial = new ComboBox<>("Examples of Type Validity");
 		examplestvsocial.setEmptySelectionAllowed(false);
 		examplestvsocial.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6",
-				"Example 7", "Example 8", "Example 9");
+				"Example 7", "Example 8", "Example 9","Example 10","Example 11");
 		examplestvsocial.setWidth("100%");
-		examplestvsocial.setPageLength(9);
+		examplestvsocial.setPageLength(11);
 
 		examplestsocial.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -647,6 +661,12 @@ public class MyUI extends UI {
 					editor.setValue(socex40);
 				} else if (event.getValue() == "Example 9") {
 					editor.setValue(socex41);
+				}
+				else if (event.getValue() == "Example 10") {
+					editor.setValue(socex42);
+				}
+				else if (event.getValue() == "Example 11") {
+					editor.setValue(socex43);
 				}
 			}
 		});

@@ -3555,7 +3555,7 @@ public class TSPARQL {
 										if (qimpl.hasSolution())
 										// COUNTEREXAMPLE
 										{
-											if (negcons.isEmpty())
+											if (neghead.isEmpty())
 											{if (!error && show) {
 												error = true;
 												System.out.print("<p style=\"color:red\">"
@@ -3850,7 +3850,7 @@ public class TSPARQL {
 										if (qimpl.hasSolution()) {
 											// COUNTEREXAMPLE
 											
-											if (negcons.isEmpty())
+											if (neghead.isEmpty())
 											{if (!error && show) {
 												error = true;
 												System.out.print("<p style=\"color:red\">"

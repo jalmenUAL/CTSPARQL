@@ -1961,7 +1961,7 @@ public class TSPARQL {
 						Boolean one = false;
 						for (Node var : vars_) {
 							if (!one) {
-								if (var.equals(ind)) {
+								if (var.equals(NodeFactory.createURI(ind.toString()))) {
 									one = true;
 								}
 							}
@@ -3555,7 +3555,16 @@ public class TSPARQL {
 										if (qimpl.hasSolution())
 										// COUNTEREXAMPLE
 										{
-
+											if (negcons.isEmpty())
+											{if (!error && show) {
+												error = true;
+												System.out.print("<p style=\"color:red\">"
+														+ "Unsuccessful type validity checking. The property cannot be proved. "
+														+ "Not enough information for: " + "</p>");
+												System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+											}}
+											else
+											{
 											if (!error && show) {
 												error = true;
 												System.out.println("<p style=\"color:red\">"
@@ -3570,6 +3579,7 @@ public class TSPARQL {
 														}
 												}
 											}
+										}
 										}
 
 										else {
@@ -3839,6 +3849,16 @@ public class TSPARQL {
 										org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
 										if (qimpl.hasSolution()) {
 											// COUNTEREXAMPLE
+											
+											if (negcons.isEmpty())
+											{if (!error && show) {
+												error = true;
+												System.out.print("<p style=\"color:red\">"
+														+ "Unsuccessful type validity checking. The property cannot be proved. "
+														+ "Not enough information for: " + "</p>");
+												System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+											}}
+											else {
 											if (!error && show) {
 												error = true;
 												System.out.println("<p style=\"color:red\">"
@@ -3852,6 +3872,7 @@ public class TSPARQL {
 																	+ s.get(key) + "</p>");
 														}
 												}
+											}
 											}
 										} else
 

@@ -675,91 +675,67 @@ public class MyUI extends UI {
 
 		// PEOPLE
 
+		 
+
 		String peoplex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-				+ "SELECT ?A WHERE {?A rdf:type pp:dog . ?A rdf:type pp:cat}\r\n" + "";
-
-		String peoplex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-				+ "SELECT ?P WHERE {?P rdf:type pp:kid . ?P rdf:type pp:adult}\r\n" + "";
-
-		String peoplex3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?A WHERE {?A rdf:type pp:animal . ?A pp:part_of ?plant . ?plant rdf:type pp:plant}\r\n" + "";
 
-		String peoplex4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?L WHERE {?L rdf:type pp:old_lady . ?L pp:has_pet ?P . ?P rdf:type pp:dog}\r\n" + "";
 
-		String peoplex5 = "# ?D : driver\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex3 = "# ?D : driver\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?D WHERE  {?D rdf:type pp:person}\r\n" + "";
 
-		String peoplex6 = "# ?P : driver\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-				+ "SELECT ?P WHERE  {?P rdf:type pp:adult . ?P rdf:type pp:male}";
+		 
 
-		String peoplex7 = "# ?P : Vegetarian\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-				+ "SELECT ?A WHERE  {?A rdf:type pp:adult . ?A pp:eats pp:Rex}\r\n" + "";
-
-		String peoplex8 = "# ?W : old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex4 = "# ?W : old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?W WHERE  {?W rdf:type pp:woman}\r\n";
 
-		String peoplex9 = "# ?P : dog_liker\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex5 = "# ?P : dog_liker\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?P WHERE  {?P rdf:type pp:person . ?P pp:has_pet ?A}\r\n";
 
-		String peoplex10 = "# ?P:grownup\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex6 = "# ?P:grownup\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n";
 
-		String peoplex11 = "# ?P:old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex7 = "# ?P:old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?P WHERE  {?P rdf:type pp:person . ?P pp:has_pet ?A . ?A rdf:type pp:animal}\r\n" + "";
 
-		String peoplex12 = "# ?P:vegetarian\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex8 = "# ?P:vegetarian\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n" + "";
 
-		String peoplex13 = "# ?P:tabloid\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String peoplex9 = "# ?P:tabloid\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
@@ -769,15 +745,15 @@ public class MyUI extends UI {
 		ComboBox<String> examplestpeople = new ComboBox<>("Examples of Correctness");
 		examplestpeople.setWidth("100%");
 		examplestpeople.setEmptySelectionAllowed(false);
-		examplestpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4");
-		examplestpeople.setPageLength(4);
+		examplestpeople.setItems("Example 1", "Example 2");
+		examplestpeople.setPageLength(2);
 
 		ComboBox<String> examplestvpeople = new ComboBox<>("Examples of Type Validity");
 		examplestvpeople.setEmptySelectionAllowed(false);
 		examplestvpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6",
-				"Example 7", "Example 8", "Example 9");
+				"Example 7");
 		examplestvpeople.setWidth("100%");
-		examplestvpeople.setPageLength(9);
+		examplestvpeople.setPageLength(7);
 
 		examplestpeople.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -789,11 +765,7 @@ public class MyUI extends UI {
 					editor.setValue(peoplex1);
 				} else if (event.getValue() == "Example 2") {
 					editor.setValue(peoplex2);
-				} else if (event.getValue() == "Example 3") {
-					editor.setValue(peoplex3);
-				} else if (event.getValue() == "Example 4") {
-					editor.setValue(peoplex4);
-				}
+				}  
 
 			}
 		});
@@ -806,24 +778,20 @@ public class MyUI extends UI {
 				debug_button.setVisible(true);
 
 				if (event.getValue() == "Example 1") {
-					editor.setValue(peoplex5);
+					editor.setValue(peoplex3);
 				} else if (event.getValue() == "Example 2") {
-					editor.setValue(peoplex6);
+					editor.setValue(peoplex4);
 				} else if (event.getValue() == "Example 3") {
-					editor.setValue(peoplex7);
+					editor.setValue(peoplex5);
 				} else if (event.getValue() == "Example 4") {
-					editor.setValue(peoplex8);
+					editor.setValue(peoplex6);
 				} else if (event.getValue() == "Example 5") {
-					editor.setValue(peoplex9);
+					editor.setValue(peoplex7);
 				} else if (event.getValue() == "Example 6") {
-					editor.setValue(peoplex10);
+					editor.setValue(peoplex8);
 				} else if (event.getValue() == "Example 7") {
-					editor.setValue(peoplex11);
-				} else if (event.getValue() == "Example 8") {
-					editor.setValue(peoplex12);
-				} else if (event.getValue() == "Example 9") {
-					editor.setValue(peoplex13);
-				}
+					editor.setValue(peoplex9);
+				}  
 			}
 		});
 
@@ -831,35 +799,30 @@ public class MyUI extends UI {
 
 		// PIZZA
 
+		 
+
 		String pizz1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:SpicyPizza .  ?P rdf:type pi:Margherita}\r\n" + "";
+				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
 
-		String pizz2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String pizz2 = "# ?P:Mushroom\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
 				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
 
-		String pizz3 = "# ?P:Mushroom\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
-
-		String pizz4 = "# ?P:ThinAndCrispyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String pizz3 = "# ?P:ThinAndCrispyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
 				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?X pi:hasTopping pi:FruitTopping }\r\n" + "";
 
-		String pizz5 = "# ?P:AmericanHot\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String pizz4 = "# ?P:AmericanHot\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
@@ -869,8 +832,8 @@ public class MyUI extends UI {
 		ComboBox<String> examplestpizza = new ComboBox<>("Examples of Correctness");
 		examplestpizza.setWidth("100%");
 		examplestpizza.setEmptySelectionAllowed(false);
-		examplestpizza.setItems("Example 1", "Example 2");
-		examplestpizza.setPageLength(2);
+		examplestpizza.setItems("Example 1");
+		examplestpizza.setPageLength(1);
 
 		ComboBox<String> examplestvpizza = new ComboBox<>("Examples of Type Validity");
 		examplestvpizza.setEmptySelectionAllowed(false);
@@ -886,9 +849,7 @@ public class MyUI extends UI {
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(pizz1);
-				} else if (event.getValue() == "Example 2") {
-					editor.setValue(pizz2);
-				}
+				}  
 
 			}
 		});
@@ -900,74 +861,64 @@ public class MyUI extends UI {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
-					editor.setValue(pizz3);
+					editor.setValue(pizz2);
 				} else if (event.getValue() == "Example 2") {
-					editor.setValue(pizz4);
+					editor.setValue(pizz3);
 				} else if (event.getValue() == "Example 3") {
-					editor.setValue(pizz5);
+					editor.setValue(pizz4);
 				}
 			}
 		});
 
 		// COURSE
 
+		 
+
+		 
+
 		String c1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S\r\n"
-				+ "WHERE { ?S rdf:type co:student . ?S rdf:type co:professor}";
-
-		String c2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S\r\n"
-				+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:passed . ?E rdf:type co:failed}";
-
-		String c3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S\r\n"
 				+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:failed . ?E co:scores ?V . FILTER (?V > 5)}";
 
-		String c4 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c2 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
 				+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:passed}";
 
-		String c5 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c3 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
 				+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:failed}";
 
-		String c6 = "# ?S: student\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c4 = "# ?S: student\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S \r\n"
 				+ "WHERE { ?S rdf:type co:person }";
 
-		String c7 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c5 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
 				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
 
-		String c8 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c6 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
 				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
 
-		String c9 = "# ?E: failed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String c7 = "# ?E: failed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
@@ -977,8 +928,8 @@ public class MyUI extends UI {
 		ComboBox<String> examplestcourse = new ComboBox<>("Examples of Correctness");
 		examplestcourse.setWidth("100%");
 		examplestcourse.setEmptySelectionAllowed(false);
-		examplestcourse.setItems("Example 1", "Example 2", "Example 3", "Example 4");
-		examplestcourse.setPageLength(4);
+		examplestcourse.setItems("Example 1");
+		examplestcourse.setPageLength(1);
 
 		ComboBox<String> examplestvcourse = new ComboBox<>("Examples of Type Validity");
 		examplestvcourse.setEmptySelectionAllowed(false);
@@ -994,13 +945,7 @@ public class MyUI extends UI {
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
 					editor.setValue(c1);
-				} else if (event.getValue() == "Example 2") {
-					editor.setValue(c2);
-				} else if (event.getValue() == "Example 3") {
-					editor.setValue(c3);
-				} else if (event.getValue() == "Example 4") {
-					editor.setValue(c4);
-				}
+				}  
 
 			}
 		});
@@ -1012,92 +957,87 @@ public class MyUI extends UI {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
-					editor.setValue(c5);
+					editor.setValue(c2);
 				} else if (event.getValue() == "Example 2") {
-					editor.setValue(c6);
+					editor.setValue(c3);
 				} else if (event.getValue() == "Example 3") {
-					editor.setValue(c7);
+					editor.setValue(c4);
 				} else if (event.getValue() == "Example 4") {
-					editor.setValue(c8);
+					editor.setValue(c5);
 				} else if (event.getValue() == "Example 5") {
-					editor.setValue(c9);
+					editor.setValue(c6);
 				}
 			}
 		});
 
 		// CONFERENCE
 
-		String con1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type con:acceptance . ?P rdf:type con:rejection  }";
+		 
 
-		String con2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P \r\n"
 				+ "WHERE { ?P rdf:type con:acceptance . ?P con:has_review ?R . ?R con:score ?V . FILTER (?V < 1)  }";
 
-		String con3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A \r\n"
 				+ "WHERE { ?A rdf:type con:attendant . ?A con:submits ?P . ?P rdf:type con:rejection  }";
 
-		String con4 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con3 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A \r\n"
 				+ "WHERE { ?A con:submits ?P  }";
 
-		String con5 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con4 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
 				+ "WHERE { ?A con:submits ?P . ?P con:has_review ?R  }";
 
-		String con6 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con5 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
 				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
 
-		String con7 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con6 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
 				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
 
-		String con8 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con7 = "# ?A : attendant\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
 				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
 
-		String con9 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con8 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
 				+ "WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 2) }";
 
-		String con10 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con9 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
 				+ "WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 0) }";
 
-		String con11 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String con10 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
@@ -1107,8 +1047,8 @@ public class MyUI extends UI {
 		ComboBox<String> examplestconf = new ComboBox<>("Examples of Correctness");
 		examplestconf.setWidth("100%");
 		examplestconf.setEmptySelectionAllowed(false);
-		examplestconf.setItems("Example 1", "Example 2", "Example 3");
-		examplestconf.setPageLength(4);
+		examplestconf.setItems("Example 1", "Example 2");
+		examplestconf.setPageLength(2);
 
 		ComboBox<String> examplestvconf = new ComboBox<>("Examples of Type Validity");
 		examplestvconf.setEmptySelectionAllowed(false);
@@ -1127,9 +1067,7 @@ public class MyUI extends UI {
 					editor.setValue(con1);
 				} else if (event.getValue() == "Example 2") {
 					editor.setValue(con2);
-				} else if (event.getValue() == "Example 3") {
-					editor.setValue(con3);
-				}
+				}  
 
 			}
 		});
@@ -1141,21 +1079,21 @@ public class MyUI extends UI {
 				run_button.setVisible(true);
 				debug_button.setVisible(true);
 				if (event.getValue() == "Example 1") {
-					editor.setValue(con4);
+					editor.setValue(con3);
 				} else if (event.getValue() == "Example 2") {
-					editor.setValue(con5);
+					editor.setValue(con4);
 				} else if (event.getValue() == "Example 3") {
-					editor.setValue(con6);
+					editor.setValue(con5);
 				} else if (event.getValue() == "Example 4") {
-					editor.setValue(con7);
+					editor.setValue(con6);
 				} else if (event.getValue() == "Example 5") {
-					editor.setValue(con8);
+					editor.setValue(con7);
 				} else if (event.getValue() == "Example 6") {
-					editor.setValue(con9);
+					editor.setValue(con8);
 				} else if (event.getValue() == "Example 7") {
-					editor.setValue(con10);
+					editor.setValue(con9);
 				} else if (event.getValue() == "Example 8") {
-					editor.setValue(con11);
+					editor.setValue(con10);
 				}
 			}
 		});

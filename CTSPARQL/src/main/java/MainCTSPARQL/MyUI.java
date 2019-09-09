@@ -135,7 +135,7 @@ public class MyUI extends UI {
 		new_ontology.setWidth("100%");
 		
        
-	   setErrorHandler(new ErrorHandler() {
+	   /*setErrorHandler(new ErrorHandler() {
 
 			@Override
 			public void error(com.vaadin.server.ErrorEvent event) {
@@ -143,7 +143,7 @@ public class MyUI extends UI {
 				restore("C:/working_ontology.owl");
 			}
 
-		});
+		});*/
 		
 
 
@@ -735,12 +735,7 @@ public class MyUI extends UI {
 				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
 				+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n" + "";
 
-		String peoplex9 = "# ?P:tabloid\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-				+ "SELECT ?P WHERE  {?P rdf:type pp:newspaper}";
+		 
 
 		ComboBox<String> examplestpeople = new ComboBox<>("Examples of Correctness");
 		examplestpeople.setWidth("100%");
@@ -750,10 +745,9 @@ public class MyUI extends UI {
 
 		ComboBox<String> examplestvpeople = new ComboBox<>("Examples of Type Validity");
 		examplestvpeople.setEmptySelectionAllowed(false);
-		examplestvpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6",
-				"Example 7");
+		examplestvpeople.setItems("Example 1", "Example 2", "Example 3", "Example 4", "Example 5", "Example 6");
 		examplestvpeople.setWidth("100%");
-		examplestvpeople.setPageLength(7);
+		examplestvpeople.setPageLength(6);
 
 		examplestpeople.addValueChangeListener(event -> {
 			if (event.getSource().isEmpty()) {
@@ -789,8 +783,6 @@ public class MyUI extends UI {
 					editor.setValue(peoplex7);
 				} else if (event.getValue() == "Example 6") {
 					editor.setValue(peoplex8);
-				} else if (event.getValue() == "Example 7") {
-					editor.setValue(peoplex9);
 				}  
 			}
 		});
@@ -806,28 +798,28 @@ public class MyUI extends UI {
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
+				+ "WHERE { ?P rdf:type pi:VegetarianPizza .  ?P pi:hasTopping pi:MeatTopping }\r\n" + "";
 
-		String pizz2 = "# ?P:Mushroom\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String pizz2 = "# ?P:RealItalianPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
+				+ "WHERE { ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
 
 		String pizz3 = "# ?P:ThinAndCrispyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?X pi:hasTopping pi:FruitTopping }\r\n" + "";
+				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping pi:FruitTopping }\r\n" + "";
 
-		String pizz4 = "# ?P:AmericanHot\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+		String pizz4 = "# ?P:CheeseyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
 				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
 				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-				+ "WHERE { ?P rdf:type pi:NamedPizza .  ?X pi:hasSpiciness pi:Medium }\r\n" + "";
+				+ "WHERE { ?P rdf:type pi:Pizza . ?P pi:hasTopping pi:CheeseTopping }\r\n" + "";
 
 		ComboBox<String> examplestpizza = new ComboBox<>("Examples of Correctness");
 		examplestpizza.setWidth("100%");

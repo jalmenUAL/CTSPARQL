@@ -1886,16 +1886,17 @@ public class TSPARQL {
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
 
-				show = false;
+				/*show = false;
 				Boolean one = false;
 				Set<OWLClassExpression> ec = arg0.getOperands();
+				 
 				for (OWLClassExpression e : ec) {
 					if (!one) {
 						e.accept(this);
 					}
 					one = !wrong_analysis;
 				}
-				show = true;
+				show = true;*/
 
 			}
 
@@ -2732,43 +2733,75 @@ public class TSPARQL {
 				String entailment = entailment(axiom);
 				if (entailment == "true") {
 				} else {
-					addTypeAssertion(arg0, in);
-					OWLClass res = dataFactory.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
-					addTypeAssertion(res, in);
-					String consistency = consistency();
-					if (consistency == "true") {
 
-						removeTypeAssertion(arg0, in);
-						Set<OWLClassExpression> ec = arg0.getEquivalentClasses(ontology);
-						for (OWLClassExpression e : ec) {
-							if (!error) {
-								e.accept(this);
+					Set<OWLClassExpression> ec0 = arg0.getEquivalentClasses(ontology);
+					for (OWLClassExpression e : ec0) {
+						if (!error) {
+							e.accept(this);
+						}
+					}
+					if (!error) {
+						if (ec0.isEmpty()) {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
 							}
 						}
-
 					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
+						addTypeAssertion(arg0, in);
+						OWLClass res = dataFactory
+								.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
+						addTypeAssertion(res, in);
+						String consistency = consistency();
+						removeTypeAssertion(arg0, in);
+						if (consistency == "true") {
+							
+							Set<OWLClassExpression> ec1 = arg0.getSuperClasses(ontology);
+							for (OWLClassExpression e : ec1) {
+								if (!error) {
+									e.accept(this);
+								}
+							}
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
+
 						}
 
 					}
-
 				}
 			}
 
 			@Override
 			public void visit(OWLObjectIntersectionOf arg0) {
-				Set<OWLClassExpression> ec = arg0.getOperands();
-				for (OWLClassExpression e : ec) {
 
+				Set<OWLClassExpression> ec = arg0.getOperands();
+
+				for (OWLClassExpression e : ec) {
 					if (!error) {
+
 						e.accept(this);
 					}
 				}
+
 			}
 
 			@Override
@@ -2862,6 +2895,15 @@ public class TSPARQL {
 				addTypeAssertion(arg0, in);
 				String consistency = consistency();
 				if (consistency == "true") {
+					
+					if (!error && show) {
+						error = true;
+						System.out.println("<p style=\"color:red\">"
+								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+								+ "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					}
 
 				} else {
 					if (!error && show) {
@@ -2921,7 +2963,14 @@ public class TSPARQL {
 				addTypeAssertion(arg0, in);
 				String consistency = consistency();
 				if (consistency == "true") {
-
+					if (!error && show) {
+						error = true;
+						System.out.println("<p style=\"color:red\">"
+								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+								+ "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					}
 				} else {
 					if (!error && show) {
 						error = true;
@@ -2954,6 +3003,15 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
 
 					} else {
 						if (!error && show) {
@@ -2988,6 +3046,15 @@ public class TSPARQL {
 					String consistency = consistency();
 					if (consistency == "true") {
 
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3020,6 +3087,15 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
 
 					} else {
 						if (!error && show) {
@@ -3054,6 +3130,15 @@ public class TSPARQL {
 					String consistency = consistency();
 					if (consistency == "true") {
 
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3087,6 +3172,15 @@ public class TSPARQL {
 					String consistency = consistency();
 					if (consistency == "true") {
 
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+
 					} else {
 						if (!error && show) {
 							error = true;
@@ -3119,6 +3213,15 @@ public class TSPARQL {
 					addTypeAssertion(arg0, in);
 					String consistency = consistency();
 					if (consistency == "true") {
+
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
 
 					} else {
 						if (!error && show) {
@@ -3166,6 +3269,15 @@ public class TSPARQL {
 						addTypeAssertion(arg0, in);
 						String consistency = consistency();
 						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
 
 						} else {
 							if (!error && show) {
@@ -3555,31 +3667,31 @@ public class TSPARQL {
 										if (qimpl.hasSolution())
 										// COUNTEREXAMPLE
 										{
-											if (neghead.isEmpty())
-											{if (!error && show) {
-												error = true;
-												System.out.print("<p style=\"color:red\">"
-														+ "Unsuccessful type validity checking. The property cannot be proved. "
-														+ "Not enough information for: " + "</p>");
-												System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
-											}}
-											else
-											{
-											if (!error && show) {
-												error = true;
-												System.out.println("<p style=\"color:red\">"
-														+ "Unsuccessful type validity checking. Counterexample:"
-														+ "</p>");
-												Map<String, Term>[] sols = qimpl.allSolutions();
-												for (Map<String, Term> s : sols) {
-													for (String key : s.keySet())
-														if (s.get(key).isCompound()) {
-															System.out.println("<p>" + rename.get(key) + "="
-																	+ s.get(key) + "</p>");
-														}
+											if (neghead.isEmpty()) {
+												if (!error && show) {
+													error = true;
+													System.out.print("<p style=\"color:red\">"
+															+ "Unsuccessful type validity checking. The property cannot be proved. "
+															+ "Not enough information for: " + "</p>");
+													System.out.println(
+															"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+												}
+											} else {
+												if (!error && show) {
+													error = true;
+													System.out.println("<p style=\"color:red\">"
+															+ "Unsuccessful type validity checking. Counterexample:"
+															+ "</p>");
+													Map<String, Term>[] sols = qimpl.allSolutions();
+													for (Map<String, Term> s : sols) {
+														for (String key : s.keySet())
+															if (s.get(key).isCompound()) {
+																System.out.println("<p>" + rename.get(key) + "="
+																		+ s.get(key) + "</p>");
+															}
+													}
 												}
 											}
-										}
 										}
 
 										else {
@@ -3650,6 +3762,15 @@ public class TSPARQL {
 						String consistency = consistency();
 
 						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
 
 						} else {
 							if (!error && show) {
@@ -3849,30 +3970,31 @@ public class TSPARQL {
 										org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
 										if (qimpl.hasSolution()) {
 											// COUNTEREXAMPLE
-											
-											if (neghead.isEmpty())
-											{if (!error && show) {
-												error = true;
-												System.out.print("<p style=\"color:red\">"
-														+ "Unsuccessful type validity checking. The property cannot be proved. "
-														+ "Not enough information for: " + "</p>");
-												System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
-											}}
-											else {
-											if (!error && show) {
-												error = true;
-												System.out.println("<p style=\"color:red\">"
-														+ "Unsuccessful type validity checking. Counterexample:"
-														+ "</p>");
-												Map<String, Term>[] sols = qimpl.allSolutions();
-												for (Map<String, Term> s : sols) {
-													for (String key : s.keySet())
-														if (s.get(key).isCompound()) {
-															System.out.println("<p>" + rename.get(key) + "="
-																	+ s.get(key) + "</p>");
-														}
+
+											if (neghead.isEmpty()) {
+												if (!error && show) {
+													error = true;
+													System.out.print("<p style=\"color:red\">"
+															+ "Unsuccessful type validity checking. The property cannot be proved. "
+															+ "Not enough information for: " + "</p>");
+													System.out.println(
+															"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
 												}
-											}
+											} else {
+												if (!error && show) {
+													error = true;
+													System.out.println("<p style=\"color:red\">"
+															+ "Unsuccessful type validity checking. Counterexample:"
+															+ "</p>");
+													Map<String, Term>[] sols = qimpl.allSolutions();
+													for (Map<String, Term> s : sols) {
+														for (String key : s.keySet())
+															if (s.get(key).isCompound()) {
+																System.out.println("<p>" + rename.get(key) + "="
+																		+ s.get(key) + "</p>");
+															}
+													}
+												}
 											}
 										} else
 
@@ -4359,6 +4481,13 @@ public class TSPARQL {
 				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
 				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A  ?P \r\n"
 				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:acceptance  }";
+
+		String peoplex4 = "# ?W : old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?W WHERE  {?W rdf:type pp:woman}\r\n";
 
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;

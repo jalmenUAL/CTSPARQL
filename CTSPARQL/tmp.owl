@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://www.semanticweb.org/conference#"
-     xml:base="http://www.semanticweb.org/conference"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
+<rdf:RDF xmlns="http://www.semanticweb.org/course#"
+     xml:base="http://www.semanticweb.org/course"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://www.semanticweb.org/conference">
-        <rdfs:isDefinedBy>Jesus M. Almendros-Jimenez</rdfs:isDefinedBy>
-        <rdfs:label>conference</rdfs:label>
+    <owl:Ontology rdf:about="http://www.semanticweb.org/course">
+        <rdfs:label>course</rdfs:label>
         <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.0</owl:versionInfo>
+        <rdfs:isDefinedBy>Jesus M. Almendros-Jimenez</rdfs:isDefinedBy>
     </owl:Ontology>
     
 
@@ -25,47 +24,29 @@
     
 
 
-    <!-- http://www.semanticweb.org/conference#attends -->
+    <!-- http://www.semanticweb.org/course#about -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#attends">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#author"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#conference"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/course#about">
+        <rdfs:range rdf:resource="http://www.semanticweb.org/course#course"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/course#enrollment"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/conference#has_review -->
+    <!-- http://www.semanticweb.org/course#is_enrolled -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#has_review">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#paper"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#review"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/course#is_enrolled">
+        <rdfs:range rdf:resource="http://www.semanticweb.org/course#enrollment"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/course#student"/>
     </owl:ObjectProperty>
     
 
 
-    <!-- http://www.semanticweb.org/conference#receives -->
+    <!-- http://www.semanticweb.org/course#teaches -->
 
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#receives">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#conference"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#reviews -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#reviews">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#submits -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/conference#submits">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#author"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/conference#paper"/>
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/course#teaches">
+        <rdfs:range rdf:resource="http://www.semanticweb.org/course#course"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/course#professor"/>
     </owl:ObjectProperty>
     
 
@@ -81,20 +62,11 @@
     
 
 
-    <!-- http://www.semanticweb.org/conference#comment -->
+    <!-- http://www.semanticweb.org/course#scores -->
 
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/conference#comment">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#review"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#score -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/conference#score">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/conference#review"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/course#scores">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/course#enrollment"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
     </owl:DatatypeProperty>
     
 
@@ -110,40 +82,56 @@
     
 
 
-    <!-- http://www.semanticweb.org/conference#acceptance -->
+    <!-- http://www.semanticweb.org/course#active -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#acceptance">
+    <owl:Class rdf:about="http://www.semanticweb.org/course#active">
         <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/conference#paper"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#has_review"/>
-                        <owl:allValuesFrom rdf:resource="http://www.semanticweb.org/conference#accepted"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/course#teaches"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/course#course"/>
+            </owl:Restriction>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#paper"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#professor"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/conference#accepted -->
+    <!-- http://www.semanticweb.org/course#course -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#accepted">
+    <owl:Class rdf:about="http://www.semanticweb.org/course#course">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#enrollment"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#person"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#professor"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#student"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/course#enrollment -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/course#enrollment">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#person"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#professor"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#student"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/course#failed -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/course#failed">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/conference#review"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/course#enrollment"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#score"/>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/course#scores"/>
                         <owl:allValuesFrom>
                             <rdfs:Datatype>
                                 <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
                                 <owl:withRestrictions rdf:parseType="Collection">
                                     <rdf:Description>
-                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</xsd:minInclusive>
+                                        <xsd:maxExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</xsd:maxExclusive>
                                     </rdf:Description>
                                 </owl:withRestrictions>
                             </rdfs:Datatype>
@@ -152,61 +140,45 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#enrollment"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/conference#author -->
+    <!-- http://www.semanticweb.org/course#finished -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#author">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#submits"/>
-                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#paper"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#conference"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#paper"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#conference -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#conference">
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#paper"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#paper -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#paper">
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#review"/>
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#rejected -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#rejected">
+    <owl:Class rdf:about="http://www.semanticweb.org/course#finished">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/conference#review"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/course#enrollment"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#score"/>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/course#scores"/>
+                        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#enrollment"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/course#passed -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/course#passed">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/course#enrollment"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/course#scores"/>
                         <owl:someValuesFrom>
                             <rdfs:Datatype>
                                 <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
                                 <owl:withRestrictions rdf:parseType="Collection">
                                     <rdf:Description>
-                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</xsd:maxInclusive>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</xsd:minInclusive>
                                     </rdf:Description>
                                 </owl:withRestrictions>
                             </rdfs:Datatype>
@@ -215,48 +187,153 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#review"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#enrollment"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/conference#rejection -->
+    <!-- http://www.semanticweb.org/course#person -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#rejection">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/conference#paper"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#has_review"/>
-                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#rejected"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/conference#paper"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/course#person"/>
+    
+
+
+    <!-- http://www.semanticweb.org/course#professor -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/course#professor">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#person"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/course#student"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/conference#review -->
+    <!-- http://www.semanticweb.org/course#student -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#review">
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/conference#reviewer"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#reviewer -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/conference#reviewer">
+    <owl:Class rdf:about="http://www.semanticweb.org/course#student">
         <owl:equivalentClass>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/conference#reviews"/>
-                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/conference#paper"/>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/course#is_enrolled"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/course#enrollment"/>
             </owl:Restriction>
         </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/course#person"/>
     </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:dateTime -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:dateTime">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:decimal"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:double"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:float"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:integer"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:negativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonPositiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:positiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:decimal -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:decimal">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:integer"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:negativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonPositiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:positiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:double -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:double">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:integer"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:negativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonPositiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:positiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:float -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:float">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:integer"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:negativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonNegativeInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:nonPositiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:positiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:integer -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:integer">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:negativeInteger -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:negativeInteger">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:positiveInteger"/>
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:nonNegativeInteger -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:nonNegativeInteger">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:nonPositiveInteger -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:nonPositiveInteger">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:positiveInteger -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:positiveInteger">
+        <owl:disjointWith rdf:resource="http://www.types.org#xsd:string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.types.org#xsd:string -->
+
+    <owl:Class rdf:about="http://www.types.org#xsd:string"/>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#Literal -->
+
+    <owl:Class rdf:about="http://www.w3.org/2000/01/rdf-schema#Literal">
+        <owl:disjointWith rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#Resource -->
+
+    <owl:Class rdf:about="http://www.w3.org/2000/01/rdf-schema#Resource"/>
     
 
 
@@ -271,68 +348,84 @@
     
 
 
-    <!-- http://www.semanticweb.org/conference#EDBT -->
+    <!-- http://www.semanticweb.org/course#E -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#EDBT"/>
-    
-
-
-    <!-- http://www.semanticweb.org/conference#VLDB -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#VLDB">
-        <rdf:type rdf:resource="http://www.semanticweb.org/conference#conference"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#E">
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <scores rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</scores>
     </owl:NamedIndividual>
     
 
 
-    <!-- http://www.semanticweb.org/conference#antonio -->
+    <!-- http://www.semanticweb.org/course#S -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#antonio"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#S">
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+        <is_enrolled rdf:resource="http://www.semanticweb.org/course#E"/>
+    </owl:NamedIndividual>
     
 
 
-    <!-- http://www.semanticweb.org/conference#frank -->
+    <!-- http://www.semanticweb.org/course#antonio -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#frank"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#antonio"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#jesus -->
+    <!-- http://www.semanticweb.org/course#computer -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#jesus"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#computer"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#paper1 -->
+    <!-- http://www.semanticweb.org/course#databases -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#paper1"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#databases"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#paper2 -->
+    <!-- http://www.semanticweb.org/course#enrollment1 -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#paper2"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#enrollment1"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#review1 -->
+    <!-- http://www.semanticweb.org/course#enrollment2 -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review1"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#enrollment2"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#review2 -->
+    <!-- http://www.semanticweb.org/course#jesus -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#review2"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#jesus"/>
     
 
 
-    <!-- http://www.semanticweb.org/conference#susan -->
+    <!-- http://www.semanticweb.org/course#john -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/conference#susan"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#john"/>
+    
+
+
+    <!-- http://www.semanticweb.org/course#mark -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#mark"/>
+    
+
+
+    <!-- http://www.semanticweb.org/course#mary -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#mary"/>
+    
+
+
+    <!-- http://www.semanticweb.org/course#ontologies -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/course#ontologies"/>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 1.3.8.1099) http://owlapi.sourceforge.net -->
 

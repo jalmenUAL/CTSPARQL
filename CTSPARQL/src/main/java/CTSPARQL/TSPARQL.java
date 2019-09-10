@@ -692,7 +692,8 @@ public class TSPARQL {
 	}
 
 	public String print(TriplePath tp) {
-		return tp.getSubject().getName() + " " + tp.getPredicate().getLocalName() + " " + tp.getObject().getName();
+		return "<pre>" + tp.getSubject() + " " + tp.getPredicate().getLocalName() + " " + tp.getObject() + "</pre>";
+
 	}
 
 	public Boolean Existence(TriplePath tp) {
@@ -795,7 +796,7 @@ public class TSPARQL {
 							}
 						} else /* VUL */
 						{
-							 
+
 							// ADD TYPE
 							OWLNamedIndividual ni = null;
 							ni = dft.getOWLNamedIndividual(
@@ -1436,9 +1437,9 @@ public class TSPARQL {
 
 			if (!wrong_analysis) {
 				wrong_analysis = true;
-				System.out.println("<p style=\"color:green\">"
-						+ "Query is not linear. Found same subject and property in:" + "</p>");
-				System.out.println("<p> Triple: " + print(tp) + "</p>");
+				System.out
+						.println("<p style=\"color:green\">" + "Query is not linear. Found same property in:" + "</p>");
+				System.out.println("<p>" + tp.getSubject() + "</p>");
 			}
 
 		}
@@ -1550,36 +1551,27 @@ public class TSPARQL {
 		manager.applyChange(addAxiom17);
 		AddAxiom addAxiom18 = new AddAxiom(ontology, ax18);
 		manager.applyChange(addAxiom18);
-		AddAxiom addAxiom19 = new AddAxiom(ontology, ax19);
-		manager.applyChange(addAxiom19);
-		AddAxiom addAxiom20 = new AddAxiom(ontology, ax20);
-		manager.applyChange(addAxiom20);
-		AddAxiom addAxiom21 = new AddAxiom(ontology, ax21);
-		manager.applyChange(addAxiom21);
-		AddAxiom addAxiom22 = new AddAxiom(ontology, ax22);
-		manager.applyChange(addAxiom22);
-		AddAxiom addAxiom23 = new AddAxiom(ontology, ax23);
-		manager.applyChange(addAxiom23);
-		AddAxiom addAxiom24 = new AddAxiom(ontology, ax24);
-		manager.applyChange(addAxiom24);
-		AddAxiom addAxiom25 = new AddAxiom(ontology, ax25);
-		manager.applyChange(addAxiom25);
-		AddAxiom addAxiom26 = new AddAxiom(ontology, ax26);
-		manager.applyChange(addAxiom26);
-		AddAxiom addAxiom27 = new AddAxiom(ontology, ax27);
-		manager.applyChange(addAxiom27);
-		AddAxiom addAxiom28 = new AddAxiom(ontology, ax28);
-		manager.applyChange(addAxiom28);
-		AddAxiom addAxiom29 = new AddAxiom(ontology, ax29);
-		manager.applyChange(addAxiom29);
-		AddAxiom addAxiom30 = new AddAxiom(ontology, ax30);
-		manager.applyChange(addAxiom30);
-		AddAxiom addAxiom31 = new AddAxiom(ontology, ax31);
-		manager.applyChange(addAxiom31);
-		AddAxiom addAxiom32 = new AddAxiom(ontology, ax32);
-		manager.applyChange(addAxiom32);
-		AddAxiom addAxiom33 = new AddAxiom(ontology, ax33);
-		manager.applyChange(addAxiom33);
+		/*
+		 * AddAxiom addAxiom19 = new AddAxiom(ontology, ax19);
+		 * manager.applyChange(addAxiom19); AddAxiom addAxiom20 = new AddAxiom(ontology,
+		 * ax20); manager.applyChange(addAxiom20); AddAxiom addAxiom21 = new
+		 * AddAxiom(ontology, ax21); manager.applyChange(addAxiom21); AddAxiom
+		 * addAxiom22 = new AddAxiom(ontology, ax22); manager.applyChange(addAxiom22);
+		 * AddAxiom addAxiom23 = new AddAxiom(ontology, ax23);
+		 * manager.applyChange(addAxiom23); AddAxiom addAxiom24 = new AddAxiom(ontology,
+		 * ax24); manager.applyChange(addAxiom24); AddAxiom addAxiom25 = new
+		 * AddAxiom(ontology, ax25); manager.applyChange(addAxiom25); AddAxiom
+		 * addAxiom26 = new AddAxiom(ontology, ax26); manager.applyChange(addAxiom26);
+		 * AddAxiom addAxiom27 = new AddAxiom(ontology, ax27);
+		 * manager.applyChange(addAxiom27); AddAxiom addAxiom28 = new AddAxiom(ontology,
+		 * ax28); manager.applyChange(addAxiom28); AddAxiom addAxiom29 = new
+		 * AddAxiom(ontology, ax29); manager.applyChange(addAxiom29); AddAxiom
+		 * addAxiom30 = new AddAxiom(ontology, ax30); manager.applyChange(addAxiom30);
+		 * AddAxiom addAxiom31 = new AddAxiom(ontology, ax31);
+		 * manager.applyChange(addAxiom31); AddAxiom addAxiom32 = new AddAxiom(ontology,
+		 * ax32); manager.applyChange(addAxiom32); AddAxiom addAxiom33 = new
+		 * AddAxiom(ontology, ax33); manager.applyChange(addAxiom33);
+		 */
 
 		try {
 			manager.saveOntology(ontology);
@@ -1891,7 +1883,7 @@ public class TSPARQL {
 				show = false;
 				Boolean one = false;
 				Set<OWLClassExpression> ec = arg0.getOperands();
-				 
+
 				for (OWLClassExpression e : ec) {
 					if (!one) {
 						e.accept(this);
@@ -1904,15 +1896,15 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				
-                negation = true;
+
+				negation = true;
 				show = false;
 				OWLClassExpression neg = arg0.getOperand();
-				neg.accept(this);			
+				neg.accept(this);
 				show = true;
 				negation = false;
 				wrong_analysis = !wrong_analysis;
-													
+
 			}
 
 			@Override
@@ -2004,156 +1996,155 @@ public class TSPARQL {
 				if (negation) {
 					if (!wrong_analysis && show) {
 						wrong_analysis = true;
-						System.out.println("<p style=\"color:magenta\">"
-								+ "Negated OWL Restriction not allowed:" + "</p>");
+						System.out.println(
+								"<p style=\"color:magenta\">" + "Negated OWL Restriction not allowed:" + "</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						System.out.println("<p>" + rendering.render(arg0) + "</p>");
 					}
-				}
-				else {
-				if (ctriplesn.containsKey(var_name)) {
-					OWLDataAllValuesFrom allValuesFrom = (OWLDataAllValuesFrom) arg0;
-					OWLDataRange filler = allValuesFrom.getFiller();
-					for (OWLDataProperty dp : allValuesFrom.getDataPropertiesInSignature()) {
-						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-							String cons = "";
+				} else {
+					if (ctriplesn.containsKey(var_name)) {
+						OWLDataAllValuesFrom allValuesFrom = (OWLDataAllValuesFrom) arg0;
+						OWLDataRange filler = allValuesFrom.getFiller();
+						for (OWLDataProperty dp : allValuesFrom.getDataPropertiesInSignature()) {
+							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+								String cons = "";
 
-							if (filler instanceof OWLDatatypeRestriction) {
-								OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+								if (filler instanceof OWLDatatypeRestriction) {
+									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
 
-								for (Node var : vars_) {
+									for (Node var : vars_) {
 
-									if (r.getDatatype().isInteger()) {
-										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-											if (fr.getFacet().toString() == "maxExclusive") {
-												if (var.isVariable()) {
-													cons = cons + var.toString().substring(1).toUpperCase() + "#<"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase() + " < "
-															+ fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + var.getLiteralValue().toString() + "#<"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " < " + fr.getFacetValue().getLiteral() + " )");
-												}
+										if (r.getDatatype().isInteger()) {
+											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+												if (fr.getFacet().toString() == "maxExclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													}
 
-											} else if (fr.getFacet().toString() == "maxInclusive") {
-												if (var.isVariable()) {
-													cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase()
-															+ " <= " + fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + var.getLiteralValue().toString() + "#=<"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " <= " + fr.getFacetValue().getLiteral() + " )");
-												}
-											} else if (fr.getFacet().toString() == "minExclusive") {
-												if (var.isVariable()) {
-													cons = cons + var.toString().substring(1).toUpperCase() + "#>"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase() + " > "
-															+ fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + var.getLiteralValue().toString() + "#>"
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " > " + fr.getFacetValue().getLiteral() + " )");
-												}
-											} else if (fr.getFacet().toString() == "minInclusive") {
-												if (var.isVariable()) {
-													cons = cons + var.toString().substring(1).toUpperCase() + "#>="
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase()
-															+ " >= " + fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + var.getLiteralValue().toString() + "#>="
-															+ fr.getFacetValue().getLiteral() + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+												} else if (fr.getFacet().toString() == "maxInclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " <= " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#=<"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " <= " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minExclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#>"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#>"
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minInclusive") {
+													if (var.isVariable()) {
+														cons = cons + var.toString().substring(1).toUpperCase() + "#>="
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + var.getLiteralValue().toString() + "#>="
+																+ fr.getFacetValue().getLiteral() + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													}
 												}
 											}
-										}
-									} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
-										for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-											if (fr.getFacet().toString() == "maxExclusive") {
+										} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
+											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+												if (fr.getFacet().toString() == "maxExclusive") {
 
-												if (var.isVariable()) {
-													cons = cons + "{" + var.toString().substring(1).toUpperCase() + "<"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase() + " < "
-															+ fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + "{" + var.getLiteralValue().toString() + "<"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " < " + fr.getFacetValue().getLiteral() + " )");
-												}
-											} else if (fr.getFacet().toString() == "maxInclusive") {
-												if (var.isVariable()) {
-													cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=<"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase()
-															+ " <= " + fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + "{" + var.getLiteralValue().toString() + "=<"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("(" + var.getLiteralValue().toString()
-															+ " <= " + fr.getFacetValue().getLiteral() + ")");
-												}
-											} else if (fr.getFacet().toString() == "minExclusive") {
-												if (var.isVariable()) {
-													cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase() + " > "
-															+ fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + "{" + var.getLiteralValue().toString() + ">"
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " > " + fr.getFacetValue().getLiteral() + " )");
-												}
-											} else if (fr.getFacet().toString() == "minInclusive") {
-												if (var.isVariable()) {
-													cons = cons + "{" + var.toString().substring(1).toUpperCase() + ">="
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.toString().toUpperCase()
-															+ " >= " + fr.getFacetValue().getLiteral() + " )");
-												} else {
-													cons = cons + "{" + var.getLiteralValue().toString() + ">="
-															+ fr.getFacetValue().getLiteral() + "}" + ",";
-													constraints_elements.add("( " + var.getLiteralValue().toString()
-															+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ "<" + fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " < " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "maxInclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ "=<" + fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " <= " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + "=<"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ " <= " + fr.getFacetValue().getLiteral() + ")");
+													}
+												} else if (fr.getFacet().toString() == "minExclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ ">" + fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">"
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " > " + fr.getFacetValue().getLiteral() + " )");
+													}
+												} else if (fr.getFacet().toString() == "minInclusive") {
+													if (var.isVariable()) {
+														cons = cons + "{" + var.toString().substring(1).toUpperCase()
+																+ ">=" + fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.toString().toUpperCase()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													} else {
+														cons = cons + "{" + var.getLiteralValue().toString() + ">="
+																+ fr.getFacetValue().getLiteral() + "}" + ",";
+														constraints_elements.add("( " + var.getLiteralValue().toString()
+																+ " >= " + fr.getFacetValue().getLiteral() + " )");
+													}
 												}
 											}
-										}
-									} else {
-										if (!wrong_analysis && show) {
-											wrong_analysis = true;
-											System.out.println("<p style=\"color:magenta\">"
-													+ "OWL Restriction not allowed:" + "</p>");
-											ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-											System.out.println("<p>" + rendering.render(arg0) + "</p>");
+										} else {
+											if (!wrong_analysis && show) {
+												wrong_analysis = true;
+												System.out.println("<p style=\"color:magenta\">"
+														+ "OWL Restriction not allowed:" + "</p>");
+												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+												System.out.println("<p>" + rendering.render(arg0) + "</p>");
+											}
 										}
 									}
+									if (!cons.isEmpty()) {
+										cons = cons.substring(0, cons.length() - 1);
+									}
+
+									rules.get(current).add(cons);
+
+								} else {
+									// NON OWL DATATYPE RESTRICTION
+
 								}
-								if (!cons.isEmpty()) {
-									cons = cons.substring(0, cons.length() - 1);
-								}
-
-								rules.get(current).add(cons);
-
-							} else {
-								// NON OWL DATATYPE RESTRICTION
-
 							}
 						}
 					}
-				}
 				}
 			}
 
@@ -2172,63 +2163,62 @@ public class TSPARQL {
 				if (negation) {
 					if (!wrong_analysis && show) {
 						wrong_analysis = true;
-						System.out.println("<p style=\"color:magenta\">"
-								+ "Negated OWL Restriction not allowed:" + "</p>");
+						System.out.println(
+								"<p style=\"color:magenta\">" + "Negated OWL Restriction not allowed:" + "</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 						System.out.println("<p>" + rendering.render(arg0) + "</p>");
 					}
-				}
-				else {
-				if (ctriplesn.containsKey(var_name)) {
-					OWLDataHasValue HasValue = (OWLDataHasValue) arg0;
-					OWLLiteral value = HasValue.getValue();
-					for (OWLDataProperty dp : HasValue.getDataPropertiesInSignature()) {
-						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-							String cons = "";
-							for (Node var : vars_) {
-								if (value.isInteger()) {
-									if (var.isVariable()) {
-										cons = cons + var.toString().substring(1).toUpperCase() + "#="
-												+ value.getLiteral();
-										constraints_elements.add("( " + var.toString().toUpperCase() + " = "
-												+ value.getLiteral() + " )");
+				} else {
+					if (ctriplesn.containsKey(var_name)) {
+						OWLDataHasValue HasValue = (OWLDataHasValue) arg0;
+						OWLLiteral value = HasValue.getValue();
+						for (OWLDataProperty dp : HasValue.getDataPropertiesInSignature()) {
+							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+								String cons = "";
+								for (Node var : vars_) {
+									if (value.isInteger()) {
+										if (var.isVariable()) {
+											cons = cons + var.toString().substring(1).toUpperCase() + "#="
+													+ value.getLiteral();
+											constraints_elements.add("( " + var.toString().toUpperCase() + " = "
+													+ value.getLiteral() + " )");
+										} else {
+											cons = cons + var.getLiteralValue().toString() + "#=" + value.getLiteral();
+											constraints_elements.add("( " + var.getLiteralValue().toString() + " = "
+													+ value.getLiteral() + " )");
+										}
+									} else if (value.isFloat() || value.isDouble()) {
+										if (var.isVariable()) {
+											cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=:="
+													+ value.getLiteral() + "}";
+											constraints_elements.add("( " + var.toString().toUpperCase() + " = "
+													+ value.getLiteral() + " )");
+										} else {
+											cons = cons + "{" + var.getLiteralValue().toString() + "=:="
+													+ value.getLiteral() + "}";
+											constraints_elements.add("( " + var.getLiteralValue().toString() + " = "
+													+ value.getLiteral() + " )");
+										}
 									} else {
-										cons = cons + var.getLiteralValue().toString() + "#=" + value.getLiteral();
-										constraints_elements.add("( " + var.getLiteralValue().toString() + " = "
-												+ value.getLiteral() + " )");
-									}
-								} else if (value.isFloat() || value.isDouble()) {
-									if (var.isVariable()) {
-										cons = cons + "{" + var.toString().substring(1).toUpperCase() + "=:="
-												+ value.getLiteral() + "}";
-										constraints_elements.add("( " + var.toString().toUpperCase() + " = "
-												+ value.getLiteral() + " )");
-									} else {
-										cons = cons + "{" + var.getLiteralValue().toString() + "=:="
-												+ value.getLiteral() + "}";
-										constraints_elements.add("( " + var.getLiteralValue().toString() + " = "
-												+ value.getLiteral() + " )");
-									}
-								} else {
-									if (!wrong_analysis && show) {
-										wrong_analysis = true;
-										System.out.println("<p style=\"color:magenta\">"
-												+ "OWL Restriction not allowed:" + "</p>");
-										ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-										System.out.println("<p>" + rendering.render(arg0) + "</p>");
+										if (!wrong_analysis && show) {
+											wrong_analysis = true;
+											System.out.println("<p style=\"color:magenta\">"
+													+ "OWL Restriction not allowed:" + "</p>");
+											ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+											System.out.println("<p>" + rendering.render(arg0) + "</p>");
+										}
 									}
 								}
-							}
-							if (!cons.isEmpty()) {
-								cons = cons.substring(0, cons.length() - 1);
-							}
+								if (!cons.isEmpty()) {
+									cons = cons.substring(0, cons.length() - 1);
+								}
 
-							rules.get(current).add(cons);
+								rules.get(current).add(cons);
+							}
 						}
 					}
-				}
 				}
 			}
 
@@ -2756,13 +2746,13 @@ public class TSPARQL {
 				String entailment = entailment(axiom);
 				if (entailment == "true") {
 				} else {
-					 
+
 					Set<OWLClassExpression> ec0 = arg0.getEquivalentClasses(ontology);
-					 
+
 					for (OWLClassExpression e : ec0) {
-						 
+
 						if (!error) {
-							 
+
 							e.accept(this);
 						}
 					}
@@ -2785,7 +2775,7 @@ public class TSPARQL {
 						String consistency = consistency();
 						removeTypeAssertion(arg0, in);
 						if (consistency == "true") {
-							
+
 							Set<OWLClassExpression> ec1 = arg0.getSuperClasses(ontology);
 							for (OWLClassExpression e : ec1) {
 								if (!error) {
@@ -2818,25 +2808,24 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectIntersectionOf arg0) {
-				
-				 
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				Set<OWLClassExpression> ec = arg0.getOperands();
 
-				for (OWLClassExpression e : ec) {
-					if (!error) {
-						 
-						e.accept(this);
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
-				}
+				} else {
+					Set<OWLClassExpression> ec = arg0.getOperands();
+
+					for (OWLClassExpression e : ec) {
+						if (!error) {
+
+							e.accept(this);
+						}
+					}
 				}
 
 			}
@@ -2844,38 +2833,38 @@ public class TSPARQL {
 			@Override
 			public void visit(OWLObjectUnionOf arg0) {
 
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				show = false;
-				Boolean one = false;
-				Set<OWLClassExpression> ec = arg0.getOperands();
-				for (OWLClassExpression e : ec) {
-					if (!one) {
-						e.accept(this);
-						one = !error;
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
-				}
-				show = true;
-				if (!one) {
-					System.out.println("<p style=\"color:red\">"
-							+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-							+ "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					printClass(rendering.render(arg0), rendering.render(in));
-				}
+				} else {
+					show = false;
+					Boolean one = false;
+					Set<OWLClassExpression> ec = arg0.getOperands();
+					for (OWLClassExpression e : ec) {
+						if (!one) {
+							e.accept(this);
+							one = !error;
+						}
+					}
+					show = true;
+					if (!one) {
+						System.out.println("<p style=\"color:red\">"
+								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+								+ "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						printClass(rendering.render(arg0), rendering.render(in));
+					}
 				}
 			}
 
 			@Override
 			public void visit(OWLObjectComplementOf arg0) {
-				
+
 				negation = true;
 				show = false;
 				OWLClassExpression neg = arg0.getOperand();
@@ -2894,45 +2883,55 @@ public class TSPARQL {
 
 			@Override
 			public void visit(OWLObjectSomeValuesFrom arg0) {
-				
-				 
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				if (ctriplesn.containsKey(var_name)) {
-					OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
-					OWLClassExpression filler = someValuesFrom.getFiller();
-					Boolean prop = false;
 
-					for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
-						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-
-						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-
-							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-							Boolean one = false;
-							for (Node var : vars_) {
-								String urio = ontology.getOntologyID().getOntologyIRI().toString();
-								OWLNamedIndividual in = dataFactory
-										.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
-								if (!one) {
-									owl_type_validity(filler.asOWLClass(), in, var);
-								}
-								if (!error) {
-									one = true;
-								}
-							}
-						} else {
-							prop = true;
-						}
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
-					if (prop) {
+				} else {
+					if (ctriplesn.containsKey(var_name)) {
+						OWLObjectSomeValuesFrom someValuesFrom = (OWLObjectSomeValuesFrom) arg0;
+						OWLClassExpression filler = someValuesFrom.getFiller();
+						Boolean prop = false;
+
+						for (OWLObjectProperty dp : someValuesFrom.getObjectPropertiesInSignature()) {
+							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+
+							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+
+								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+								Boolean one = false;
+								for (Node var : vars_) {
+									String urio = ontology.getOntologyID().getOntologyIRI().toString();
+									OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(
+											IRI.create(urio + '#' + var.toString().substring(1)));
+									if (!one) {
+										owl_type_validity(filler.asOWLClass(), in, var);
+									}
+									if (!error) {
+										one = true;
+									}
+								}
+							} else {
+								prop = true;
+							}
+						}
+						if (prop) {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+						}
+
+					} else {
 						if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"
@@ -2943,74 +2942,74 @@ public class TSPARQL {
 						}
 					}
 
-				} else {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				}
+					addTypeAssertion(arg0, in);
+					String consistency = consistency();
+					if (consistency == "true") {
 
-				addTypeAssertion(arg0, in);
-				String consistency = consistency();
-				if (consistency == "true") {
-					
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
 
-				} else {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-								+ "</p>");
-						System.out.print(explanations());
+					} else {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+									+ "</p>");
+							System.out.print(explanations());
+						}
 					}
-				}
-				removeTypeAssertion(arg0, in);
+					removeTypeAssertion(arg0, in);
 				}
 			}
 
 			@Override
 			public void visit(OWLObjectAllValuesFrom arg0) {
-				
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				if (ctriplesn.containsKey(var_name)) {
-					OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
-					OWLClassExpression filler = allValuesFrom.getFiller();
-					Boolean prop = false;
-					for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
-						Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-						if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-							Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-							for (Node var : vars_) {
-								String urio = ontology.getOntologyID().getOntologyIRI().toString();
-								OWLNamedIndividual in = dataFactory
-										.getOWLNamedIndividual(IRI.create(urio + '#' + var.toString().substring(1)));
-								owl_type_validity(filler.asOWLClass(), in, var);
-							}
-						} else {
-							prop = true;
-						}
+
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
-					if (prop) {
+				} else {
+					if (ctriplesn.containsKey(var_name)) {
+						OWLObjectAllValuesFrom allValuesFrom = (OWLObjectAllValuesFrom) arg0;
+						OWLClassExpression filler = allValuesFrom.getFiller();
+						Boolean prop = false;
+						for (OWLObjectProperty dp : allValuesFrom.getObjectPropertiesInSignature()) {
+							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+								for (Node var : vars_) {
+									String urio = ontology.getOntologyID().getOntologyIRI().toString();
+									OWLNamedIndividual in = dataFactory.getOWLNamedIndividual(
+											IRI.create(urio + '#' + var.toString().substring(1)));
+									owl_type_validity(filler.asOWLClass(), in, var);
+								}
+							} else {
+								prop = true;
+							}
+						}
+						if (prop) {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+						}
+
+					} else {
 						if (!error && show) {
 							error = true;
 							System.out.println("<p style=\"color:red\">"
@@ -3021,70 +3020,45 @@ public class TSPARQL {
 						}
 					}
 
-				} else {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
+					addTypeAssertion(arg0, in);
+					String consistency = consistency();
+					if (consistency == "true") {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+					} else {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+									+ "</p>");
+							System.out.print(explanations());
+						}
 					}
-				}
-
-				addTypeAssertion(arg0, in);
-				String consistency = consistency();
-				if (consistency == "true") {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				} else {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-								+ "</p>");
-						System.out.print(explanations());
-					}
-				}
-				removeTypeAssertion(arg0, in);
+					removeTypeAssertion(arg0, in);
 				}
 			}
 
 			@Override
 			public void visit(OWLObjectHasValue arg0) {
 
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else
-				{
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
-
+				if (negation) {
 					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
 				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
 
 						if (!error && show) {
 							error = true;
@@ -3094,301 +3068,46 @@ public class TSPARQL {
 							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 							printClass(rendering.render(arg0), rendering.render(in));
 						}
-
 					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
 						}
+						removeTypeAssertion(arg0, in);
 					}
-					removeTypeAssertion(arg0, in);
-				}
 				}
 			}
 
 			@Override
 			public void visit(OWLObjectMinCardinality arg0) {
 
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
+				if (negation) {
 					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
 						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
 					}
 				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
-
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-
-					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
-						}
-					}
-					removeTypeAssertion(arg0, in);
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLObjectExactCardinality arg0) {
-
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
-
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-
-					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
-						}
-					}
-					removeTypeAssertion(arg0, in);
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLObjectMaxCardinality arg0) {
-
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
-
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-
-					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
-						}
-					}
-					removeTypeAssertion(arg0, in);
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLObjectHasSelf arg0) {
-
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
-
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-
-					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
-						}
-					}
-					removeTypeAssertion(arg0, in);
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLObjectOneOf arg0) {
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-				String entailment = entailment(axiom);
-				if (entailment == "false") {
-					if (!error && show) {
-						error = true;
-						System.out.println("<p style=\"color:red\">"
-								+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-								+ "</p>");
-						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-						printClass(rendering.render(arg0), rendering.render(in));
-					}
-				} else {
-					addTypeAssertion(arg0, in);
-					String consistency = consistency();
-					if (consistency == "true") {
-
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-
-					} else {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-									+ "</p>");
-							System.out.print(explanations());
-						}
-					}
-					removeTypeAssertion(arg0, in);
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLDataAllValuesFrom arg0) {
-
-				if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}
-
-			}
-
-			@Override
-			public void visit(OWLDataSomeValuesFrom arg0) {
-
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				if (arg0.isObjectRestriction()) {
 					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
 					String entailment = entailment(axiom);
 					if (entailment == "false") {
@@ -3422,52 +3141,871 @@ public class TSPARQL {
 										+ "</p>");
 								System.out.print(explanations());
 							}
-
 						}
 						removeTypeAssertion(arg0, in);
 					}
-				} else { // arg0.isDataRestriction()
-					if (ctriplesn.containsKey(var_name)) {
-						String t1n = "use_module(library('clpfd'))";
-						org.jpl7.Query q1n = new org.jpl7.Query(t1n);
-						System.out.print((q1n.hasSolution() ? "" : ""));
-						String t2n = "use_module(library('clpr'))";
-						org.jpl7.Query q2n = new org.jpl7.Query(t2n);
-						System.out.print((q2n.hasSolution() ? "" : ""));
-						for (List<String> rule : rules) {
-							String c = "";
-							if (rule.size() >= 2) {
-								c = rule.get(0) + ":-";
-								for (int i = 1; i < rule.size(); i++) {
-									c = c + rule.get(i) + ',';
-								}
-								c = c.substring(0, c.length() - 1);
-							} else {
-								c = rule.get(0);
-							}
-							String drn = rule.get(0);
-							org.jpl7.Query drqn = new org.jpl7.Query("retractall(" + drn + ")");
-							System.out.print((drqn.hasSolution() ? "" : ""));
-							String aprulen = "asserta((" + c + "))";
-							org.jpl7.Query q4n = new org.jpl7.Query(aprulen);
-							System.out.print((q4n.hasSolution() ? "" : ""));
+				}
+			}
+
+			@Override
+			public void visit(OWLObjectExactCardinality arg0) {
+
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
 						}
-						OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
-						OWLDataRange filler = someValuesFrom.getFiller();
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
 
-						for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
-							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString())))
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
 
-							{
-								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
+			}
 
-								if (filler instanceof OWLDatatypeRestriction) {
+			@Override
+			public void visit(OWLObjectMaxCardinality arg0) {
 
-									OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
+			}
+
+			@Override
+			public void visit(OWLObjectHasSelf arg0) {
+
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
+			}
+
+			@Override
+			public void visit(OWLObjectOneOf arg0) {
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+					String entailment = entailment(axiom);
+					if (entailment == "false") {
+						if (!error && show) {
+							error = true;
+							System.out.println("<p style=\"color:red\">"
+									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+									+ "</p>");
+							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+							printClass(rendering.render(arg0), rendering.render(in));
+						}
+					} else {
+						addTypeAssertion(arg0, in);
+						String consistency = consistency();
+						if (consistency == "true") {
+
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+
+						} else {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+										+ "</p>");
+								System.out.print(explanations());
+							}
+						}
+						removeTypeAssertion(arg0, in);
+					}
+				}
+			}
+
+			@Override
+			public void visit(OWLDataAllValuesFrom arg0) {
+
+				if (!error && show) {
+					System.out.println("<p style=\"color:magenta\">"
+							+ "This type cannot be proved by type validity analysis:" + "</p>");
+					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+					System.out.println("<p>" + rendering.render(arg0) + "</p>");
+					error = true;
+				}
+
+			}
+
+			@Override
+			public void visit(OWLDataSomeValuesFrom arg0) {
+
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					if (arg0.isObjectRestriction()) {
+						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+						String entailment = entailment(axiom);
+						if (entailment == "false") {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+						} else {
+							addTypeAssertion(arg0, in);
+							String consistency = consistency();
+							if (consistency == "true") {
+
+								if (!error && show) {
+									error = true;
+									System.out.println("<p style=\"color:red\">"
+											+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+											+ "</p>");
+									ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+									printClass(rendering.render(arg0), rendering.render(in));
+								}
+
+							} else {
+								if (!error && show) {
+									error = true;
+									System.out.println("<p style=\"color:red\">"
+											+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+											+ "</p>");
+									System.out.print(explanations());
+								}
+
+							}
+							removeTypeAssertion(arg0, in);
+						}
+					} else { // arg0.isDataRestriction()
+
+						if (ctriplesn.containsKey(var_name)) {
+
+							String t1n = "use_module(library('clpfd'))";
+							org.jpl7.Query q1n = new org.jpl7.Query(t1n);
+							System.out.print((q1n.hasSolution() ? "" : ""));
+							String t2n = "use_module(library('clpr'))";
+							org.jpl7.Query q2n = new org.jpl7.Query(t2n);
+							System.out.print((q2n.hasSolution() ? "" : ""));
+							for (List<String> rule : rules) {
+								String c = "";
+								if (rule.size() >= 2) {
+									c = rule.get(0) + ":-";
+									for (int i = 1; i < rule.size(); i++) {
+										c = c + rule.get(i) + ',';
+									}
+									c = c.substring(0, c.length() - 1);
+								} else {
+									c = rule.get(0);
+								}
+								String drn = rule.get(0);
+								org.jpl7.Query drqn = new org.jpl7.Query("retractall(" + drn + ")");
+								System.out.print((drqn.hasSolution() ? "" : ""));
+								String aprulen = "asserta((" + c + "))";
+								org.jpl7.Query q4n = new org.jpl7.Query(aprulen);
+								System.out.print((q4n.hasSolution() ? "" : ""));
+							}
+							OWLDataSomeValuesFrom someValuesFrom = (OWLDataSomeValuesFrom) arg0;
+							OWLDataRange filler = someValuesFrom.getFiller();
+
+							for (OWLDataProperty dp : someValuesFrom.getDataPropertiesInSignature()) {
+								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+								if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString())))
+
+								{
+
+									Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+
+									if (filler instanceof OWLDatatypeRestriction) {
+
+										OWLDatatypeRestriction r = (OWLDatatypeRestriction) filler;
+
+										String domain = "";
+
+										for (Node v : vars_) {
+											if (v.isVariable()) {
+												if (types_literals
+														.containsKey(v.toString().substring(1).toUpperCase())) {
+													if (types_literals.get(v.toString().substring(1).toUpperCase())
+															.equals("http://www.types.org#xsd:integer")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:string")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:dateTime")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:positiveInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:negativeInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:nonPositiveInteger")
+															|| types_literals
+																	.get(v.toString().substring(1).toUpperCase())
+																	.equals("http://www.types.org#xsd:nonNegativeInteger")) {
+														Integer act = nvar;
+														nvar++;
+														domain = domain + "fd_dom("
+																+ v.toString().substring(1).toUpperCase() + ",R" + act
+																+ ")" + ",";
+														rename.put("R" + act, v.toString().substring(1).toUpperCase());
+
+													} else {
+														if (types_literals.get(v.toString().substring(1).toUpperCase())
+																.equals("http://www.types.org#xsd:float")
+																|| types_literals
+																		.get(v.toString().substring(1).toUpperCase())
+																		.equals("http://www.types.org#xsd:double")
+																|| types_literals
+																		.get(v.toString().substring(1).toUpperCase())
+																		.equals("http://www.types.org#xsd:decimal")) {
+															Integer act = nvar;
+															nvar++;
+															domain = domain + "(sup("
+																	+ v.toString().substring(1).toUpperCase() + ",S),"
+																	+ "inf(" + v.toString().substring(1).toUpperCase()
+																	+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
+																	+ v.toString().substring(1).toUpperCase() + ",S)->R"
+																	+ act + "=..['..',inf,S];" + "inf("
+																	+ v.toString().substring(1).toUpperCase() + ",I)->R"
+																	+ act + "=..['..',I,sup];" + "R" + act
+																	+ "=..['..',inf,sup]))" + ",";
+															rename.put("R" + act,
+																	v.toString().substring(1).toUpperCase());
+														}
+													}
+												}
+											}
+										}
+
+										if (!domain.isEmpty()) {
+											domain = domain.substring(0, domain.length() - 1);
+										}
+
+										String poshead = "";
+										for (int i = 1; i < rules.get(0).size(); i++) {
+											poshead = poshead + rules.get(0).get(i) + ',';
+										}
+
+										String cons = "";
+										for (Node var : vars_) {
+
+											if (r.getDatatype().isInteger()) {
+												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+													if (fr.getFacet().toString() == "maxExclusive") {
+
+														if (var.isVariable()) {
+															cons = cons + var.toString().substring(1).toUpperCase()
+																	+ "#<" + fr.getFacetValue().getLiteral() + ",";
+														} else {
+															cons = cons + var.getLiteralValue().toString() + "#<"
+																	+ fr.getFacetValue().getLiteral() + ",";
+														}
+
+													} else if (fr.getFacet().toString() == "maxInclusive") {
+														if (var.isVariable()) {
+															cons = cons + var.toString().substring(1).toUpperCase()
+																	+ "#=<" + fr.getFacetValue().getLiteral() + ",";
+														} else {
+															cons = cons + var.getLiteralValue().toString() + "#=<"
+																	+ fr.getFacetValue().getLiteral() + ",";
+														}
+
+													} else if (fr.getFacet().toString() == "minExclusive") {
+														if (var.isVariable()) {
+															cons = cons + var.toString().substring(1).toUpperCase()
+																	+ "#>" + fr.getFacetValue().getLiteral() + ",";
+														} else {
+															cons = cons + var.getLiteralValue().toString() + "#>"
+																	+ fr.getFacetValue().getLiteral() + ",";
+														}
+
+													} else if (fr.getFacet().toString() == "minInclusive") {
+														if (var.isVariable()) {
+															cons = cons + var.toString().substring(1).toUpperCase()
+																	+ "#>=" + fr.getFacetValue().getLiteral() + ",";
+														} else {
+															cons = cons + var.getLiteralValue().toString() + "#>="
+																	+ fr.getFacetValue().getLiteral() + ",";
+														}
+													}
+												}
+											} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
+												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+													if (fr.getFacet().toString() == "maxExclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														} else {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														}
+													} else if (fr.getFacet().toString() == "maxInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "=<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														} else {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + "=<"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														}
+													} else if (fr.getFacet().toString() == "minExclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														} else {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">"
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														}
+													} else if (fr.getFacet().toString() == "minInclusive") {
+														if (var.isVariable()) {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">="
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														} else {
+															cons = cons + "{"
+																	+ var.toString().substring(1).toUpperCase() + ">="
+																	+ fr.getFacetValue().getLiteral() + "}" + ",";
+														}
+													}
+												}
+											} else {
+												if (!error && show) {
+													error = true;
+													System.out.println("<p style=\"color:magenta\">"
+															+ "OWL Restriction not allowed:" + "</p>");
+													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+													System.out.println("<p>" + rendering.render(arg0) + "</p>");
+												}
+											}
+										}
+										if (!cons.isEmpty()) {
+											cons = cons.substring(0, cons.length() - 1);
+										}
+										String phead;
+
+										if (!poshead.isEmpty()) {
+											poshead = poshead.substring(0, poshead.length() - 1);
+											if (!domain.isEmpty()) {
+												phead = poshead + "," + cons + "," + domain;
+											} else {
+												phead = poshead + "," + cons;
+											}
+										} else {
+											if (!domain.isEmpty()) {
+												phead = cons + "," + domain;
+											} else {
+												phead = cons;
+											}
+										}
+
+										org.jpl7.Query qcons = new org.jpl7.Query(phead);
+
+										if (!qcons.hasSolution()) {
+											// INCONSISTENCY
+											if (!error && show) {
+												error = true;
+												System.out.println("<p style=\"color:red\">"
+														+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+														+ "</p>");
+												if (!poshead.isEmpty()) {
+													System.out.println("<p>" + poshead.replace("#", "") + ","
+															+ cons.replace("#", "") + "</p>");
+												} else {
+													System.out.println("<p>" + cons.replace("#", "") + "</p>");
+												}
+
+											}
+										} else {
+
+											String negcons = "";
+											for (Node var : vars_) {
+
+												if (r.getDatatype().isInteger()) {
+													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+														if (fr.getFacet().toString() == "maxExclusive") {
+															if (var.isVariable()) {
+																negcons = negcons
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "#>=" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " >= "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + var.getLiteralValue().toString()
+																		+ "#>=" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " >= "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														} else if (fr.getFacet().toString() == "maxInclusive") {
+															if (var.isVariable()) {
+																negcons = negcons
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "#>" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " > "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + var.getLiteralValue().toString()
+																		+ "#>" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " > "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														} else if (fr.getFacet().toString() == "minExclusive") {
+															if (var.isVariable()) {
+																negcons = negcons
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "#=<" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " =< "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + var.getLiteralValue().toString()
+																		+ "#=<" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " =< "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														} else if (fr.getFacet().toString() == "minInclusive") {
+															if (var.isVariable()) {
+																negcons = negcons
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "#<" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " < "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + var.getLiteralValue().toString()
+																		+ "#<" + fr.getFacetValue().getLiteral() + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " < "
+																		+ fr.getFacetValue().getLiteral() + ")");
+															}
+														}
+													}
+												} else if (r.getDatatype().isDouble() || r.getDatatype().isFloat()) {
+													for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
+
+														if (fr.getFacet().toString() == "maxExclusive") {
+
+															if (var.isVariable()) {
+																negcons = negcons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">=" + fr.getFacetValue().getLiteral() + "}"
+																		+ ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " >= "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + "{"
+																		+ var.getLiteralValue().toString() + ">="
+																		+ fr.getFacetValue().getLiteral() + "}" + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " >= "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+
+														} else if (fr.getFacet().toString() == "maxInclusive") {
+															if (var.isVariable()) {
+																negcons = negcons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ ">" + fr.getFacetValue().getLiteral() + "}"
+																		+ ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " > "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + "{"
+																		+ var.getLiteralValue().toString() + ">"
+																		+ fr.getFacetValue().getLiteral() + "}" + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " > "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														} else if (fr.getFacet().toString() == "minExclusive") {
+															if (var.isVariable()) {
+																negcons = negcons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "=<" + fr.getFacetValue().getLiteral() + "}"
+																		+ ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " =< "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + "{"
+																		+ var.getLiteralValue().toString() + "=<"
+																		+ fr.getFacetValue().getLiteral() + "}" + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " =< "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														} else if (fr.getFacet().toString() == "minInclusive") {
+															if (var.isVariable()) {
+																negcons = negcons + "{"
+																		+ var.toString().substring(1).toUpperCase()
+																		+ "<" + fr.getFacetValue().getLiteral() + "}"
+																		+ ";";
+																constraints_elements.add("( "
+																		+ var.toString().toUpperCase() + " < "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															} else {
+																negcons = negcons + "{"
+																		+ var.getLiteralValue().toString() + "<"
+																		+ fr.getFacetValue().getLiteral() + "}" + ";";
+																constraints_elements.add("( "
+																		+ var.getLiteralValue().toString() + " < "
+																		+ fr.getFacetValue().getLiteral() + " )");
+															}
+														}
+													}
+												} else {
+													if (!error && show) {
+														error = true;
+														System.out.println("<p style=\"color:green\">"
+																+ "OWL Restriction not allowed:" + "</p>");
+														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+														System.out.println("<p>" + rendering.render(arg0) + "</p>");
+													}
+												}
+											}
+
+											if (!negcons.isEmpty()) {
+												negcons = negcons.substring(0, negcons.length() - 1);
+											}
+
+											String neghead = "";
+											for (int i = 1; i < rules.get(0).size(); i++) {
+												neghead = neghead + rules.get(0).get(i) + ',';
+											}
+
+											String nhead;
+
+											if (!neghead.isEmpty()) {
+												neghead = neghead.substring(0, neghead.length() - 1);
+												if (!domain.isEmpty()) {
+													nhead = neghead + "," + negcons + "," + domain;
+												} else {
+													nhead = neghead + "," + negcons;
+												}
+											} else {
+												if (!domain.isEmpty()) {
+													nhead = negcons + "," + domain;
+												} else {
+													nhead = negcons;
+												}
+											}
+
+											org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
+
+											if (qimpl.hasSolution())
+											// COUNTEREXAMPLE
+											{
+												if (neghead.isEmpty()) {
+													if (!error && show) {
+														error = true;
+														System.out.print("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. The property cannot be proved. "
+																+ "Not enough information for: " + "</p>");
+														System.out.println(
+																"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+													}
+												} else {
+													if (!error && show) {
+														error = true;
+														System.out.println("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. Counterexample:"
+																+ "</p>");
+														Map<String, Term>[] sols = qimpl.allSolutions();
+														for (Map<String, Term> s : sols) {
+															for (String key : s.keySet())
+																if (s.get(key).isCompound()) {
+																	System.out.println("<p>" + rename.get(key) + "="
+																			+ s.get(key) + "</p>");
+																}
+														}
+													}
+												}
+											}
+
+											else {
+												// ENTAILMENT
+												String ihead;
+												ihead = phead + "->" + cons;
+												qcons = new org.jpl7.Query(ihead);
+												if (qcons.hasSolution()) {
+												} else {
+													if (!error && show) {
+														error = true;
+														System.out.println("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+																+ "</p>");
+														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+														printClass(rendering.render(arg0), rendering.render(in));
+													}
+												}
+
+											}
+										}
+
+									} else {
+										// NON OWL DATATYPE RESTRICTION
+									}
+								} else {
+									// INCOMPLETENESS
+									if (!error && show) {
+										error = true;
+										System.out.print("<p style=\"color:red\">"
+												+ "Unsuccessful type validity checking. The property cannot be proved. "
+												+ "Not enough information for: " + "</p>");
+										System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+									}
+								}
+							}
+						} else {
+							// INCOMPLETENESS
+							if (!error && show) {
+								error = true;
+								System.out.print("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The property cannot be proved. "
+										+ "Not enough information for: " + "</p>");
+								System.out.println("<p>" + var_name + "</p>");
+							}
+						}
+					}
+				}
+			}
+
+			@Override
+			public void visit(OWLDataHasValue arg0) {
+
+				if (negation) {
+					if (!error && show) {
+						System.out.println("<p style=\"color:magenta\">"
+								+ "This type cannot be proved by type validity analysis:" + "</p>");
+						ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+						System.out.println("<p>" + rendering.render(arg0) + "</p>");
+						error = true;
+					}
+				} else {
+					if (arg0.isObjectRestriction()) {
+						OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
+						String entailment = entailment(axiom);
+						if (entailment == "false") {
+							if (!error && show) {
+								error = true;
+								System.out.println("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+										+ "</p>");
+								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+								printClass(rendering.render(arg0), rendering.render(in));
+							}
+						} else {
+							addTypeAssertion(arg0, in);
+							String consistency = consistency();
+
+							if (consistency == "true") {
+
+								if (!error && show) {
+									error = true;
+									System.out.println("<p style=\"color:red\">"
+											+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+											+ "</p>");
+									ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+									printClass(rendering.render(arg0), rendering.render(in));
+								}
+
+							} else {
+								if (!error && show) {
+									error = true;
+									System.out.println("<p style=\"color:red\">"
+											+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+											+ "</p>");
+									System.out.print(explanations());
+								}
+							}
+							removeTypeAssertion(arg0, in);
+						}
+					} else { // arg0.isDataRestriction()
+						if (ctriplesn.containsKey(var_name)) {
+							String t1n = "use_module(library('clpfd'))";
+							org.jpl7.Query q1n = new org.jpl7.Query(t1n);
+							System.out.print((q1n.hasSolution() ? "" : ""));
+							String t2n = "use_module(library('clpr'))";
+							org.jpl7.Query q2n = new org.jpl7.Query(t2n);
+							System.out.print((q2n.hasSolution() ? "" : ""));
+							for (List<String> rule : rules) {
+								String c = "";
+								if (rule.size() >= 2) {
+									c = rule.get(0) + ":-";
+									for (int i = 1; i < rule.size(); i++) {
+										c = c + rule.get(i) + ',';
+									}
+									c = c.substring(0, c.length() - 1);
+								} else {
+									c = rule.get(0);
+								}
+								String drn = rule.get(0);
+								org.jpl7.Query drqn = new org.jpl7.Query("retractall(" + drn + ")");
+								System.out.print((drqn.hasSolution() ? "" : ""));
+								String aprulen = "asserta((" + c + "))";
+								org.jpl7.Query q4n = new org.jpl7.Query(aprulen);
+								System.out.print((q4n.hasSolution() ? "" : ""));
+							}
+							OWLDataHasValue hasValue = (OWLDataHasValue) arg0;
+							OWLLiteral val = hasValue.getValue();
+							for (OWLDataProperty dp : hasValue.getDataPropertiesInSignature()) {
+								Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
+								if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
+
+									Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
 
 									String domain = "";
-
 									for (Node v : vars_) {
 										if (v.isVariable()) {
 											if (types_literals.containsKey(v.toString().substring(1).toUpperCase())) {
@@ -3491,7 +4029,6 @@ public class TSPARQL {
 															+ v.toString().substring(1).toUpperCase() + ",R" + act + ")"
 															+ ",";
 													rename.put("R" + act, v.toString().substring(1).toUpperCase());
-
 												} else {
 													if (types_literals.get(v.toString().substring(1).toUpperCase())
 															.equals("http://www.types.org#xsd:float")
@@ -3522,668 +4059,179 @@ public class TSPARQL {
 										domain = domain.substring(0, domain.length() - 1);
 									}
 
-									String poshead = "";
-									for (int i = 1; i < rules.get(0).size(); i++) {
-										poshead = poshead + rules.get(0).get(i) + ',';
-									}
+									{
 
-									String cons = "";
-									for (Node var : vars_) {
-
-										if (r.getDatatype().isInteger()) {
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												if (fr.getFacet().toString() == "maxExclusive") {
-
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#<"
-																+ fr.getFacetValue().getLiteral() + ",";
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#<"
-																+ fr.getFacetValue().getLiteral() + ",";
-													}
-
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#=<"
-																+ fr.getFacetValue().getLiteral() + ",";
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#=<"
-																+ fr.getFacetValue().getLiteral() + ",";
-													}
-
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#>"
-																+ fr.getFacetValue().getLiteral() + ",";
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#>"
-																+ fr.getFacetValue().getLiteral() + ",";
-													}
-
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + var.toString().substring(1).toUpperCase() + "#>="
-																+ fr.getFacetValue().getLiteral() + ",";
-													} else {
-														cons = cons + var.getLiteralValue().toString() + "#>="
-																+ fr.getFacetValue().getLiteral() + ",";
-													}
-												}
-											}
-										} else if (r.getDatatype().isFloat() || r.getDatatype().isDouble()) {
-											for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-												if (fr.getFacet().toString() == "maxExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "<" + fr.getFacetValue().getLiteral() + "}" + ",";
-													} else {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "<" + fr.getFacetValue().getLiteral() + "}" + ",";
-													}
-												} else if (fr.getFacet().toString() == "maxInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "=<" + fr.getFacetValue().getLiteral() + "}" + ",";
-													} else {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ "=<" + fr.getFacetValue().getLiteral() + "}" + ",";
-													}
-												} else if (fr.getFacet().toString() == "minExclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">" + fr.getFacetValue().getLiteral() + "}" + ",";
-													} else {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">" + fr.getFacetValue().getLiteral() + "}" + ",";
-													}
-												} else if (fr.getFacet().toString() == "minInclusive") {
-													if (var.isVariable()) {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">=" + fr.getFacetValue().getLiteral() + "}" + ",";
-													} else {
-														cons = cons + "{" + var.toString().substring(1).toUpperCase()
-																+ ">=" + fr.getFacetValue().getLiteral() + "}" + ",";
-													}
-												}
-											}
-										} else {
-											if (!error && show) {
-												error = true;
-												System.out.println("<p style=\"color:magenta\">"
-														+ "OWL Restriction not allowed:" + "</p>");
-												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-												System.out.println("<p>" + rendering.render(arg0) + "</p>");
-											}
-										}
-									}
-									if (!cons.isEmpty()) {
-										cons = cons.substring(0, cons.length() - 1);
-									}
-									String phead;
-
-									if (!poshead.isEmpty()) {
-										poshead = poshead.substring(0, poshead.length() - 1);
-										phead = poshead + "," + cons + "," + domain;
-									} else {
-										phead = cons + "," + domain;
-									}
-
-									org.jpl7.Query qcons = new org.jpl7.Query(phead);
-
-									if (!qcons.hasSolution()) {
-										// INCONSISTENCY
-										if (!error && show) {
-											error = true;
-											System.out.println("<p style=\"color:red\">"
-													+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-													+ "</p>");
-											System.out.println("<p>" + poshead.replace("#","") + "," + cons.replace("#","") + "</p>");
-										}
-									} else {
-
-										String negcons = "";
+										vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
+										String poscons = "";
 										for (Node var : vars_) {
 
-											if (r.getDatatype().isInteger()) {
-												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-													if (fr.getFacet().toString() == "maxExclusive") {
-														if (var.isVariable()) {
-															negcons = negcons
-																	+ var.toString().substring(1).toUpperCase() + "#>="
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " >= " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + var.getLiteralValue().toString() + "#>="
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add(
-																	"( " + var.getLiteralValue().toString() + " >= "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													} else if (fr.getFacet().toString() == "maxInclusive") {
-														if (var.isVariable()) {
-															negcons = negcons
-																	+ var.toString().substring(1).toUpperCase() + "#>"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " > " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + var.getLiteralValue().toString() + "#>"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements
-																	.add("( " + var.getLiteralValue().toString() + " > "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													} else if (fr.getFacet().toString() == "minExclusive") {
-														if (var.isVariable()) {
-															negcons = negcons
-																	+ var.toString().substring(1).toUpperCase() + "#=<"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " =< " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + var.getLiteralValue().toString() + "#=<"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add(
-																	"( " + var.getLiteralValue().toString() + " =< "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													} else if (fr.getFacet().toString() == "minInclusive") {
-														if (var.isVariable()) {
-															negcons = negcons
-																	+ var.toString().substring(1).toUpperCase() + "#<"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " < " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + var.getLiteralValue().toString() + "#<"
-																	+ fr.getFacetValue().getLiteral() + ";";
-															constraints_elements
-																	.add("( " + var.getLiteralValue().toString() + " < "
-																			+ fr.getFacetValue().getLiteral() + ")");
-														}
-													}
+											if (val.isInteger()) {
+												if (var.isVariable()) {
+													poscons = poscons + var.toString().substring(1).toUpperCase() + "#="
+															+ val.getLiteral();
+												} else {
+													poscons = poscons + var.getLiteral() + "#=" + val.getLiteral();
 												}
-											} else if (r.getDatatype().isDouble() || r.getDatatype().isFloat()) {
-												for (OWLFacetRestriction fr : r.getFacetRestrictions()) {
-
-													if (fr.getFacet().toString() == "maxExclusive") {
-
-														if (var.isVariable()) {
-															negcons = negcons + "{"
-																	+ var.toString().substring(1).toUpperCase() + ">="
-																	+ fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " >= " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + "{" + var.getLiteralValue().toString()
-																	+ ">=" + fr.getFacetValue().getLiteral() + "}"
-																	+ ";";
-															constraints_elements.add(
-																	"( " + var.getLiteralValue().toString() + " >= "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-
-													} else if (fr.getFacet().toString() == "maxInclusive") {
-														if (var.isVariable()) {
-															negcons = negcons + "{"
-																	+ var.toString().substring(1).toUpperCase() + ">"
-																	+ fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " > " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + "{" + var.getLiteralValue().toString()
-																	+ ">" + fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements
-																	.add("( " + var.getLiteralValue().toString() + " > "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													} else if (fr.getFacet().toString() == "minExclusive") {
-														if (var.isVariable()) {
-															negcons = negcons + "{"
-																	+ var.toString().substring(1).toUpperCase() + "=<"
-																	+ fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " =< " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + "{" + var.getLiteralValue().toString()
-																	+ "=<" + fr.getFacetValue().getLiteral() + "}"
-																	+ ";";
-															constraints_elements.add(
-																	"( " + var.getLiteralValue().toString() + " =< "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													} else if (fr.getFacet().toString() == "minInclusive") {
-														if (var.isVariable()) {
-															negcons = negcons + "{"
-																	+ var.toString().substring(1).toUpperCase() + "<"
-																	+ fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements.add("( " + var.toString().toUpperCase()
-																	+ " < " + fr.getFacetValue().getLiteral() + " )");
-														} else {
-															negcons = negcons + "{" + var.getLiteralValue().toString()
-																	+ "<" + fr.getFacetValue().getLiteral() + "}" + ";";
-															constraints_elements
-																	.add("( " + var.getLiteralValue().toString() + " < "
-																			+ fr.getFacetValue().getLiteral() + " )");
-														}
-													}
+											} else if (val.isFloat() || val.isDouble()) {
+												if (var.isVariable()) {
+													poscons = poscons + "{" + var.toString().substring(1).toUpperCase()
+															+ "=:=" + val.getLiteral() + "}";
+												} else {
+													poscons = poscons + "{" + var.getLiteral() + "=:="
+															+ val.getLiteral() + "}";
 												}
 											} else {
 												if (!error && show) {
 													error = true;
-													System.out.println("<p style=\"color:green\">"
+													System.out.println("<p style=\"color:magenta\">"
 															+ "OWL Restriction not allowed:" + "</p>");
 													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 													System.out.println("<p>" + rendering.render(arg0) + "</p>");
 												}
 											}
 										}
-
-										if (!negcons.isEmpty()) {
-											negcons = negcons.substring(0, negcons.length() - 1);
-										}
-
-										String neghead = "";
+										String poshead = "";
 										for (int i = 1; i < rules.get(0).size(); i++) {
-											neghead = neghead + rules.get(0).get(i) + ',';
+											poshead = poshead + rules.get(0).get(i) + ',';
 										}
-
-										String nhead;
-										if (!neghead.isEmpty()) {
-											neghead = neghead.substring(0, neghead.length() - 1);
-											nhead = neghead + "," + negcons + "," + domain;
+										String phead;
+										if (!poshead.isEmpty()) {
+											poshead = poshead.substring(0, poshead.length() - 1);
+											phead = poshead + "," + poscons;
 										} else {
-											nhead = negcons + "," + domain;
+											phead = poscons;
 										}
 
-										org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
+										org.jpl7.Query qcons = new org.jpl7.Query(phead);
+										if (!qcons.hasSolution()) {
+											// INCONSISTENCY
+											if (!error && show) {
+												error = true;
+												System.out.println("<p style=\"color:red\">"
+														+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
+														+ "</p>");
+												System.out.println("<p>" + phead.replace("#", "") + "</p>");
+											}
+										} else {
 
-										if (qimpl.hasSolution())
-										// COUNTEREXAMPLE
-										{
-											if (neghead.isEmpty()) {
-												if (!error && show) {
-													error = true;
-													System.out.print("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. The property cannot be proved. "
-															+ "Not enough information for: " + "</p>");
-													System.out.println(
-															"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+											String neghead = "";
+											for (int i = 1; i < rules.get(0).size(); i++) {
+												neghead = neghead + rules.get(0).get(i) + ',';
+											}
+
+											String negcons = "";
+											for (Node var : vars_) {
+												if (val.isInteger()) {
+													if (var.isVariable()) {
+														negcons = negcons + "#\\"
+																+ var.toString().substring(1).toUpperCase() + "#="
+																+ val.getLiteral();
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "=" + val.getLiteral() + ")");
+													} else {
+														negcons = negcons + "#\\" + var.getLiteralValue().toString()
+																+ "#=" + val.getLiteral();
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "=" + val.getLiteral() + ")");
+													}
+												} else if (val.isFloat() || val.isDouble()) {
+													if (var.isVariable()) {
+														negcons = negcons + "#\\"
+																+ var.toString().substring(1).toUpperCase() + "=:="
+																+ val.getLiteral();
+														constraints_elements.add("(" + var.toString().toUpperCase()
+																+ "=" + val.getLiteral() + ")");
+													} else {
+														negcons = negcons + "#\\" + var.getLiteralValue().toString()
+																+ "=:=" + val.getLiteral();
+														constraints_elements.add("(" + var.getLiteralValue().toString()
+																+ "=" + val.getLiteral() + ")");
+													}
 												}
+											}
+
+											String nhead;
+
+											if (!neghead.isEmpty()) {
+												neghead = neghead.substring(0, neghead.length() - 1);
+												nhead = neghead + "," + negcons + "," + domain;
 											} else {
-												if (!error && show) {
-													error = true;
-													System.out.println("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. Counterexample:"
-															+ "</p>");
-													Map<String, Term>[] sols = qimpl.allSolutions();
-													for (Map<String, Term> s : sols) {
-														for (String key : s.keySet())
-															if (s.get(key).isCompound()) {
-																System.out.println("<p>" + rename.get(key) + "="
-																		+ s.get(key) + "</p>");
-															}
+												nhead = negcons + "," + domain;
+											}
+
+											org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
+											if (qimpl.hasSolution()) {
+												// COUNTEREXAMPLE
+
+												if (neghead.isEmpty()) {
+													if (!error && show) {
+														error = true;
+														System.out.print("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. The property cannot be proved. "
+																+ "Not enough information for: " + "</p>");
+														System.out.println(
+																"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+													}
+												} else {
+													if (!error && show) {
+														error = true;
+														System.out.println("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. Counterexample:"
+																+ "</p>");
+														Map<String, Term>[] sols = qimpl.allSolutions();
+														for (Map<String, Term> s : sols) {
+															for (String key : s.keySet())
+																if (s.get(key).isCompound()) {
+																	System.out.println("<p>" + rename.get(key) + "="
+																			+ s.get(key) + "</p>");
+																}
+														}
+													}
+												}
+											} else
+
+											{
+												// ENTAILMENT
+												phead = poshead + "->" + poscons;
+												qcons = new org.jpl7.Query(phead);
+												if (qcons.hasSolution()) {
+												} else {
+													if (!error && show) {
+														error = true;
+														System.out.println("<p style=\"color:red\">"
+																+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
+																+ "</p>");
+														ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+														printClass(rendering.render(arg0), rendering.render(in));
 													}
 												}
 											}
 										}
 
-										else {
-											// ENTAILMENT
-											String ihead;
-											ihead = phead + "->" + cons;
-											qcons = new org.jpl7.Query(ihead);
-											if (qcons.hasSolution()) {
-											} else {
-												if (!error && show) {
-													error = true;
-													System.out.println("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-															+ "</p>");
-													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-													printClass(rendering.render(arg0), rendering.render(in));
-												}
-											}
-
-										}
 									}
 
 								} else {
-									// NON OWL DATATYPE RESTRICTION
-								}
-							} else {
-								// INCOMPLETENESS
-								if (!error && show) {
-									error = true;
-									System.out.print("<p style=\"color:red\">"
-											+ "Unsuccessful type validity checking. The property cannot be proved. "
-											+ "Not enough information for: " + "</p>");
-									System.out.println("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+									// INCOMPLETENESS
+									if (!error && show) {
+										error = true;
+										System.out.print("<p style=\"color:red\">"
+												+ "Unsuccessful type validity checking. The property cannot be proved. "
+												+ "Not enough information for: " + "</p>");
+										System.out.print("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
+									}
 								}
 							}
-						}
-					} else {
-						// INCOMPLETENESS
-						if (!error && show) {
-							error = true;
-							System.out.print("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The property cannot be proved. "
-									+ "Not enough information for: " + "</p>");
-							System.out.println("<p>" + var_name + "</p>");
-						}
-					}
-				}
-				}
-			}
-
-			@Override
-			public void visit(OWLDataHasValue arg0) {
-
-				if (negation)
-				{if (!error && show) {
-					System.out.println("<p style=\"color:magenta\">"
-							+ "This type cannot be proved by type validity analysis:" + "</p>");
-					ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-					System.out.println("<p>" + rendering.render(arg0) + "</p>");
-					error = true;
-				}}
-				else {
-				if (arg0.isObjectRestriction()) {
-					OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(arg0, in);
-					String entailment = entailment(axiom);
-					if (entailment == "false") {
-						if (!error && show) {
-							error = true;
-							System.out.println("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-									+ "</p>");
-							ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-							printClass(rendering.render(arg0), rendering.render(in));
-						}
-					} else {
-						addTypeAssertion(arg0, in);
-						String consistency = consistency();
-
-						if (consistency == "true") {
-
-							if (!error && show) {
-								error = true;
-								System.out.println("<p style=\"color:red\">"
-										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-										+ "</p>");
-								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-								printClass(rendering.render(arg0), rendering.render(in));
-							}
-
 						} else {
+							// INCOMPLETENESS
 							if (!error && show) {
 								error = true;
-								System.out.println("<p style=\"color:red\">"
-										+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-										+ "</p>");
-								System.out.print(explanations());
+								System.out.print("<p style=\"color:red\">"
+										+ "Unsuccessful type validity checking. The property cannot be proved. "
+										+ "Not enough information for: " + "</p>");
+								System.out.println("<p>" + var_name + "</p>");
 							}
-						}
-						removeTypeAssertion(arg0, in);
-					}
-				} else { // arg0.isDataRestriction()
-					if (ctriplesn.containsKey(var_name)) {
-						String t1n = "use_module(library('clpfd'))";
-						org.jpl7.Query q1n = new org.jpl7.Query(t1n);
-						System.out.print((q1n.hasSolution() ? "" : ""));
-						String t2n = "use_module(library('clpr'))";
-						org.jpl7.Query q2n = new org.jpl7.Query(t2n);
-						System.out.print((q2n.hasSolution() ? "" : ""));
-						for (List<String> rule : rules) {
-							String c = "";
-							if (rule.size() >= 2) {
-								c = rule.get(0) + ":-";
-								for (int i = 1; i < rule.size(); i++) {
-									c = c + rule.get(i) + ',';
-								}
-								c = c.substring(0, c.length() - 1);
-							} else {
-								c = rule.get(0);
-							}
-							String drn = rule.get(0);
-							org.jpl7.Query drqn = new org.jpl7.Query("retractall(" + drn + ")");
-							System.out.print((drqn.hasSolution() ? "" : ""));
-							String aprulen = "asserta((" + c + "))";
-							org.jpl7.Query q4n = new org.jpl7.Query(aprulen);
-							System.out.print((q4n.hasSolution() ? "" : ""));
-						}
-						OWLDataHasValue hasValue = (OWLDataHasValue) arg0;
-						OWLLiteral val = hasValue.getValue();
-						for (OWLDataProperty dp : hasValue.getDataPropertiesInSignature()) {
-							Map<Node, Set<Node>> uses = ctriplesn.get(var_name);
-							if (uses.containsKey(NodeFactory.createURI(dp.getIRI().toString()))) {
-
-								Set<Node> vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-
-								String domain = "";
-								for (Node v : vars_) {
-									if (v.isVariable()) {
-										if (types_literals.containsKey(v.toString().substring(1).toUpperCase())) {
-											if (types_literals.get(v.toString().substring(1).toUpperCase())
-													.equals("http://www.types.org#xsd:integer")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:string")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:dateTime")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:positiveInteger")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:negativeInteger")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:nonPositiveInteger")
-													|| types_literals.get(v.toString().substring(1).toUpperCase())
-															.equals("http://www.types.org#xsd:nonNegativeInteger")) {
-												Integer act = nvar;
-												nvar++;
-												domain = domain + "fd_dom(" + v.toString().substring(1).toUpperCase()
-														+ ",R" + act + ")" + ",";
-												rename.put("R" + act, v.toString().substring(1).toUpperCase());
-											} else {
-												if (types_literals.get(v.toString().substring(1).toUpperCase())
-														.equals("http://www.types.org#xsd:float")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:double")
-														|| types_literals.get(v.toString().substring(1).toUpperCase())
-																.equals("http://www.types.org#xsd:decimal")) {
-													Integer act = nvar;
-													nvar++;
-													domain = domain + "(sup(" + v.toString().substring(1).toUpperCase()
-															+ ",S)," + "inf(" + v.toString().substring(1).toUpperCase()
-															+ ",I)->R" + act + "=..['..',I,S];" + "(sup("
-															+ v.toString().substring(1).toUpperCase() + ",S)->R" + act
-															+ "=..['..',inf,S];" + "inf("
-															+ v.toString().substring(1).toUpperCase() + ",I)->R" + act
-															+ "=..['..',I,sup];" + "R" + act + "=..['..',inf,sup]))"
-															+ ",";
-													rename.put("R" + act, v.toString().substring(1).toUpperCase());
-												}
-											}
-										}
-									}
-								}
-								if (!domain.isEmpty()) {
-									domain = domain.substring(0, domain.length() - 1);
-								}
-
-								{
-
-									vars_ = uses.get(NodeFactory.createURI(dp.getIRI().toString()));
-									String poscons = "";
-									for (Node var : vars_) {
-
-										if (val.isInteger()) {
-											if (var.isVariable()) {
-												poscons = poscons + var.toString().substring(1).toUpperCase() + "#="
-														+ val.getLiteral();
-											} else {
-												poscons = poscons + var.getLiteral() + "#=" + val.getLiteral();
-											}
-										} else if (val.isFloat() || val.isDouble()) {
-											if (var.isVariable()) {
-												poscons = poscons + "{" + var.toString().substring(1).toUpperCase()
-														+ "=:=" + val.getLiteral() + "}";
-											} else {
-												poscons = poscons + "{" + var.getLiteral() + "=:=" + val.getLiteral()
-														+ "}";
-											}
-										} else {
-											if (!error && show) {
-												error = true;
-												System.out.println("<p style=\"color:magenta\">"
-														+ "OWL Restriction not allowed:" + "</p>");
-												ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-												System.out.println("<p>" + rendering.render(arg0) + "</p>");
-											}
-										}
-									}
-									String poshead = "";
-									for (int i = 1; i < rules.get(0).size(); i++) {
-										poshead = poshead + rules.get(0).get(i) + ',';
-									}
-									String phead;
-									if (!poshead.isEmpty()) {
-										poshead = poshead.substring(0, poshead.length() - 1);
-										phead = poshead + "," + poscons;
-									} else {
-										phead = poscons;
-									}
-
-									org.jpl7.Query qcons = new org.jpl7.Query(phead);
-									if (!qcons.hasSolution()) {
-										// INCONSISTENCY
-										if (!error && show) {
-											error = true;
-											System.out.println("<p style=\"color:red\">"
-													+ "Unsuccessful type validity checking. Caused by the following inconsistency:"
-													+ "</p>");
-											System.out.println("<p>" + phead.replace("#","") + "</p>");
-										}
-									} else {
-
-										String neghead = "";
-										for (int i = 1; i < rules.get(0).size(); i++) {
-											neghead = neghead + rules.get(0).get(i) + ',';
-										}
-
-										String negcons = "";
-										for (Node var : vars_) {
-											if (val.isInteger()) {
-												if (var.isVariable()) {
-													negcons = negcons + "#\\"
-															+ var.toString().substring(1).toUpperCase() + "#="
-															+ val.getLiteral();
-													constraints_elements.add("(" + var.toString().toUpperCase() + "="
-															+ val.getLiteral() + ")");
-												} else {
-													negcons = negcons + "#\\" + var.getLiteralValue().toString() + "#="
-															+ val.getLiteral();
-													constraints_elements.add("(" + var.getLiteralValue().toString()
-															+ "=" + val.getLiteral() + ")");
-												}
-											} else if (val.isFloat() || val.isDouble()) {
-												if (var.isVariable()) {
-													negcons = negcons + "#\\"
-															+ var.toString().substring(1).toUpperCase() + "=:="
-															+ val.getLiteral();
-													constraints_elements.add("(" + var.toString().toUpperCase() + "="
-															+ val.getLiteral() + ")");
-												} else {
-													negcons = negcons + "#\\" + var.getLiteralValue().toString() + "=:="
-															+ val.getLiteral();
-													constraints_elements.add("(" + var.getLiteralValue().toString()
-															+ "=" + val.getLiteral() + ")");
-												}
-											}
-										}
-
-										String nhead;
-
-										if (!neghead.isEmpty()) {
-											neghead = neghead.substring(0, neghead.length() - 1);
-											nhead = neghead + "," + negcons + "," + domain;
-										} else {
-											nhead = negcons + "," + domain;
-										}
-
-										org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
-										if (qimpl.hasSolution()) {
-											// COUNTEREXAMPLE
-
-											if (neghead.isEmpty()) {
-												if (!error && show) {
-													error = true;
-													System.out.print("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. The property cannot be proved. "
-															+ "Not enough information for: " + "</p>");
-													System.out.println(
-															"<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
-												}
-											} else {
-												if (!error && show) {
-													error = true;
-													System.out.println("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. Counterexample:"
-															+ "</p>");
-													Map<String, Term>[] sols = qimpl.allSolutions();
-													for (Map<String, Term> s : sols) {
-														for (String key : s.keySet())
-															if (s.get(key).isCompound()) {
-																System.out.println("<p>" + rename.get(key) + "="
-																		+ s.get(key) + "</p>");
-															}
-													}
-												}
-											}
-										} else
-
-										{
-											// ENTAILMENT
-											phead = poshead + "->" + poscons;
-											qcons = new org.jpl7.Query(phead);
-											if (qcons.hasSolution()) {
-											} else {
-												if (!error && show) {
-													error = true;
-													System.out.println("<p style=\"color:red\">"
-															+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-															+ "</p>");
-													ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-													printClass(rendering.render(arg0), rendering.render(in));
-												}
-											}
-										}
-									}
-
-								}
-
-							} else {
-								// INCOMPLETENESS
-								if (!error && show) {
-									error = true;
-									System.out.print("<p style=\"color:red\">"
-											+ "Unsuccessful type validity checking. The property cannot be proved. "
-											+ "Not enough information for: " + "</p>");
-									System.out.print("<p>" + dp.getIRI().toString().split("#")[1] + "</p>");
-								}
-							}
-						}
-					} else {
-						// INCOMPLETENESS
-						if (!error && show) {
-							error = true;
-							System.out.print("<p style=\"color:red\">"
-									+ "Unsuccessful type validity checking. The property cannot be proved. "
-									+ "Not enough information for: " + "</p>");
-							System.out.println("<p>" + var_name + "</p>");
 						}
 					}
-				}
 				}
 			}
 
@@ -4282,524 +4330,521 @@ public class TSPARQL {
 
 		// SOCIAL NETWORK
 
-				// CORRECTNESS
-
-				// First Method. Wrongly Typed Query.
-
-				String socex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
-						+ "WHERE { sn:foo sn:unknown sn:bad }\n";
-
-				String socex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
-						+ "?USER sn:friend_of ?EVENT\r\n" + "}";
-
-				String socex3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?USER\r\n" + "}\r\n" + "\r\n" + "";
-
-				String socex4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:likes ?EVENT\r\n ." + "?EVENT rdf:type sn:User\r\n"
-						+ "}";
-
-				String socex5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
-						+ "?USER sn:age ?EVENT\r\n" + "}\n";
-
-				String socex6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n"
-						+ "?EVENT rdf:type sn:Event\r\n" + "}";
-
-				String socex7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n" + "?EVENT rdf:type ?TYPE\r\n"
-						+ "}";
-
-				String socex8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?P ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?P ?EVENT . \r\n" + "?USER sn:age ?P\r\n"
-						+ "}";
-
-				String socex9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type sn:User  \r\n" + "}";
-
-				String socex10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type ?TYPE .\r\n"
-						+ "?TYPE rdfs:subClassOf sn:User\r\n" + "}";
-
-				String socex11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type 10\r\n" + "}";
-
-				String socex12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "?USER sn:name ?VALUE .\r\n"
-						+ "FILTER (?VALUE > 10) \r\n" + "}";
-
-				String socex13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?VALUE .\r\n"
-						+ "FILTER (?VALUE > 10) \r\n" + "}";
-
-				String socex14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
-						+ "sn:jesus sn:age ?NAME\r\n" + "}";
-
-				String socex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
-						+ "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?NAME > ?AGE) \r\n" + "}";
-
-				String socex16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?PROP ?EVENT . \r\n" + "FILTER (?USER > 10)\r\n"
-						+ "}";
-
-				// First Method. Inconsistent Query.
-
-				String socex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
-						+ "WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE = 50) " + ". BIND ((?AGE+?AGE) AS ?U) "
-						+ ". FILTER(?U = 10)}";
-
-				String socex18 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER1 ?USER2 " + "WHERE {\n" + "?USER1 sn:age ?AU1 . " + "?USER2 sn:age ?AU2 . \n "
-						+ "FILTER(?AU1-?AU2 < 10) .\n" + "FILTER(?AU1 > 40 ).\n" + "FILTER (?AU2 < 18) }\n";
-
-				String socex19 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
-						+ "WHERE {\n" + "?USER sn:age ?AU . " + "FILTER(?AU > 30 ).\n" + "FILTER (?AU < 31) }\n";
-
-				String socex20 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
-						+ "WHERE {\n" + "?USER sn:height ?HU  . " + "FILTER(?HU > 130 ).\n" + "FILTER (?HU < 131) }\n";
-
-				String socex21 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER sn:friend_of ?USER \r\n" + "}";
-
-				String socex22 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n" + "FILTER EXISTS "
-						+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
-						+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
-
-				String socex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:friend_of sn:jesus\r\n" + "}";
-
-				String socex24 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Active . \r\n"
-						+ "?USER sn:dailyActivity ?DA . \r\n" + "FILTER (?DA<=4) \r\n" + "}";
-
-				String socex25 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?AGE = 50) .\r\n"
-						+ "FILTER (?AGE = 100)\r\n" + "}";
-
-				String socex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER2 sn:age ?AGE2 . \r\n"
-						+ "FILTER (?AGE2 > 0) .\r\n" + "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n" + "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n"
-						+ "FILTER (?SUM < 10)\r\n" + "}";
-
-				String socex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?MESSAGE\r\n" + "WHERE \r\n" + "{ \r\n" + "?MESSAGE sn:date ?DATE .\r\n"
-						+ "FILTER (?DATE < '2017-09-04T01:00:00Z'^^xsd:dateTime) .\r\n"
-						+ "FILTER (?DATE > '2017-09-04T01:00:00Z'^^xsd:dateTime)\r\n" + "}";
-
-				String socex28 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER\r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER sn:name ?NAME .\r\n" + "FILTER (?NAME < 'a') .\r\n"
-						+ "FILTER (?NAME > 'z')\r\n" + "}";
-
-				String socex29 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER sn:age ?AGE2\r\n"
-						+ "FILTER (?AGE != ?AGE2) \r\n" + "}";
-
-				String socex30 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:OpinionLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
-						+ "}";
-
-				String socex31 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
-						+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:SocialLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
-						+ "}";
-
-				// TYPE VALIDITY
-
-				// Second Method. Incomplete Query. Missing Triple Pattern.
-
-				String socex32 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n"
-						+ "?USER2 sn:likes ?MESSAGE\r\n" + "}";
-
-				String socex33 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n"
-						+ "?USER2 sn:likes ?MESSAGE\r\n" + "}";
-
-				String socex34 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:likes ?MESSAGE .\r\n"
-						+ "?USER2 sn:shares ?MESSAGE\r\n" + "}";
-
-				String socex35 = "# ?USER : sn:OpinionLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE \r\n" + "}";
-
-				// Second Method. Incomplete Query. Missing Filter Condition.
-
-				String socex36 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
-						+ "?USER sn:dailyLikes ?DL \r\n" + "}";
-
-				// Second Method. Inconsistent Variable Typing. Ontology Inconsistency.
-
-				String socex37 = "# ?USER : sn:Message\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
-
-				String socex38 = "# ?USER : sn:User\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
-
-				// Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
-
-				String socex39 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
-						+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL < 200) \r\n" + "}";
-
-				String socex40 = "# ?USER : sn:Active\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
-						+ "?USER sn:dailyActivity ?DA .\r\n" + "FILTER (?DA < 200) \r\n" + "}";
-
-				// Second Method. Counterexamples of Variable Typing.
-
-				String socex41 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
-						+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
-				
-				String socex42 = "# ?USER : sn:FriendOfInfluencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
-						+ "?USER2 sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 50) \r\n" + "}";
-				
-				String socex43 = "# ?USER : sn:FriendOfActive\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-						+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
-						+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
-						+ "?USER2 sn:dailyActivity ?DA .\r\n" + "FILTER (?DA > 50) \r\n" + "}";
-				
-				
-				String peoplex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?A WHERE {?A rdf:type pp:animal . ?A pp:part_of ?plant . ?plant rdf:type pp:plant}\r\n" + "";
-
-				String peoplex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?L WHERE {?L rdf:type pp:old_lady . ?L pp:has_pet ?P . ?P rdf:type pp:dog}\r\n" + "";
-
-				String peoplex3 = "# ?D : driver\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?D WHERE  {?D rdf:type pp:person}\r\n" + "";
-
-				 
-
-				String peoplex4 = "# ?W : old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?W WHERE  {?W rdf:type pp:woman}\r\n";
-
-				String peoplex5 = "# ?P : dog_liker\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?P WHERE  {?P rdf:type pp:person . ?P pp:has_pet ?A}\r\n";
-
-				String peoplex6 = "# ?P:grownup\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n";
-
-				String peoplex7 = "# ?P:old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?P WHERE  {?P rdf:type pp:elderly . ?P pp:has_pet ?A . ?A rdf:type pp:animal}\r\n" + "";
-
-				String peoplex8 = "# ?P:vegetarian\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
-						+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n" + "";
-				
-				String pizz1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P rdf:type pi:VegetarianPizza .  ?P pi:hasTopping ?T . ?T rdf:type pi:MeatTopping }\r\n" + "";
-
-				String pizz2 = "# ?P:RealItalianPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P pi:hasTopping ?T . ?T rdf:type pi:FruitTopping }\r\n" + "";
-
-				String pizz3 = "# ?P:ThinAndCrispyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping ?T . ?T rdf:type pi:FruitTopping }\r\n" + "";
-
-				String pizz4 = "# ?P:CheeseyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P rdf:type pi:Pizza . ?P pi:hasTopping ?T. ?T rdf:type pi:CheeseTopping }\r\n" + "";
-				
-				
-				String c1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S\r\n"
-						+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:failed . ?E co:scores ?V . FILTER (?V > 5)}";
-
-				String c2 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
-						+ "WHERE { ?S co:is_enrolled ?E . ?E co:scores ?Z . FILTER(?Z <3)}";
-
-				String c3 = "# ?E: finished\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
-						+ "WHERE { ?S co:is_enrolled ?E . ?E co:scores ?Z . FILTER(?Z <3)}";
-
-				String c4 = "# ?S: student\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S \r\n"
-						+ "WHERE { ?S rdf:type co:person }";
-
-				String c5 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
-						+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
-
-				String c6 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
-						+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
-
-				String c7 = "# ?E: failed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
-						+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
-				
-				String con1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P \r\n"
-						+ "WHERE { ?P rdf:type con:acceptance . ?P con:has_review ?R . ?R con:score ?V . FILTER (?V < 1)  }";
-
-				String con2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A \r\n"
-						+ "WHERE { ?A rdf:type con:acceptance . ?A con:submits ?P . ?P rdf:type con:rejection  }";
-
-				String con3 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A \r\n"
-						+ "WHERE { ?A con:submits ?P  }";
-
-				String con4 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
-						+ "WHERE { ?A con:submits ?P . ?P con:has_review ?R  }";
-
-				String con5 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
-						+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
-
-				String con6 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
-						+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
-
-				String con7 = "# ?P: acceptance \r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
-						+ "WHERE { ?A con:submits ?P . ?P con:has_review ?R. ?R rdf:type con:accepted  }";
-
-				String con8 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P con:has_review ?R . ?R rdf:type con:rejected }";
-
-				String con9 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 0) }";
-
-				String con10 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-						+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
-						+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
-						+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
-						+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
-						+ "WHERE { ?P con:has_review ?R }";
-				
+		// CORRECTNESS
+
+		// First Method. Wrongly Typed Query.
+
+		String socex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE { sn:foo sn:unknown sn:bad }\n";
+
+		String socex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
+				+ "?USER sn:friend_of ?EVENT\r\n" + "}";
+
+		String socex3 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?USER\r\n" + "}\r\n" + "\r\n" + "";
+
+		String socex4 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER WHERE \r\n" + "{\r\n" + "?USER sn:likes ?EVENT\r\n ." + "?EVENT rdf:type sn:User\r\n"
+				+ "}";
+
+		String socex5 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:attends_to ?EVENT . \r\n"
+				+ "?USER sn:age ?EVENT\r\n" + "}\n";
+
+		String socex6 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n"
+				+ "?EVENT rdf:type sn:Event\r\n" + "}";
+
+		String socex7 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER sn:age ?EVENT .\r\n" + "?EVENT rdf:type ?TYPE\r\n"
+				+ "}";
+
+		String socex8 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?P ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?P ?EVENT . \r\n" + "?USER sn:age ?P\r\n"
+				+ "}";
+
+		String socex9 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type sn:User  \r\n" + "}";
+
+		String socex10 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Event .\r\n" + "?USER rdf:type ?TYPE .\r\n"
+				+ "?TYPE rdfs:subClassOf sn:User\r\n" + "}";
+
+		String socex11 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type 10\r\n" + "}";
+
+		String socex12 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "?USER sn:name ?VALUE .\r\n"
+				+ "FILTER (?VALUE > 10) \r\n" + "}";
+
+		String socex13 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?VALUE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?VALUE .\r\n"
+				+ "FILTER (?VALUE > 10) \r\n" + "}";
+
+		String socex14 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
+				+ "sn:jesus sn:age ?NAME\r\n" + "}";
+
+		String socex15 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?NAME ?AGE WHERE \r\n" + "{ \r\n" + "sn:jesus sn:name ?NAME .\r\n"
+				+ "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?NAME > ?AGE) \r\n" + "}";
+
+		String socex16 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?EVENT WHERE \r\n" + "{\r\n" + "?USER ?PROP ?EVENT . \r\n" + "FILTER (?USER > 10)\r\n"
+				+ "}";
+
+		// First Method. Inconsistent Query.
+
+		String socex17 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:age ?AGE .\n" + "FILTER (?AGE = 50) " + ". BIND ((?AGE+?AGE) AS ?U) "
+				+ ". FILTER(?U = 10)}";
+
+		String socex18 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER1 ?USER2 " + "WHERE {\n" + "?USER1 sn:age ?AU1 . " + "?USER2 sn:age ?AU2 . \n "
+				+ "FILTER(?AU1-?AU2 < 10) .\n" + "FILTER(?AU1 > 40 ).\n" + "FILTER (?AU2 < 18) }\n";
+
+		String socex19 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:age ?AU . " + "FILTER(?AU > 30 ).\n" + "FILTER (?AU < 31) }\n";
+
+		String socex20 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER "
+				+ "WHERE {\n" + "?USER sn:height ?HU  . " + "FILTER(?HU > 130 ).\n" + "FILTER (?HU < 131) }\n";
+
+		String socex21 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:friend_of ?USER \r\n" + "}";
+
+		String socex22 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER WHERE {\n" + "?USER sn:height ?H .\n" + "FILTER (?H > 175) .\n" + "FILTER EXISTS "
+				+ "{SELECT ?USER2 WHERE {\n" + "?USER2 sn:height ?H2 .\n" + "FILTER (?H2 < 176) .\n"
+				+ "FILTER (?H < ?H2 ) }\n" + "}}\n";
+
+		String socex23 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:friend_of sn:jesus\r\n" + "}";
+
+		String socex24 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:Active . \r\n"
+				+ "?USER sn:dailyActivity ?DA . \r\n" + "FILTER (?DA<=4) \r\n" + "}";
+
+		String socex25 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "sn:jesus sn:age ?AGE .\r\n" + "FILTER (?AGE = 50) .\r\n"
+				+ "FILTER (?AGE = 100)\r\n" + "}";
+
+		String socex26 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER2 sn:age ?AGE2 . \r\n"
+				+ "FILTER (?AGE2 > 0) .\r\n" + "FILTER (?AGE2 < 50) .\r\n" + "FILTER (?AGE > 100) .\r\n"
+				+ "BIND((?AGE + ?AGE2) AS ?SUM) .\r\n" + "FILTER (?SUM < 10)\r\n" + "}";
+
+		String socex27 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?MESSAGE\r\n" + "WHERE \r\n" + "{ \r\n" + "?MESSAGE sn:date ?DATE .\r\n"
+				+ "FILTER (?DATE < '2017-09-04T01:00:00Z'^^xsd:dateTime) .\r\n"
+				+ "FILTER (?DATE > '2017-09-04T01:00:00Z'^^xsd:dateTime)\r\n" + "}";
+
+		String socex28 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER\r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:name ?NAME .\r\n" + "FILTER (?NAME < 'a') .\r\n"
+				+ "FILTER (?NAME > 'z')\r\n" + "}";
+
+		String socex29 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER sn:age ?AGE .\r\n" + "?USER sn:age ?AGE2\r\n"
+				+ "FILTER (?AGE != ?AGE2) \r\n" + "}";
+
+		String socex30 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:OpinionLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
+				+ "}";
+
+		String socex31 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n" + "SELECT ?USER \r\n"
+				+ "WHERE \r\n" + "{ \r\n" + "?USER rdf:type sn:SocialLeader .\r\n" + "?USER sn:creates ?MESSAGE\r\n"
+				+ "}";
+
+		// TYPE VALIDITY
+
+		// Second Method. Incomplete Query. Missing Triple Pattern.
+
+		String socex32 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n"
+				+ "?USER2 sn:likes ?MESSAGE\r\n" + "}";
+
+		String socex33 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE .\r\n"
+				+ "?USER2 sn:likes ?MESSAGE\r\n" + "}";
+
+		String socex34 = "# ?USER : sn:SocialLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:likes ?MESSAGE .\r\n"
+				+ "?USER2 sn:shares ?MESSAGE\r\n" + "}";
+
+		String socex35 = "# ?USER : sn:OpinionLeader\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:creates ?MESSAGE \r\n" + "}";
+
+		// Second Method. Incomplete Query. Missing Filter Condition.
+
+		String socex36 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL \r\n" + "}";
+
+		// Second Method. Inconsistent Variable Typing. Ontology Inconsistency.
+
+		String socex37 = "# ?USER : sn:Message\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
+
+		String socex38 = "# ?USER : sn:User\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?MESSAGE \r\n" + "WHERE \r\n" + "{\r\n" + "?MESSAGE sn:attends_to ?USER\r\n" + "}";
+
+		// Second Method. Inconsistent Variable Typing. Constraint Inconsistency.
+
+		String socex39 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL < 200) \r\n" + "}";
+
+		String socex40 = "# ?USER : sn:Active\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyActivity ?DA .\r\n" + "FILTER (?DA < 200) \r\n" + "}";
+
+		// Second Method. Counterexamples of Variable Typing.
+
+		String socex41 = "# ?USER : sn:Influencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER rdf:type sn:User .\r\n"
+				+ "?USER sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 200) \r\n" + "}";
+
+		String socex42 = "# ?USER : sn:FriendOfInfluencer\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DL \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
+				+ "?USER2 sn:dailyLikes ?DL .\r\n" + "FILTER (?DL > 50) \r\n" + "}";
+
+		String socex43 = "# ?USER : sn:FriendOfActive\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+				+ "PREFIX sn: <http://www.semanticweb.org/ontologies/2011/7/socialnetwork.owl#>\n"
+				+ "SELECT ?USER ?DA \r\n" + "WHERE \r\n" + "{\r\n" + "?USER sn:friend_of ?USER2 .\r\n"
+				+ "?USER2 sn:dailyActivity ?DA .\r\n" + "FILTER (?DA > 50) \r\n" + "}";
+
+		String peoplex1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?A WHERE {?A rdf:type pp:animal . ?A pp:part_of ?plant . ?plant rdf:type pp:plant}\r\n" + "";
+
+		String peoplex2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?L WHERE {?L rdf:type pp:old_lady . ?L pp:has_pet ?P . ?P rdf:type pp:dog}\r\n" + "";
+
+		String peoplex3 = "# ?D : driver\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?D WHERE  {?D rdf:type pp:person}\r\n" + "";
+
+		String peoplex4 = "# ?W : old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?W WHERE  {?W rdf:type pp:woman}\r\n";
+
+		String peoplex5 = "# ?P : dog_liker\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?P WHERE  {?P rdf:type pp:person . ?P pp:has_pet ?A}\r\n";
+
+		String peoplex6 = "# ?P:grownup\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n";
+
+		String peoplex7 = "# ?P:old_lady\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?P WHERE  {?P rdf:type pp:elderly . ?P pp:has_pet ?A . ?A rdf:type pp:animal}\r\n" + "";
+
+		String peoplex8 = "# ?P:vegetarian\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pp: <http://owl.man.ac.uk/2006/07/sssw/people#>\r\n"
+				+ "SELECT ?P WHERE  {?P rdf:type pp:person}\r\n" + "";
+
+		String pizz1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P rdf:type pi:VegetarianPizza .  ?P pi:hasTopping ?T . ?T rdf:type pi:MeatTopping }\r\n"
+				+ "";
+
+		String pizz2 = "# ?P:RealItalianPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P pi:hasTopping ?T . ?T rdf:type pi:FruitTopping }\r\n" + "";
+
+		String pizz3 = "# ?P:ThinAndCrispyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P rdf:type pi:MeatyPizza .  ?P pi:hasTopping ?T . ?T rdf:type pi:FruitTopping }\r\n" + "";
+
+		String pizz4 = "# ?P:CheeseyPizza\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX pi: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P rdf:type pi:Pizza . ?P pi:hasTopping ?T. ?T rdf:type pi:CheeseTopping }\r\n" + "";
+
+		String c1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S\r\n"
+				+ "WHERE { ?S co:is_enrolled ?E . ?E rdf:type co:failed . ?E co:scores ?V . FILTER (?V > 5)}";
+
+		String c2 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S co:is_enrolled ?E . ?E co:scores 3}";
+
+		String c3 = "# ?E: finished\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S co:is_enrolled ?E . ?E co:scores ?Z . FILTER(?Z <3)}";
+
+		String c4 = "# ?S: student\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S \r\n"
+				+ "WHERE { ?S rdf:type co:person }";
+
+		String c5 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V }";
+
+		String c6 = "# ?E: passed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
+
+		String c7 = "# ?E: failed\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX co: <http://www.semanticweb.org/course#>\r\n" + "SELECT ?S ?E\r\n"
+				+ "WHERE { ?S rdf:type co:student . ?S co:is_enrolled ?E . ?E co:scores ?V . FILTER (?V >= 3) }";
+
+		String con1 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P \r\n"
+				+ "WHERE { ?P rdf:type con:acceptance . ?P con:has_review ?R . ?R con:score ?V . FILTER (?V < 1)  }";
+
+		String con2 = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A \r\n"
+				+ "WHERE { ?A rdf:type con:acceptance . ?A con:submits ?P . ?P rdf:type con:rejection  }";
+
+		String con3 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P \r\n"
+				+ "WHERE { ?A con:submits ?P  }";
+
+		String con4 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
+				+ "WHERE { ?A con:submits ?P . ?P con:has_review ?R  }";
+
+		String con5 = "# ?P : acceptance\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
+				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
+
+		String con6 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
+				+ "WHERE { ?A con:submits ?P . ?P rdf:type con:paper  }";
+
+		String con7 = "# ?P: acceptance \r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?A ?P\r\n"
+				+ "WHERE { ?A con:submits ?P . ?P con:has_review ?R. ?R rdf:type con:accepted  }";
+
+		String con8 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P con:has_review ?R . ?R rdf:type con:rejected }";
+
+		String con9 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P con:has_review ?R . ?R con:score ?V . FILTER (?V > 0) }";
+
+		String con10 = "# ?P : rejection\r\n" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
+				+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n"
+				+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n"
+				+ "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
+				+ "PREFIX con: <http://www.semanticweb.org/conference#>\r\n" + "SELECT ?P\r\n"
+				+ "WHERE { ?P con:has_review ?R }";
+
 		OWLOntologyManager manager;
 		OWLOntologyManager manager_rdf;
 		OWLOntologyManager manager_owl;
@@ -4809,7 +4854,7 @@ public class TSPARQL {
 		OWLDataFactory dataFactory;
 		OWLDataFactory df_rdf;
 		OWLDataFactory df_owl;
-		String file = "C:/conference.owl";
+		String file = "C:/course.owl";
 		String rdf = "C:/rdf-vocabulary.owl";
 		String owl = "C:/owl-vocabulary.owl";
 
@@ -4855,15 +4900,13 @@ public class TSPARQL {
 		TSPARQL t = new TSPARQL(manager, manager_rdf, manager_owl, ontology, ont_rdf, ont_owl, dataFactory, df_rdf,
 				df_owl, file);
 
-		
-		  /*try { t.SPARQL_CORRECTNESS(socex32); } catch (Exception e) { 
-			  // TODO Auto-generated catch block e.printStackTrace(); 
-			  }
+		/*
+		 * try { t.SPARQL_CORRECTNESS(socex32); } catch (Exception e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
 		 */
 
 		try {
-			t.SPARQL_TYPE_VALIDITY(con10, "P",
-					"http://www.semanticweb.org/conference#rejection");
+			t.SPARQL_TYPE_VALIDITY(c2, "E", "http://www.semanticweb.org/course#passed");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block e.printStackTrace(); }
 		}

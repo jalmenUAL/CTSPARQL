@@ -4095,11 +4095,21 @@ public class TSPARQL {
 											poshead = poshead + rules.get(0).get(i) + ',';
 										}
 										String phead;
+										 
+										
 										if (!poshead.isEmpty()) {
 											poshead = poshead.substring(0, poshead.length() - 1);
-											phead = poshead + "," + poscons;
+											if (!domain.isEmpty()) {
+												phead = poshead + "," + poscons + "," + domain;
+											} else {
+												phead = poshead + "," + poscons;
+											}
 										} else {
-											phead = poscons;
+											if (!domain.isEmpty()) {
+												phead = poscons + "," + domain;
+											} else {
+												phead = poscons;
+											}
 										}
 
 										org.jpl7.Query qcons = new org.jpl7.Query(phead);
@@ -4150,14 +4160,24 @@ public class TSPARQL {
 												}
 											}
 
-											String nhead;
+											 
 
+											String nhead;
 											if (!neghead.isEmpty()) {
 												neghead = neghead.substring(0, neghead.length() - 1);
-												nhead = neghead + "," + negcons + "," + domain;
+												if (!domain.isEmpty()) {
+													nhead = neghead + "," + negcons + "," + domain;
+												} else {
+													nhead = neghead + "," + negcons;
+												}
 											} else {
-												nhead = negcons + "," + domain;
+												if (!domain.isEmpty()) {
+													nhead = negcons + "," + domain;
+												} else {
+													nhead = negcons;
+												}
 											}
+
 
 											org.jpl7.Query qimpl = new org.jpl7.Query(nhead);
 											if (qimpl.hasSolution()) {

@@ -1,5 +1,6 @@
 package MainCTSPARQL;
 
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +21,8 @@ import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -216,8 +219,26 @@ public class MyUI extends UI {
 		editor.setReadOnly(false);
 		editor.setShowInvisibles(false);
 		editor.setShowGutter(false);
-		editor.setShowPrintMargin(false);
 		editor.setUseSoftTabs(false);
+		editor.setShowPrintMargin(false);
+		editor.setWordWrap(true);
+		
+
+		editor.addValueChangeListener(new com.vaadin.data.HasValue.ValueChangeListener<String>() {
+			@Override
+			public void valueChange(com.vaadin.data.HasValue.ValueChangeEvent<String> event) {
+				
+				
+				if (editor.getValue().isEmpty()){
+				debug_button.setVisible(false);
+				run_button.setVisible(false);}
+				else {debug_button.setVisible(true);
+				run_button.setVisible(true);}
+				
+			}
+		});
+		
+		 
 
 		Grid<HashMap<String, RDFNode>> answers = new Grid<>("Execution Result");
 		answers.setWidth("100%");
@@ -1078,11 +1099,12 @@ public class MyUI extends UI {
 		result.setHeight("100%");
 		result.setStyleName("multi-line-caption");
 		result.setVisible(true);
-
-		ShortcutListener shortcut = new ShortcutListener("", ShortcutAction.KeyCode.ENTER, null) {
+		
+		 
+		 
+		new_ontology.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
 			@Override
 			public void handleAction(Object sender, Object target) {
-
 				ontologies.setValue(null);
 				current_ontology = new_ontology.getValue();
 				String ontology = "";
@@ -1107,9 +1129,12 @@ public class MyUI extends UI {
 				}
 
 			}
-		};
+			
+		});
 
-		new_ontology.addShortcutListener(shortcut);
+		 
+
+		 
 		new_ontology.setDescription("Type an ontology");
 
 		ontologies.addValueChangeListener(event -> {
@@ -1231,6 +1256,7 @@ public class MyUI extends UI {
 				}
 			}
 		});
+		
 
 		correctness.addClickListener(new Button.ClickListener() {
 			@Override

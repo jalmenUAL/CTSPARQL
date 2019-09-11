@@ -2756,24 +2756,13 @@ public class TSPARQL {
 							e.accept(this);
 						}
 					}
-					if (!error) {
-						if (ec0.isEmpty()) {
-							if (!error && show) {
-								error = true;
-								System.out.println("<p style=\"color:red\">"
-										+ "Unsuccessful type validity checking. The following class membership cannot be proved:"
-										+ "</p>");
-								ManchesterOWLSyntaxOWLObjectRendererImpl rendering = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-								printClass(rendering.render(arg0), rendering.render(in));
-							}
-						}
-					} else {
+					 
 						addTypeAssertion(arg0, in);
 						OWLClass res = dataFactory
 								.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
 						addTypeAssertion(res, in);
 						String consistency = consistency();
-						removeTypeAssertion(arg0, in);
+						
 						if (consistency == "true") {
 
 							Set<OWLClassExpression> ec1 = arg0.getSuperClasses(ontology);
@@ -2801,9 +2790,10 @@ public class TSPARQL {
 							}
 
 						}
+						removeTypeAssertion(arg0, in);
 
 					}
-				}
+				
 			}
 
 			@Override

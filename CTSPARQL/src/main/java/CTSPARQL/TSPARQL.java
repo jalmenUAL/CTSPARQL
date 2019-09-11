@@ -2757,6 +2757,9 @@ public class TSPARQL {
 						}
 					}
 					 
+					if (error) {}
+					else if (!ec0.isEmpty()) {}
+					else {
 						addTypeAssertion(arg0, in);
 						OWLClass res = dataFactory
 								.getOWLClass(IRI.create("http://www.w3.org/2000/01/rdf-schema#Resource"));
@@ -2791,7 +2794,7 @@ public class TSPARQL {
 
 						}
 						removeTypeAssertion(arg0, in);
-
+					}
 					}
 				
 			}

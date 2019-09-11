@@ -59,6 +59,7 @@ import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -106,7 +107,8 @@ public class MyUI extends UI {
 	ComboBox<String> ontologies = new ComboBox<String>("Examples of Ontologies");
 	ComboBox<String> cb_type_validity = new ComboBox<String>();
 	ComboBox<Var> cb_vars = new ComboBox<Var>();
-	TextField new_ontology = new TextField("Type URL of an ontology");
+	TextField new_ontology = new TextField();
+	Button load_new = new Button("");
 
 	public static String readStringFromURL(String requestURL) throws IOException {
 		try (Scanner scanner = new Scanner(new URL(requestURL).openStream(), StandardCharsets.UTF_8.toString())) {
@@ -132,7 +134,10 @@ public class MyUI extends UI {
 				"https://protege.stanford.edu/ontologies/pizza/pizza.owl");
 		ontologies.setEmptySelectionCaption("Please select an ontology:");
 		ontologies.setWidth("100%");
-		new_ontology.setWidth("100%");
+		new_ontology.setWidth("95%");
+		load_new.setWidth("5%");
+		new_ontology.setPlaceholder("Or Type an ontology URL");
+		 
 
 		
 		  setErrorHandler(new ErrorHandler() {
@@ -1102,13 +1107,16 @@ public class MyUI extends UI {
 		
 		 
 		 
-		new_ontology.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
+		load_new.addClickListener(new Button.ClickListener() {
 			@Override
-			public void handleAction(Object sender, Object target) {
+			public void buttonClick(ClickEvent event) {
 				ontologies.setValue(null);
 				current_ontology = new_ontology.getValue();
 				String ontology = "";
-				editor.setValue("");
+				editor.setValue("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
+					    "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
+						"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
+						"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n");
 				examplesall.removeAllComponents();
 
 				try {
@@ -1145,7 +1153,10 @@ public class MyUI extends UI {
 				new_ontology.setValue("");
 				current_ontology = event.getValue();
 				String ontology = "";
-				editor.setValue("");
+				editor.setValue("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" + 
+					    "PREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n" + 
+						"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\r\n" + 
+						"PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n");
 
 				try {
 					ontology = readStringFromURL(current_ontology);
@@ -1428,7 +1439,16 @@ public class MyUI extends UI {
 		main.setWidth("100%");
 
 		main.addComponent(ontologies);
-		main.addComponent(new_ontology);
+		
+		CssLayout news = new CssLayout();
+		news.setWidth("100%");
+		news.addComponent(new_ontology);
+		news.addComponent(load_new);
+		news.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
+		load_new.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+		load_new.setIcon(VaadinIcons.DOWNLOAD);
+		
+		main.addComponent(news);
 		main.addComponent(examplesall);
 		main.addComponent(edS);
 		main.addComponent(run_button);
